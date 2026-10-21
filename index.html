@@ -926,6 +926,9 @@ $("import-file").addEventListener("change", async e => {
 })();
 </script>
 
+<footer style="max-width:1180px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left,0px)) 32px max(16px,env(safe-area-inset-right,0px));font-size:13px">
+  <a href="datenschutz.html" style="color:var(--muted)">Datenschutz</a>
+</footer>
 <script>
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
   window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); });

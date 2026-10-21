@@ -1,6 +1,6 @@
 // Offline-Betrieb des Gebärden-Wörterbuchs. Erzeugt von baue_woerterbuch_github.py – nicht von Hand ändern.
-const CACHE = "woerterbuch-5de3f0f77e";
-const FILES = ["./", "./index.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png"];
+const CACHE = "woerterbuch-03ba18d8df";
+const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
 });
@@ -12,8 +12,9 @@ self.addEventListener("fetch", e => {
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
   if (req.mode === "navigate") {
     // Seite: erst Netz (damit Änderungen ankommen), ohne Netz aus dem Speicher
-    e.respondWith(fetch(req).then(r => { const c = r.clone(); caches.open(CACHE).then(x => x.put("./", c)); return r; })
-      .catch(() => caches.match("./").then(r => r || caches.match("./index.html"))));
+    // jede Seite unter ihrer eigenen Adresse speichern (sonst würde z. B. datenschutz.html die Startseite überschreiben)
+    e.respondWith(fetch(req).then(r => { if (r.ok) { const c = r.clone(); caches.open(CACHE).then(x => x.put(req, c)); } return r; })
+      .catch(() => caches.match(req).then(r => r || caches.match("./") || caches.match("./index.html"))));
     return;
   }
   e.respondWith(caches.match(req).then(r => r || fetch(req)));
