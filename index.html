@@ -594,7 +594,7 @@ function renderList(){
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
   const L = $("list");
   L.hidden = st.xp.open;
-  if (st.xp.open) renderExport();
+  renderExport();
   if (!items.length){
     const wo = matchMedia("(max-width:860px)").matches ? "oben" : "links";
     L.innerHTML = `<div class="empty"><h3>Noch keine Gebärden in der ${esc(SAMMLUNG[st.sammlung].name)}</h3>
