@@ -377,6 +377,12 @@ async function addKat(){
   renderKat(vorhanden || name);
 }
 
+/* ---------- Videos immer ohne Ton (Freddy 21.10.2026) ---------- */
+["volumechange", "play"].forEach(type => document.addEventListener(type, e => {
+  const v = e.target;
+  if (v && v.tagName === "VIDEO" && !v.muted) v.muted = true;
+}, true));
+
 /* ---------- Video-Felder im Formular ---------- */
 function faPflicht(){ return SAMMLUNG[st.sammlung].faPflicht; }
 function renderSlot(key){
@@ -390,7 +396,7 @@ function renderSlot(key){
   if (blob){
     const anzeige = istBild(blob)
       ? `<img src="${url(blob)}" alt="Erklärungsbild">`
-      : `<video controls playsinline preload="metadata" src="${url(blob)}"></video>`;
+      : `<video controls muted playsinline preload="metadata" src="${url(blob)}"></video>`;
     el.innerHTML = `<div class="vidbox">${anzeige}
       <div class="row"><label class="btn" for="${id}">Anderes ${was} wählen<input type="file" id="${id}" accept="${accept}"></label>
       ${pflicht ? "" : `<button type="button" class="btn ghost danger" data-rm="${key}">${istBild(blob) ? "Bild" : "Video"} entfernen</button>`}</div></div>`;
