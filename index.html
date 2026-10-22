@@ -159,14 +159,48 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
 /* Menü „⋯“ oben (Freddy 22.10.2026): Paket exportieren/importieren */
-.topright{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;position:relative}
+.topright{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:flex-start;gap:6px;position:relative}
+.segwrap{display:flex;flex-direction:column;gap:6px}
 .mehr{border:1px solid var(--line);background:var(--surface);border-radius:999px;width:40px;height:40px;cursor:pointer;font-size:22px;font-weight:700;line-height:1;color:var(--muted)}
 .mehr[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
 .menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px;display:grid;gap:6px;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
 .menu .tools{display:grid;gap:6px;margin:0}
 .menu .btn{justify-content:flex-start}
 /* Gesammelt (Freddy 22.10.2026): Wörter ohne Gebärde, je Sammlung */
-.ges{display:grid;gap:12px;margin-bottom:16px;padding:16px 18px}
+.ges{display:grid;gap:12px;padding:18px;width:100%;max-width:560px;max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box}
+.gesov{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;box-sizing:border-box}
+.gesov[hidden]{display:none}
+/* Test Schritt 1 (22.10.2026): Ablauf ohne Speichern */
+.testov{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:20px 16px 40px;box-sizing:border-box}
+.testov[hidden]{display:none}
+.testin{max-width:720px;margin:0 auto;display:grid;gap:16px}
+.testkopf{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.testkopf h2{font-size:22px}
+.testnr{color:var(--muted);font-weight:700}
+.testwahl{display:grid;gap:10px}
+.testwahl label.opt{display:flex;gap:10px;align-items:center;font-weight:700}
+.testwahl select,.testwahl input[type=number]{max-width:100%}
+.testliste{display:grid;gap:4px;max-height:260px;overflow:auto;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;background:var(--surface)}
+.testliste label{display:flex;gap:8px;align-items:center}
+.hilfen{display:flex;flex-wrap:wrap;gap:8px}
+.abc{font-family:var(--font-display);font-size:40px;font-weight:700;letter-spacing:.04em}
+.testfoto img{display:block;width:100%;max-height:60vh;object-fit:contain;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+.urteile{display:grid;gap:6px}
+.urteil{display:grid;grid-template-columns:32px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px}
+.urteil .w{font-weight:700;font-size:18px}
+.urteil .knoepfe{display:flex;gap:6px}
+.urteil .btn[aria-pressed="true"].ja{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+.urteil .btn[aria-pressed="true"].nein{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.erg td,.erg th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
+.erg td.r,.erg th.r{text-align:right}
+.erg{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--r)}
+.geskopf{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.geszu{border:0;background:none;font-size:28px;line-height:1;padding:0 4px;color:var(--muted);cursor:pointer}
+/* Sticker „noch zu bearbeiten“ unter dem gewählten Sammlungs-Knopf (Freddy 22.10.2026) */
+.segunter{display:flex;justify-content:flex-start;padding:0 8px}
+.segunter.rechts{justify-content:flex-end}
+.zubearb{all:unset;cursor:pointer;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.zubearb:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .ges h3{font-size:19px}
 .ges .n{color:var(--muted);font-weight:400;font-size:15px}
 .gesform{display:flex;gap:8px}
@@ -207,9 +241,12 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
       <h1 id="apptitle">Lernapp DGS/Deutsch</h1>
     </div>
     <div class="topright">
+    <div class="segwrap">
     <div class="seg" role="group" aria-label="Sammlung wählen">
       <button type="button" id="seg-schueler" data-s="schueler">Schüler<span class="n" id="n-schueler"></span></button>
       <button type="button" id="seg-fachkraft" data-s="fachkraft">Dolmetscher &amp; Lehrer<span class="n" id="n-fachkraft"></span></button>
+    </div>
+    <div class="segunter" id="segunter"><button type="button" class="zubearb" id="zubearb">noch zu bearbeiten</button></div>
     </div>
     <button type="button" class="mehr" id="mehr" aria-haspopup="true" aria-expanded="false" aria-label="Weitere Funktionen" title="Weitere Funktionen">⋯</button>
     <div class="menu" id="mehr-menu" hidden>
@@ -294,16 +331,19 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
     <section aria-labelledby="listtitle">
       <div class="listhead">
         <h2 id="listtitle">Einträge</h2>
-        <span class="count" id="count"></span>
+        <span style="display:flex;gap:12px;align-items:center"><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
       </div>
-      <section class="panel ges" id="gespanel" aria-labelledby="gestitle">
-        <h3 id="gestitle">Gesammelt <span class="n" id="ges-n"></span></h3>
-        <p class="hint">Wörter ohne Gebärde – antippen, um die Gebärde anzulegen.</p>
+      <div class="gesov" id="gesov" hidden>
+      <section class="panel ges" id="gespanel" role="dialog" aria-modal="true" aria-labelledby="gestitle">
+        <div class="geskopf"><h3 id="gestitle">Noch zu bearbeiten <span class="n" id="ges-n"></span></h3><button type="button" class="geszu" id="ges-zu" aria-label="Schließen" title="Schließen">×</button></div>
+        <p class="hint">Wörter ohne Gebärde – antippen, um die Gebärde anzulegen. Gilt für die gerade gewählte Sammlung.</p>
         <div class="gesform"><input type="text" id="ges-text" autocomplete="off" placeholder="Wörter, mit Komma getrennt" aria-label="Wörter sammeln"><button type="button" class="btn" id="ges-add">Hinzufügen</button></div>
         <div class="geswoerter" id="ges-liste"></div>
         <div><label class="btn" for="ges-csv">Liste einlesen (CSV) …<input type="file" id="ges-csv" accept=".csv,text/csv,text/plain"></label></div>
       </section>
+      </div>
       <div id="report"></div>
+      <div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
       <section class="panel xp" id="exportpanel" hidden aria-labelledby="xptitle"></section>
       <div class="list" id="list"></div>
     </section>
@@ -447,6 +487,7 @@ document.addEventListener("loadedmetadata", e => {
 document.addEventListener("timeupdate", e => {
   const v = e.target;
   if (!v || v.tagName !== "VIDEO" || !v.closest(".player") || !v.duration || v.paused) return;
+  if (!v.loop){ if (v.currentTime >= schleifeEnde(v)) v.pause(); return; }   // einmal abspielen (Fingeralphabet im Test)
   if (v.currentTime < schleifeAnf(v) - 0.05 || v.currentTime >= schleifeEnde(v)) v.currentTime = schleifeAnf(v);
 }, true);
 
@@ -667,6 +708,7 @@ function renderList(){
   const items = st.eintraege.filter(e => e.sammlung === st.sammlung)
     .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
+  $("btn-test").hidden = st.sammlung !== "schueler" || !items.length;
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
@@ -782,16 +824,23 @@ async function gesHinzu(woerter){
 }
 function renderGes(){
   const liste = gesListe(st.sammlung).slice().sort((a, b) => a.localeCompare(b, "de", {sensitivity:"base"}));
-  $("gespanel").hidden = st.xp.open;
   $("ges-n").textContent = liste.length ? "· " + liste.length : "";
+  $("zubearb").textContent = "noch zu bearbeiten" + (liste.length ? " · " + liste.length : "");
+  $("segunter").classList.toggle("rechts", st.sammlung === "fachkraft");
   $("ges-liste").innerHTML = liste.map(w => `<span class="gw"><button type="button" class="gw-w" data-ges="${esc(w)}" title="Gebärde anlegen">${esc(w)}</button><button type="button" class="gw-x" data-ges-del="${esc(w)}" aria-label="„${esc(w)}“ entfernen" title="Entfernen">×</button></span>`).join("");
 }
+function gesZu(){ $("gesov").hidden = true; }
+$("zubearb").addEventListener("click", () => { renderGes(); $("gesov").hidden = false; $("ges-text").focus(); });
+$("ges-zu").addEventListener("click", gesZu);
+$("gesov").addEventListener("click", ev => { if (ev.target.id === "gesov") gesZu(); });
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") gesZu(); });
 $("ges-add").addEventListener("click", async () => { const t = $("ges-text").value; if (!t.trim()) return; await gesHinzu(t.split(/[,;\n]/)); $("ges-text").value = ""; });
 $("ges-text").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("ges-add").click(); } });
 $("ges-liste").addEventListener("click", async ev => {
   const b = ev.target.closest("button"); if (!b) return;
   if (b.dataset.gesDel !== undefined){ await gesEntfernen(st.sammlung, [b.dataset.gesDel]); renderGes(); return; }
   const w = b.dataset.ges;
+  gesZu();
   resetForm();
   st.gesWort = w;
   $("wort").value = w;
@@ -818,6 +867,133 @@ $("ges-csv").addEventListener("change", async e => {
   const f = e.target.files[0]; e.target.value = ""; if (!f) return;
   let text; try { text = await f.text(); } catch(err){ toast("Die Datei konnte nicht gelesen werden."); return; }
   await gesHinzu(csvErsteSpalte(text));
+});
+
+/* ---------- Test Schritt 1 (22.10.2026): Ablauf ohne Speichern ----------
+   Gebärde sehen → Wort auf Papier schreiben → Hilfen (Anfangsbuchstabe, dann Fingeralphabet; Erklärung −1)
+   → Foto vom Zettel → Selbstauswertung ✓/✗ → Punkte. Nichts wird gespeichert, das Foto wird verworfen. */
+const T = {phase:null, quelle:"gesamt", anzahl:25, block:"", fach:"", einzeln:new Set(), woerter:[], i:0, foto:null, fotoUrl:"", urls:[]};
+function tUrl(blob){ const u = URL.createObjectURL(blob); T.urls.push(u); return u; }
+function tFrei(){ while (T.urls.length) URL.revokeObjectURL(T.urls.pop()); }
+function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
+function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function tAuswahl(){
+  const alle = schuelerEintraege();
+  if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
+  if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
+  const pool = T.quelle === "fach" ? alle.filter(e => e.kategorie === T.fach) : alle;
+  return mischen(pool).slice(0, T.anzahl);
+}
+function tPunkte(w){
+  if (!w.richtig) return 0;
+  let p = w.fa >= 1 ? Math.max(1, 4 - w.fa) : w.abc ? 4 : 5;
+  if (w.erkl) p -= 1;
+  p = Math.max(0, p);
+  return T.quelle === "gesamt" ? p * 2 : p;     // Gesamtwortschatz: doppelte Punkte
+}
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${T.phase === "ergebnis" ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
+function renderTest(){
+  const el = $("testin");
+  tFrei();
+  if (T.phase === "start"){
+    const alle = schuelerEintraege();
+    const bloecke = [...new Set(alle.filter(e => e.lernwort && e.lernblock).map(e => e.lernblock))].sort((a, b) => a - b);
+    const faecher = [...new Set(alle.map(e => e.kategorie))].sort((a, b) => a.localeCompare(b, "de"));
+    if (!T.block && bloecke.length) T.block = String(bloecke[bloecke.length - 1]);
+    if (!T.fach && faecher.length) T.fach = faecher[0];
+    const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
+    const n = tAuswahl().length;
+    const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
+    el.innerHTML = tKopf("Test") + `<section class="panel testwahl">
+      <p class="hint">Schau dir die Gebärde an und schreib das Wort nummeriert auf einen Zettel.</p>
+      ${opt("gesamt", "Gesamtwortschatz <span class='chip lern'>doppelte Punkte</span>")}
+      ${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") + (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
+      ${opt("fach", "Fach")}${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
+      ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(e.wort)}</label>`).join("")}</div>` : ""}
+      ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
+      <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>
+      <div><button type="button" class="btn primary" data-t="los" ${n ? "" : "disabled"}>Test starten</button></div></section>`;
+    return;
+  }
+  if (T.phase === "wort"){
+    const w = T.woerter[T.i], e = w.e, letzte = T.i === T.woerter.length - 1;
+    const erkl = e.erklaerung_text || erklMedium(e);
+    const erklM = erklMedium(e);
+    el.innerHTML = tKopf("Test", `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`) + `
+      <div class="player"><video autoplay loop muted playsinline controls src="${tUrl(e.gebaerde)}" aria-label="Gebärde"></video></div>
+      <div class="hilfen">
+        <button type="button" class="btn" data-t="abc" ${w.abc ? "disabled" : ""}>Anfangsbuchstabe</button>
+        <button type="button" class="btn" data-t="fa" ${!w.abc || !e.fingeralphabet ? "disabled" : ""}>Fingeralphabet${w.fa ? " (" + w.fa + "×)" : ""}</button>
+        ${erkl ? `<button type="button" class="btn" data-t="erkl" ${w.erkl ? "disabled" : ""}>Erklärung (−1 Punkt)</button>` : ""}
+      </div>
+      ${w.abc ? `<div class="abc">${esc(e.wort.charAt(0))} …</div>` : ""}
+      ${w.fa ? `<div class="player" id="t-fa"><video autoplay muted playsinline controls src="${tUrl(e.fingeralphabet)}" aria-label="Fingeralphabet"></video></div>` : ""}
+      ${w.erkl ? `${e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : ""}${erklM ? (istBild(erklM) ? `<div class="player"><img src="${tUrl(erklM)}" alt="Erklärung"></div>` : `<div class="player"><video autoplay loop muted playsinline controls src="${tUrl(erklM)}" aria-label="Erklärung"></video></div>`) : ""}` : ""}
+      <div><button type="button" class="btn primary" data-t="weiter">${letzte ? "Fertig – Foto vom Zettel machen" : "Weiter"}</button></div>`;
+    return;
+  }
+  if (T.phase === "foto"){
+    el.innerHTML = tKopf("Foto vom Zettel") + `<section class="panel testwahl">
+      <p>Mach jetzt ein Foto von deinem Zettel. Danach vergleichst du selbst.</p>
+      <p class="hint">Das Foto wird nicht gespeichert und nach der Auswertung gelöscht.</p>
+      <div><label class="btn primary" for="t-foto">Foto machen<input type="file" id="t-foto" accept="image/*" capture="environment"></label></div></section>`;
+    return;
+  }
+  if (T.phase === "auswertung"){
+    const fertig = T.woerter.every(w => w.richtig !== null);
+    el.innerHTML = tKopf("Selbst auswerten") + `
+      <div class="testfoto"><img src="${T.fotoUrl}" alt="Foto vom Zettel"></div>
+      <p class="hint">Vergleiche mit deinem Zettel: Ist das Wort richtig geschrieben?</p>
+      <div class="urteile">${T.woerter.map((w, i) => `<div class="urteil"><span class="testnr">${i + 1}.</span><span class="w">${esc(w.e.wort)}</span>
+        <span class="knoepfe"><button type="button" class="btn ja" data-ja="${i}" aria-pressed="${w.richtig === true}" aria-label="richtig">✓</button><button type="button" class="btn nein" data-nein="${i}" aria-pressed="${w.richtig === false}" aria-label="falsch">✗</button></span></div>`).join("")}</div>
+      <div><button type="button" class="btn primary" data-t="auswerten" ${fertig ? "" : "disabled"}>Auswerten</button></div>`;
+    return;
+  }
+  if (T.phase === "ergebnis"){
+    const summe = T.woerter.reduce((a, w) => a + tPunkte(w), 0), max = T.woerter.length * (T.quelle === "gesamt" ? 10 : 5);
+    const hilfe = w => [w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
+    el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+      <p style="font-size:20px"><strong>${summe} von ${max} Punkten</strong> · Schnitt ${(summe / T.woerter.length).toLocaleString("de-DE", {maximumFractionDigits:1})} pro Wort${T.quelle === "gesamt" ? " (doppelte Punkte)" : ""}</p>
+      <table class="erg"><tr><th>Wort</th><th>Hilfen</th><th class="r">Punkte</th></tr>
+      ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(w.e.wort)}</td><td>${hilfe(w)}</td><td class="r">${tPunkte(w)}</td></tr>`).join("")}</table>
+      <p class="hint">Das Ergebnis wird noch nicht gespeichert. Das Foto ist gelöscht.</p>
+      <div><button type="button" class="btn primary" data-t="abbrechen">Fertig</button></div></section>`;
+  }
+}
+function testZu(){
+  tFrei(); if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
+  T.phase = null; T.woerter = []; T.foto = null; T.fotoUrl = "";
+  $("testov").hidden = true; $("testin").innerHTML = ""; document.body.style.overflow = "";
+}
+$("btn-test").addEventListener("click", () => { T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+$("testin").addEventListener("change", ev => {
+  const t = ev.target;
+  if (t.name === "tq"){ T.quelle = t.value; renderTest(); }
+  else if (t.id === "t-block"){ T.block = t.value; renderTest(); }
+  else if (t.id === "t-fach"){ T.fach = t.value; renderTest(); }
+  else if (t.id === "t-anzahl"){ T.anzahl = Math.min(50, Math.max(10, parseInt(t.value, 10) || 25)); renderTest(); }
+  else if (t.dataset.te){ t.checked ? T.einzeln.add(t.dataset.te) : T.einzeln.delete(t.dataset.te); const n = tAuswahl().length;
+    $("t-info").textContent = n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."; document.querySelector('[data-t="los"]').disabled = !n; }
+  else if (t.id === "t-foto"){ const f = t.files[0]; if (!f) return; T.foto = f; T.fotoUrl = URL.createObjectURL(f); T.phase = "auswertung"; renderTest(); window.scrollTo(0, 0); $("testov").scrollTop = 0; }
+});
+$("testin").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  const w = T.woerter[T.i];
+  if (b.dataset.ja !== undefined){ T.woerter[+b.dataset.ja].richtig = true; renderTest(); return; }
+  if (b.dataset.nein !== undefined){ T.woerter[+b.dataset.nein].richtig = false; renderTest(); return; }
+  const a = b.dataset.t;
+  if (a === "abbrechen"){
+    if (T.phase !== "ergebnis" && T.phase !== "start" && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = "Wirklich abbrechen?"; return; }
+    testZu();
+  } else if (a === "los"){
+    T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, richtig:null}));
+    if (T.quelle !== "gesamt" && T.quelle !== "fach") T.woerter = mischen(T.woerter);
+    T.i = 0; T.phase = "wort"; renderTest();
+  } else if (a === "abc"){ w.abc = true; renderTest(); }
+  else if (a === "fa"){ w.fa++; renderTest(); }
+  else if (a === "erkl"){ w.erkl = true; renderTest(); }
+  else if (a === "weiter"){ if (T.i < T.woerter.length - 1){ T.i++; renderTest(); } else { T.phase = "foto"; renderTest(); } $("testov").scrollTop = 0; }
+  else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.foto = null; T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
 });
 
 /* ---------- Paket: gemeinsame Helfer ---------- */
