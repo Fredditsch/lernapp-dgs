@@ -174,6 +174,12 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .formov #formpanel{width:100%;max-width:640px;max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box}
 .formkopf{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
 .chip.thema{background:var(--surface);border-color:var(--accent);color:var(--accent)}
+/* Mathemodus (22.10.2026) */
+.blitzwort.mathesatz{font-size:26px;line-height:1.3;max-width:560px}
+.rechen{min-width:120px;font-size:19px}
+.rechen .rz{font-size:26px;font-weight:900;margin-right:2px}
+.rechen.richtig{border-color:#1f7a4d;border-width:3px;opacity:1!important}
+.hilfen .btn.artwahl.ja[disabled],.hilfen .btn.artwahl.nein[disabled]{opacity:1}
 /* Test Schritt 1 (22.10.2026): Ablauf ohne Speichern */
 .testov{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:20px 16px 40px;box-sizing:border-box}
 .testov[hidden]{display:none}
@@ -402,7 +408,7 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
     <section aria-labelledby="listtitle">
       <div class="listhead">
         <h2 id="listtitle">Einträge</h2>
-        <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn" id="btn-neu" style="padding:8px 14px;font-size:15px">+ Neue Gebärde</button><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
+        <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn" id="btn-neu" style="padding:8px 14px;font-size:15px">+ Neue Gebärde</button><button type="button" class="btn" id="btn-ueben" style="padding:8px 14px;font-size:15px">Üben</button><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
       </div>
       <div class="gesov" id="gesov" hidden>
       <section class="panel ges" id="gespanel" role="dialog" aria-modal="true" aria-labelledby="gestitle">
@@ -797,6 +803,7 @@ function renderList(){
     .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
   $("btn-test").hidden = st.sammlung !== "schueler" || !items.length;
+  $("btn-ueben").hidden = !items.length;
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
@@ -1028,13 +1035,36 @@ const ARTEN = {
   fach:     {name:"Fachbegriffe", info:"Erklärungsbild/-video ansehen, Fachbegriff aufschreiben. Ohne Gebärde."},
   blitz:    {name:"Blitzlesen", info:"Das Wort erscheint eine halbe Sekunde, dann aufschreiben."},
   falesen:  {name:"Fingeralphabet lesen", info:"Fingeralphabet ansehen, Wort aufschreiben."},
-  artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."}
+  artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."},
+  mathe:    {name:"Mathe: Rechenart erkennen", info:"Wort oder Satz lesen, Rechenart wählen (plus, minus, mal, geteilt)."}
 };
-const T = {phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(),
+/* Mathemodus (22.10.2026, Liste von Freddy übernommen, Klasse 7–8 Werkrealschule): fest eingebaut, unabhängig vom Wortschatz.
+   [Text, Rechenart, Erklärung (deutsche Entsprechung des Fachworts)] – Quelle: werkstatt/vokabelheft/mathe_signalwoerter.md */
+const RECHEN = {"+":{z:"+", n:"plus"}, "-":{z:"−", n:"minus"}, "*":{z:"×", n:"mal"}, "/":{z:"÷", n:"geteilt"}};
+const MATHE_LISTE = [
+  ["Addition","+","hinzufügen, dazuzählen"],["addieren","+","hinzufügen, dazuzählen"],["Summe","+","das Ergebnis beim Plusrechnen"],["Summand","+","die Zahl, die dazugezählt wird"],
+  ["plus","+"],["dazu","+"],["dazukommen","+"],["hinzufügen","+"],["zusammen","+"],["insgesamt","+"],["vermehren","+"],["erhöhen um","+"],["vergrößern um","+"],["zunehmen","+"],
+  ["5 und noch 3 dazu","+"],
+  ["Subtraktion","-","abziehen"],["subtrahieren","-","abziehen"],["Differenz","-","der Unterschied"],["Minuend","-","die Zahl, von der abgezogen wird"],["Subtrahend","-","die Zahl, die abgezogen wird"],
+  ["minus","-"],["abziehen","-"],["wegnehmen","-"],["weniger","-"],["verringern um","-"],["vermindern um","-"],["verkleinern um","-"],["übrig bleiben","-"],["Rest","-"],["ausgeben","-"],["verlieren","-"],
+  ["8 und 3 wegnehmen","-"],["Wie groß ist der Unterschied zwischen 8 und 3?","-"],
+  ["Multiplikation","*","vervielfachen, malnehmen"],["multiplizieren","*","vervielfachen, malnehmen"],["Produkt","*","das Ergebnis beim Malrechnen"],["Faktor","*","die Zahl, die malgenommen wird"],
+  ["mal","*"],["das Doppelte","*"],["das Dreifache","*"],["verdoppeln","*"],["verdreifachen","*"],["vervielfachen","*"],
+  ["3 Hefte kosten je 2 €. Was kosten alle zusammen?","*"],
+  ["Division","/","teilen"],["dividieren","/","teilen"],["Quotient","/","das Ergebnis beim Teilen"],["Dividend","/","die Zahl, die geteilt wird"],["Divisor","/","die Zahl, durch die geteilt wird"],
+  ["geteilt durch","/"],["teilen","/"],["aufteilen","/"],["verteilen","/"],["gleichmäßig","/"],["halbieren","/"],["die Hälfte","/"],["ein Drittel","/"],["ein Viertel","/"],
+  ["12 € werden gleichmäßig auf 4 Kinder verteilt. Wie viel bekommt jedes Kind?","/"]
+];
+const MATHE_E = MATHE_LISTE.map(([t, op, erkl], i) => ({id:"mathe" + i, wort:t, artikel:"", mathe:op, matheErkl:erkl || ""}));
+/* Übungsmodus (22.10.2026 abends, beide Sammlungen): deutsches Wort (+ Erklärung) sehen → Gebärde selbst machen →
+   „Gebärde anzeigen“ → selbst angeben „gewusst“/„nicht gewusst“. Nichts wird gespeichert. */
+const T = {modus:"test", phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(),
   woerter:[], i:0, fotoUrl:"", flUrls:[], flKey:"", blitzTimer:null};
 function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
 function artPool(art){
+  if (art === "mathe" && T.modus !== "ueben") return MATHE_E;
+  if (T.modus === "ueben") return st.eintraege.filter(e => e.sammlung === st.sammlung);
   const alle = schuelerEintraege();
   if (art === "fach") return alle.filter(e => erklMedium(e));
   if (art === "falesen") return alle.filter(e => e.fingeralphabet);
@@ -1045,6 +1075,7 @@ function themaKey(e){ return e.kategorie + "\u0001" + e.thema; }
 function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function tAuswahl(){
   const alle = artPool(T.art);
+  if (T.art === "mathe" && T.modus !== "ueben") return mischen(alle).slice(0, T.anzahl);
   if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
   if (T.quelle === "thema") return alle.filter(e => e.thema && themaKey(e) === T.thema);                          // ganzes Thema
   if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
@@ -1070,6 +1101,7 @@ function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign(
 const KOST1 = ` <span class="kost">−1</span>`;
 /* Bewertung am Ende (Freddy 22.10.): Schnitt 0–5 ohne Verdopplung; 5 = „Perfekt!!“, ≥ 3 = „Super“, < 3 = „Übe noch ein bisschen“ */
 function tSchnitt(){
+  if (T.art === "mathe") return 5 * T.woerter.filter(w => w.wahl === w.e.mathe).length / T.woerter.length;
   if (T.art === "artikel") return 5 * T.woerter.filter(w => w.wahl === w.e.artikel).length / T.woerter.length;
   return T.woerter.reduce((a, w) => a + (w.richtig ? tMoeglich(w) : 0), 0) / T.woerter.length;
 }
@@ -1084,7 +1116,7 @@ function tNeuStart(woerter){
   T.woerter = mischen(woerter.map(w => ({e:w.e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()})));
   T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0;
 }
-function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben"].includes(T.phase) ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
 function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
 function flUrl(blob){ const u = URL.createObjectURL(blob); T.flUrls.push(u); return u; }
 function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTimer = null; } }
@@ -1106,19 +1138,22 @@ function renderTest(){
     const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
     const n = tAuswahl().length;
     const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
-    el.innerHTML = tKopf("Test") + `<section class="panel testwahl">
-      <h3>Übungsart</h3>
+    const ueben = T.modus === "ueben";
+    el.innerHTML = tKopf(ueben ? "Gebärden üben" : "Test") + `<section class="panel testwahl">
+      ${ueben ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : `<h3>Übungsart</h3>
       <div class="arten">${Object.entries(ARTEN).map(([k, a]) => { const m = artPool(k).length;
-        return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>
-      <h3>Wörter</h3>
-      ${opt("gesamt", "Gesamtwortschatz" + (T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
+        return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>`}
+      ${!ueben && T.art === "mathe" ? `<h3>Aufgaben</h3><p class="hint">Fachwörter, Alltagswörter und Sätze aus der Mathe-Liste (${MATHE_E.length}), gemischt.</p>
+      <label class="lab" for="t-anzahl">Anzahl Aufgaben (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
+      <p class="hint" id="t-info">${n} Aufgaben</p>` : `<h3>Wörter</h3>
+      ${opt("gesamt", "Gesamtwortschatz" + (!ueben && T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
       ${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") + (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
       ${themen.length ? opt("thema", "Thema (ganzes Thema)") + (T.quelle === "thema" ? `<select id="t-thema">${themen.map(e => `<option value="${esc(themaKey(e))}" ${themaKey(e) === T.thema ? "selected" : ""}>${esc(e.kategorie)} · ${esc(e.thema)}</option>`).join("")}</select>` : "") : ""}
       ${opt("fach", "Fach")}${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
       ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
       ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
-      <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>
-      <div><button type="button" class="btn primary" data-t="los" ${n ? "" : "disabled"}>Test starten</button></div></section>`;
+      <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>`}
+      <div><button type="button" class="btn primary" data-t="los" ${n ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
     return;
   }
   if (T.phase === "wort"){
@@ -1132,7 +1167,7 @@ function renderTest(){
     // Zahl senkrecht: KEIN dominant-baseline (Safari legt es anders aus) – Grundlinie = Sternmitte (y 57,7) + halbe Ziffernhöhe (≈ 0,36 × 40 px)
     const jetzt = tMoeglich(w), vorher = T.sternWort === T.i ? T.sternPunkte : jetzt, minus = vorher - jetzt;
     T.sternWort = T.i; T.sternPunkte = jetzt;
-    const stern = T.art === "artikel" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
+    const stern = T.art === "artikel" || T.art === "mathe" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
       <defs><radialGradient id="sternglanz" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f1c"/></radialGradient></defs>
       <path d="M60 8l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="url(#sternglanz)" stroke="#ff9f1c" stroke-width="3" stroke-linejoin="round"/>
       <text x="60" y="72" text-anchor="middle" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
@@ -1148,10 +1183,42 @@ function renderTest(){
       const ok = w.wahl === e.artikel;
       unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} Es heißt: <strong>${esc(artikelWort(e))}</strong></p>`;
     }
+    if (T.art === "mathe" && w.wahl){
+      const ok = w.wahl === e.mathe;
+      unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} „${esc(e.wort)}“ heißt: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
+        + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : "");
+    }
     $("t-unter").innerHTML = unter;
     const weiter = $("t-weiter");
-    weiter.textContent = letzte ? (T.art === "artikel" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
-    weiter.disabled = (T.art === "artikel" && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
+    weiter.textContent = letzte ? (T.art === "artikel" || T.art === "mathe" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
+    weiter.disabled = ((T.art === "artikel" || T.art === "mathe") && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
+    return;
+  }
+  if (T.phase === "uwort"){
+    const w = T.woerter[T.i], e = w.e, erklM = erklMedium(e);
+    flFrei();
+    const wort = `<div class="blitzwort uebwort">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</div>`;
+    let fl;
+    if (w.zeige === "geb") fl = `<div class="player"><video autoplay loop muted playsinline src="${flUrl(e.gebaerde)}" aria-label="Gebärde zu ${esc(e.wort)}"></video></div>`;
+    else if (w.zeige === "erkl" && erklM) fl = istBild(erklM) ? `<div class="player"><img src="${flUrl(erklM)}" alt="Erklärung"></div>` : `<div class="player"><video autoplay loop muted playsinline src="${flUrl(erklM)}" aria-label="Erklärung"></video></div>`;
+    else fl = `<div class="leerflaeche"><p class="hint">Mach die Gebärde selbst – dann schau zur Kontrolle.</p></div>`;
+    el.innerHTML = tKopf("Gebärden üben", `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`) + wort
+      + (e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : "")
+      + `<div class="flaeche">${fl}</div>
+      <div class="hilfen">${erklM ? knopf("uerkl", "Erklärung", w.zeige === "erkl") : ""}${knopf("ugeb", "Gebärde anzeigen", w.zeige === "geb")}</div>
+      ${w.gesehen ? `<div class="hilfen"><button type="button" class="btn artwahl ja" data-t="gewusst">✓ Gewusst</button><button type="button" class="btn artwahl nein" data-t="nichtgewusst">✗ Nicht gewusst</button></div>`
+        : `<p class="hint">Erst die Gebärde selbst machen, dann „Gebärde anzeigen“ antippen.</p>`}`;
+    return;
+  }
+  if (T.phase === "uergebnis"){
+    const ja = T.woerter.filter(w => w.gewusst).length, nein = T.woerter.filter(w => !w.gewusst);
+    el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+      ${lobHtml(5 * ja / T.woerter.length)}
+      <p style="font-size:20px"><strong>${ja} von ${T.woerter.length} gewusst</strong></p>
+      ${nein.length ? `<p class="hint">Noch üben: ${nein.map(w => esc(artikelWort(w.e))).join(", ")}</p>` : ""}
+      <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
+      <div class="hilfen">${nein.length ? `<button type="button" class="btn primary" data-t="unochmal">Nicht gewusste nochmal</button>` : ""}
+        <button type="button" class="btn" data-t="ualle">Alle nochmal</button><button type="button" class="btn${nein.length ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
     return;
   }
   if (T.phase === "foto"){
@@ -1172,6 +1239,17 @@ function renderTest(){
     return;
   }
   if (T.phase === "ergebnis"){
+    if (T.art === "mathe"){
+      const r = T.woerter.filter(w => w.wahl === w.e.mathe).length;
+      el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+        ${lobHtml(tSchnitt())}
+        <p style="font-size:20px"><strong>${r} von ${T.woerter.length} richtig</strong></p>
+        <table class="erg"><tr><th>Aufgabe</th><th>Deine Wahl</th><th>Richtig</th></tr>
+        ${T.woerter.map(w => `<tr><td>${w.wahl === w.e.mathe ? "✓" : "✗"} ${esc(w.e.wort)}</td><td>${w.wahl ? RECHEN[w.wahl].n : "–"}</td><td>${RECHEN[w.e.mathe].n}</td></tr>`).join("")}</table>
+        <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
+        <div class="hilfen">${r < T.woerter.length ? `<button type="button" class="btn primary" data-t="mnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${r < T.woerter.length ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
+      return;
+    }
     if (T.art === "artikel"){
       const r = T.woerter.filter(w => w.wahl === w.e.artikel).length;
       el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
@@ -1221,6 +1299,7 @@ function renderFlaeche(w){
   }
   else if (w.ansicht === "bereit") fl.innerHTML = `<div class="leerflaeche"><button type="button" class="btn primary" data-t="zeigen">Wort zeigen</button><p class="hint">Das Wort erscheint nur eine halbe Sekunde.</p></div>`;
   else if (w.ansicht === "wort") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(artikelWort(e))}</div></div>`;
+  else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${esc(e.wort)}</div></div>`;
   else if (w.ansicht === "artikel") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">… ${esc(e.wort)}</div></div>`;
   else fl.innerHTML = `<div class="leerflaeche"><p class="hint">Schreib das Wort auf.</p></div>`;
 }
@@ -1242,6 +1321,8 @@ function renderHilfen(w){
     h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc || !w.gezeigt));
   } else if (T.art === "falesen"){
     h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
+  } else if (T.art === "mathe"){
+    Object.entries(RECHEN).forEach(([op, x]) => h.push(`<button type="button" class="btn artwahl rechen${w.wahl === op ? (op === e.mathe ? " ja" : " nein") : (w.wahl && op === e.mathe ? " richtig" : "")}" data-mwahl="${op}" ${w.wahl ? "disabled" : ""}><span class="rz">${x.z}</span> ${x.n}</button>`));
   } else if (T.art === "artikel"){
     ["der","die","das"].forEach(a => h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : ""}" data-wahl="${a}" ${w.wahl ? "disabled" : ""}>${a}</button>`));
   }
@@ -1253,14 +1334,19 @@ function ergKnoepfe(){
     <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">Fertig</button></div>`;
 }
 function startAnsicht(){
-  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel"}[T.art];
+  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe"}[T.art];
 }
 function testZu(){
   stoppeBlitz(); flFrei(); T.flKey = ""; if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
   T.phase = null; T.woerter = []; T.fotoUrl = ""; T.gerendert = null;
   $("testov").hidden = true; $("testin").innerHTML = ""; document.body.style.overflow = "";
 }
-$("btn-test").addEventListener("click", () => { T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+function uebenStart(woerter){
+  T.woerter = mischen(woerter.map(e => ({e, zeige:null, gesehen:false, gewusst:null})));
+  T.i = 0; T.gerendert = null; T.phase = "uwort"; renderTest(); $("testov").scrollTop = 0;
+}
+$("btn-ueben").addEventListener("click", () => { T.modus = "ueben"; T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+$("btn-test").addEventListener("click", () => { T.modus = "test"; T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
 $("testin").addEventListener("change", ev => {
   const t = ev.target;
   if (t.name === "tart"){ T.art = t.value; T.einzeln = new Set(); renderTest(); }
@@ -1279,11 +1365,23 @@ $("testin").addEventListener("click", ev => {
   if (b.dataset.ja !== undefined){ T.woerter[+b.dataset.ja].richtig = true; renderTest(); return; }
   if (b.dataset.nein !== undefined){ T.woerter[+b.dataset.nein].richtig = false; renderTest(); return; }
   if (b.dataset.wahl){ if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
+  if (b.dataset.mwahl){ if (!w.wahl){ w.wahl = b.dataset.mwahl; renderTest(); } return; }
   const a = b.dataset.t;
   if (a === "abbrechen"){
-    if (T.phase !== "ergebnis" && T.phase !== "start" && T.phase !== "ueben" && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = "Wirklich abbrechen?"; return; }
+    if (!["ergebnis","start","ueben","uergebnis"].includes(T.phase) && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = T.phase === "uwort" ? "Wirklich beenden?" : "Wirklich abbrechen?"; return; }
     testZu();
-  } else if (a === "los"){
+  } else if (a === "los" && T.modus === "ueben"){ T.uAlle = tAuswahl(); uebenStart(T.uAlle); }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
+  else if (a === "ugeb"){ w.zeige = "geb"; w.gesehen = true; renderTest(); }
+  else if (a === "uerkl"){ w.zeige = "erkl"; renderTest(); }
+  else if (a === "gewusst" || a === "nichtgewusst"){
+    w.gewusst = a === "gewusst";
+    if (T.i < T.woerter.length - 1){ T.i++; renderTest(); } else { T.phase = "uergebnis"; renderTest(); }
+    $("testov").scrollTop = 0;
+  }
+  else if (a === "mnochmal"){ T.woerter = mischen(T.woerter.filter(x => x.wahl !== x.e.mathe).map(x => ({e:x.e, wahl:null, ansicht:"mathe"}))); T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0; }
+  else if (a === "unochmal"){ uebenStart(T.woerter.filter(x => !x.gewusst).map(x => x.e)); }
+  else if (a === "ualle"){ uebenStart(T.uAlle || T.woerter.map(x => x.e)); }
+  else if (a === "los"){
     T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()}));
     if (T.quelle !== "gesamt" && T.quelle !== "fach") T.woerter = mischen(T.woerter);
     T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest();
@@ -1302,7 +1400,7 @@ $("testin").addEventListener("click", ev => {
   else if (a === "weiter"){
     stoppeBlitz();
     if (T.i < T.woerter.length - 1){ T.i++; renderTest(); }
-    else { T.phase = T.art === "artikel" ? "ergebnis" : "foto"; renderTest(); }
+    else { T.phase = T.art === "artikel" || T.art === "mathe" ? "ergebnis" : "foto"; renderTest(); }
     $("testov").scrollTop = 0;
   }
   else if (a === "wiederholen"){ tNeuStart(T.woerter); }
