@@ -200,8 +200,41 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .blitzwort{font-family:var(--font-display);font-size:44px;font-weight:700;overflow-wrap:anywhere}
 .hilfen .btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
 .hilfen .btn[disabled]{opacity:.45;cursor:default}
-.stern{display:inline-grid;place-items:center;width:46px;height:46px;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:16px;padding-top:4px;box-sizing:border-box;
-  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+/* Stern Variante C (Freddy 22.10.): leuchtend, pulsierend; bei Abzug Wackeln + großes „−n“ */
+.hilfzeile{display:flex;align-items:center;gap:12px}
+.hilfzeile .hilfen{flex:1;min-width:0}
+.sternplatz{flex:none}
+.stern{position:relative;display:inline-block;width:76px;height:76px;flex:none}
+.kost{display:inline-block;background:var(--warn);color:#fff;border-radius:999px;padding:1px 8px;font-size:13px;font-weight:800;margin-left:2px}
+.kost.null{background:var(--muted)}
+.btn[disabled] .kost{opacity:.7}
+/* Bewertung am Ende */
+.lob{position:relative;display:grid;place-items:center;min-height:110px;margin:4px 0}
+.lobtext{font-family:var(--font-display);font-weight:900;font-size:44px;line-height:1.1;text-align:center;animation:lobpop .7s cubic-bezier(.3,1.8,.5,1) both}
+.lob.perfekt .lobtext{font-size:54px;color:#e8590c;text-shadow:0 3px 0 #ffd43b,0 0 18px rgba(255,200,60,.8);animation:lobpop .7s cubic-bezier(.3,1.8,.5,1) both,lobhuepf 1.2s ease-in-out .7s infinite}
+.lob.super .lobtext{color:#2b8a3e;text-shadow:0 3px 0 #b2f2bb}
+.lob.ueben .lobtext{font-size:30px;color:var(--accent);animation:lobsanft .8s ease both}
+@keyframes lobpop{0%{transform:scale(.2) rotate(-8deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes lobhuepf{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-8px) rotate(-2deg)}}
+@keyframes lobsanft{0%{transform:translateY(10px);opacity:0}100%{transform:translateY(0);opacity:1}}
+.konfetti{position:absolute;left:50%;top:55%;width:0;height:0;pointer-events:none}
+.konfetti i{position:absolute;width:10px;height:14px;border-radius:2px;background:var(--f);opacity:0;animation:konfetti 1.4s ease-out var(--d) forwards}
+@keyframes konfetti{0%{opacity:1;transform:translate(0,0) rotate(0)}70%{opacity:1}100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 90px)) rotate(var(--r))}}
+.uebwort{text-align:center;margin:4px 0}
+@media (prefers-reduced-motion: reduce){.lobtext,.lob.perfekt .lobtext,.konfetti i{animation:none}.konfetti{display:none}}
+.testnr{white-space:nowrap}
+.stern svg{width:100%;height:100%;overflow:visible;animation:sternpuls 1.8s ease-in-out infinite}
+@keyframes sternpuls{0%,100%{filter:drop-shadow(0 0 5px rgba(255,190,40,.5))}50%{filter:drop-shadow(0 0 16px rgba(255,190,40,.95))}}
+.stern.wackel svg{animation:sternwackel .5s ease,sternpuls 1.8s ease-in-out .5s infinite}
+@keyframes sternwackel{0%,100%{transform:rotate(0)}25%{transform:rotate(-12deg) scale(.9)}50%{transform:rotate(9deg)}75%{transform:rotate(-4deg)}}
+.sternzahl{font-size:40px;font-weight:900;fill:#5a3500}
+.sternzahl.wechsel{animation:sternzahl .4s ease}
+@keyframes sternzahl{0%{opacity:0}100%{opacity:1}}
+.minusflug{position:absolute;left:50%;top:-6px;font-size:34px;font-weight:900;color:var(--accent);pointer-events:none;white-space:nowrap;
+  text-shadow:0 2px 0 var(--surface),0 0 8px var(--surface);animation:minusflug 1.1s ease-out forwards}
+@keyframes minusflug{0%{opacity:0;transform:translate(-50%,14px) scale(.7)}18%{opacity:1;transform:translate(-50%,0) scale(1.25)}100%{opacity:0;transform:translate(-50%,-52px) scale(1)}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (prefers-reduced-motion: reduce){.stern svg,.stern.wackel svg,.minusflug,.sternzahl.wechsel{animation:none}.minusflug{opacity:1;transform:translate(-50%,-30px)}}
 .arten{display:grid;gap:8px}
 .arten .art{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--surface);cursor:pointer}
 .arten .art.an{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
@@ -1007,8 +1040,25 @@ function tPunkte(w){
   if (!w.richtig) return 0;
   return tMoeglich(w) * (T.quelle === "gesamt" ? 2 : 1);
 }
-function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` (−${d})` : " (±0)"; }
-function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${T.phase === "ergebnis" || T.phase === "start" ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
+function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` <span class="kost">−${d}</span>` : ` <span class="kost null">±0</span>`; }
+const KOST1 = ` <span class="kost">−1</span>`;
+/* Bewertung am Ende (Freddy 22.10.): Schnitt 0–5 ohne Verdopplung; 5 = „Perfekt!!“, ≥ 3 = „Super“, < 3 = „Übe noch ein bisschen“ */
+function tSchnitt(){
+  if (T.art === "artikel") return 5 * T.woerter.filter(w => w.wahl === w.e.artikel).length / T.woerter.length;
+  return T.woerter.reduce((a, w) => a + (w.richtig ? tMoeglich(w) : 0), 0) / T.woerter.length;
+}
+function lobHtml(schnitt){
+  const art = schnitt >= 5 ? "perfekt" : schnitt >= 3 ? "super" : "ueben";
+  const text = {perfekt:"Perfekt!!", super:"Super!", ueben:"Übe noch ein bisschen"}[art];
+  const konfetti = art === "ueben" ? "" : `<span class="konfetti" aria-hidden="true">${Array.from({length: art === "perfekt" ? 28 : 16}, (_, i) =>
+    `<i style="--x:${Math.round(Math.cos(i * 2.4) * (60 + (i * 37) % 90))}px;--y:${Math.round(-40 - (i * 53) % 120)}px;--r:${(i * 47) % 360}deg;--f:${["#ffc83d","#ff6b6b","#4dabf7","#51cf66","#cc5de8","#ff922b"][i % 6]};--d:${(i % 5) * 60}ms"></i>`).join("")}</span>`;
+  return `<div class="lob ${art}" role="status">${konfetti}<span class="lobtext">${text}</span></div>`;
+}
+function tNeuStart(woerter){
+  T.woerter = mischen(woerter.map(w => ({e:w.e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()})));
+  T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0;
+}
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben"].includes(T.phase) ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
 function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
 function flUrl(blob){ const u = URL.createObjectURL(blob); T.flUrls.push(u); return u; }
 function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTimer = null; } }
@@ -1043,12 +1093,19 @@ function renderTest(){
   if (T.phase === "wort"){
     const w = T.woerter[T.i], letzte = T.i === T.woerter.length - 1;
     if (!$("t-flaeche") || T.gerendert !== T.i){
-      el.innerHTML = `<div id="t-kopf"></div><div class="flaeche" id="t-flaeche"></div><div class="hilfen" id="t-hilfen"></div><div id="t-unter"></div>
+      el.innerHTML = `<div id="t-kopf"></div><div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div><div class="sternplatz" id="t-stern"></div></div><div id="t-unter"></div>
         <div><button type="button" class="btn primary" data-t="weiter" id="t-weiter"></button></div>`;
       T.gerendert = T.i; T.flKey = "";
     }
-    const stern = T.art === "artikel" ? "" : `<span class="stern" aria-label="${tMoeglich(w)} Punkte möglich">${tMoeglich(w)}</span>`;
-    $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>${stern}`);
+    // Stern (Variante C, Freddy 22.10.): leuchtet/pulsiert; bei einer Hilfe wackelt er und „−n“ schwebt hoch
+    const jetzt = tMoeglich(w), vorher = T.sternWort === T.i ? T.sternPunkte : jetzt, minus = vorher - jetzt;
+    T.sternWort = T.i; T.sternPunkte = jetzt;
+    const stern = T.art === "artikel" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
+      <defs><radialGradient id="sternglanz" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f1c"/></radialGradient></defs>
+      <path d="M60 8l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="url(#sternglanz)" stroke="#ff9f1c" stroke-width="3" stroke-linejoin="round"/>
+      <text x="60" y="66" text-anchor="middle" dominant-baseline="central" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
+    $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`);
+    $("t-stern").innerHTML = stern;   // Stern unter dem Video, rechts neben den Hilfe-Knöpfen (Freddy 22.10., 18:12)
     renderFlaeche(w);
     renderHilfen(w);
     const e = w.e;
@@ -1086,21 +1143,34 @@ function renderTest(){
     if (T.art === "artikel"){
       const r = T.woerter.filter(w => w.wahl === w.e.artikel).length;
       el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+        ${lobHtml(tSchnitt())}
         <p style="font-size:20px"><strong>${r} von ${T.woerter.length} richtig</strong></p>
         <table class="erg"><tr><th>Wort</th><th>Deine Wahl</th></tr>
         ${T.woerter.map(w => `<tr><td>${w.wahl === w.e.artikel ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${esc(w.wahl || "–")}</td></tr>`).join("")}</table>
         <p class="hint">Das Ergebnis wird noch nicht gespeichert.</p>
-        <div><button type="button" class="btn primary" data-t="abbrechen">Fertig</button></div></section>`;
+        ${ergKnoepfe()}</section>`;
       return;
     }
     const summe = T.woerter.reduce((a, w) => a + tPunkte(w), 0), max = T.woerter.length * (T.quelle === "gesamt" ? 10 : 5);
     const hilfe = w => [w.geb ? "Gebärde" : "", w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.wdh ? "nochmal " + w.wdh + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
     el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+      ${lobHtml(tSchnitt())}
       <p style="font-size:20px"><strong>${summe} von ${max} Punkten</strong> · Schnitt ${(summe / T.woerter.length).toLocaleString("de-DE", {maximumFractionDigits:1})} pro Wort${T.quelle === "gesamt" ? " (doppelte Punkte)" : ""}</p>
       <table class="erg"><tr><th>Wort</th><th>Hilfen</th><th class="r">Punkte</th></tr>
       ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${hilfe(w)}</td><td class="r">${tPunkte(w)}</td></tr>`).join("")}</table>
       <p class="hint">Das Ergebnis wird noch nicht gespeichert. Das Foto ist gelöscht.</p>
-      <div><button type="button" class="btn primary" data-t="abbrechen">Fertig</button></div></section>`;
+      ${ergKnoepfe()}</section>`;
+    return;
+  }
+  if (T.phase === "ueben"){
+    // Wörter üben: Wort und Gebärde zusammen ansehen, blättern
+    const w = T.woerter[T.ui], e = w.e;
+    if (T.uGerendert !== T.ui){ flFrei(); T.uGerendert = T.ui; }
+    el.innerHTML = tKopf("Wörter üben", `<span class="testnr">${T.ui + 1} von ${T.woerter.length}</span>`) + `
+      <div class="blitzwort uebwort">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</div>
+      <div class="player"><video autoplay loop muted playsinline src="${flUrl(e.gebaerde)}" aria-label="Gebärde zu ${esc(e.wort)}"></video></div>
+      <div class="hilfen"><button type="button" class="btn" data-t="uzurueck" ${T.ui ? "" : "disabled"}>‹ Zurück</button>
+        ${T.ui < T.woerter.length - 1 ? `<button type="button" class="btn primary" data-t="uweiter">Weiter ›</button>` : `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button>`}</div>`;
   }
 }
 /* Anzeigefläche: wird nur neu aufgebaut, wenn sich die Ansicht ändert (oder Fingeralphabet erneut abgespielt wird) */
@@ -1127,23 +1197,28 @@ function renderHilfen(w){
   const e = w.e, h = [];
   if (T.art === "gebaerde"){
     h.push(knopf("geb", "Gebärde", w.ansicht === "gebaerde"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc));
+    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
     // Fingeralphabet erst nach dem Anfangsbuchstaben: Kosten so anzeigen, wie sie dann gelten
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
-    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + (w.erkl ? "" : kosten(w, {erkl:true})), w.ansicht === "erkl"));
+    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + KOST1, w.ansicht === "erkl"));
   } else if (T.art === "fach"){
     h.push(knopf("erklsehen", "Erklärung", w.ansicht === "erkl"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc));
+    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
   } else if (T.art === "blitz"){
-    h.push(knopf("blitzgeb", "Gebärde" + (w.geb ? "" : kosten(w, {geb:true})), w.ansicht === "gebaerde", !w.gezeigt));
-    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc || !w.gezeigt));
+    h.push(knopf("blitzgeb", "Gebärde" + KOST1, w.ansicht === "gebaerde", !w.gezeigt));
+    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc || !w.gezeigt));
   } else if (T.art === "falesen"){
     h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
   } else if (T.art === "artikel"){
     ["der","die","das"].forEach(a => h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : ""}" data-wahl="${a}" ${w.wahl ? "disabled" : ""}>${a}</button>`));
   }
   $("t-hilfen").innerHTML = h.join("");
+}
+function ergKnoepfe(){
+  const knapp = tSchnitt() < 3;
+  return `<div class="hilfen">${knapp ? `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button><button type="button" class="btn" data-t="ueben">Wörter üben</button>` : ""}
+    <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">Fertig</button></div>`;
 }
 function startAnsicht(){
   return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel"}[T.art];
@@ -1173,7 +1248,7 @@ $("testin").addEventListener("click", ev => {
   if (b.dataset.wahl){ if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
   const a = b.dataset.t;
   if (a === "abbrechen"){
-    if (T.phase !== "ergebnis" && T.phase !== "start" && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = "Wirklich abbrechen?"; return; }
+    if (T.phase !== "ergebnis" && T.phase !== "start" && T.phase !== "ueben" && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = "Wirklich abbrechen?"; return; }
     testZu();
   } else if (a === "los"){
     T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()}));
@@ -1197,6 +1272,10 @@ $("testin").addEventListener("click", ev => {
     else { T.phase = T.art === "artikel" ? "ergebnis" : "foto"; renderTest(); }
     $("testov").scrollTop = 0;
   }
+  else if (a === "wiederholen"){ tNeuStart(T.woerter); }
+  else if (a === "ueben"){ T.ui = 0; T.uGerendert = null; T.phase = "ueben"; renderTest(); $("testov").scrollTop = 0; }
+  else if (a === "uweiter"){ T.ui++; renderTest(); }
+  else if (a === "uzurueck"){ T.ui--; renderTest(); }
   else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
 });
 
