@@ -158,6 +158,25 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .empty .steps{display:inline-grid;gap:6px;text-align:left;margin-top:14px;font-size:14px}
 
 .tools{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+/* Menü „⋯“ oben (Freddy 22.10.2026): Paket exportieren/importieren */
+.topright{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px;position:relative}
+.mehr{border:1px solid var(--line);background:var(--surface);border-radius:999px;width:40px;height:40px;cursor:pointer;font-size:22px;font-weight:700;line-height:1;color:var(--muted)}
+.mehr[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+.menu{position:absolute;right:0;top:calc(100% + 6px);z-index:20;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px;display:grid;gap:6px;min-width:220px;box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.menu .tools{display:grid;gap:6px;margin:0}
+.menu .btn{justify-content:flex-start}
+/* Gesammelt (Freddy 22.10.2026): Wörter ohne Gebärde, je Sammlung */
+.ges{display:grid;gap:12px;margin-bottom:16px;padding:16px 18px}
+.ges h3{font-size:19px}
+.ges .n{color:var(--muted);font-weight:400;font-size:15px}
+.gesform{display:flex;gap:8px}
+.gesform input{flex:1;min-width:0}
+.geswoerter{display:flex;flex-wrap:wrap;gap:8px}
+.gw{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--bg)}
+.gw button{all:unset;cursor:pointer}
+.gw .gw-w{padding:6px 4px 6px 12px;font-weight:700}
+.gw .gw-x{padding:6px 10px 6px 6px;color:var(--muted);font-size:16px;line-height:1}
+.gw .gw-w:focus-visible,.gw .gw-x:focus-visible{outline:2px solid var(--accent);border-radius:6px}
 .tools .hint{align-self:center}
 .xp{display:grid;gap:14px}
 .xp h3{font-size:19px}
@@ -187,9 +206,19 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
     <div>
       <h1 id="apptitle">Lernapp DGS/Deutsch</h1>
     </div>
+    <div class="topright">
     <div class="seg" role="group" aria-label="Sammlung wählen">
       <button type="button" id="seg-schueler" data-s="schueler">Schüler<span class="n" id="n-schueler"></span></button>
       <button type="button" id="seg-fachkraft" data-s="fachkraft">Dolmetscher &amp; Lehrer<span class="n" id="n-fachkraft"></span></button>
+    </div>
+    <button type="button" class="mehr" id="mehr" aria-haspopup="true" aria-expanded="false" aria-label="Weitere Funktionen" title="Weitere Funktionen">⋯</button>
+    <div class="menu" id="mehr-menu" hidden>
+      <div class="tools" id="tools">
+        <button type="button" class="btn" id="btn-export">Paket exportieren …</button>
+        <label class="btn" for="import-file">Paket importieren …<input type="file" id="import-file" accept=".zip,application/zip"></label>
+        <span class="hint" id="tools-hint"></span>
+      </div>
+    </div>
     </div>
   </header>
   <p class="note alarm" id="note" hidden></p>
@@ -267,11 +296,13 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
         <h2 id="listtitle">Einträge</h2>
         <span class="count" id="count"></span>
       </div>
-      <div class="tools" id="tools">
-        <button type="button" class="btn" id="btn-export">Paket exportieren …</button>
-        <label class="btn" for="import-file">Paket importieren …<input type="file" id="import-file" accept=".zip,application/zip"></label>
-        <span class="hint" id="tools-hint"></span>
-      </div>
+      <section class="panel ges" id="gespanel" aria-labelledby="gestitle">
+        <h3 id="gestitle">Gesammelt <span class="n" id="ges-n"></span></h3>
+        <p class="hint">Wörter ohne Gebärde – antippen, um die Gebärde anzulegen.</p>
+        <div class="gesform"><input type="text" id="ges-text" autocomplete="off" placeholder="Wörter, mit Komma getrennt" aria-label="Wörter sammeln"><button type="button" class="btn" id="ges-add">Hinzufügen</button></div>
+        <div class="geswoerter" id="ges-liste"></div>
+        <div><label class="btn" for="ges-csv">Liste einlesen (CSV) …<input type="file" id="ges-csv" accept=".csv,text/csv,text/plain"></label></div>
+      </section>
       <div id="report"></div>
       <section class="panel xp" id="exportpanel" hidden aria-labelledby="xptitle"></section>
       <div class="list" id="list"></div>
@@ -296,7 +327,7 @@ const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">"
 
 /* ---------- Speicher (IndexedDB, sonst nur im Arbeitsspeicher) ---------- */
 let db = null;
-const mem = {eintraege:new Map(), kategorien:[]};
+const mem = {eintraege:new Map(), kategorien:[], gesammelt:{}};
 function openDB(){
   return new Promise((res, rej) => {
     let r;
@@ -322,11 +353,25 @@ function run(store, mode, fn){
 }
 const store = {
   async all(){ return db ? run("eintraege","readonly", s => s.getAll()) : [...mem.eintraege.values()]; },
-  async put(e){ if (db) return run("eintraege","readwrite", s => s.put(e)); mem.eintraege.set(e.id, e); },
+  async put(e){ if (db){ const f = await frisch(e); return run("eintraege","readwrite", s => s.put(f)); } mem.eintraege.set(e.id, e); },
   async del(id){ if (db) return run("eintraege","readwrite", s => s.delete(id)); mem.eintraege.delete(id); },
   async getKat(){ return db ? (await run("meta","readonly", s => s.get("kategorien"))) || [] : mem.kategorien; },
-  async setKat(k){ if (db) return run("meta","readwrite", s => s.put(k, "kategorien")); mem.kategorien = k; }
+  async setKat(k){ if (db) return run("meta","readwrite", s => s.put(k, "kategorien")); mem.kategorien = k; },
+  async getGes(){ return db ? (await run("meta","readonly", s => s.get("gesammelt"))) || {} : mem.gesammelt; },
+  async setGes(g){ if (db) return run("meta","readwrite", s => s.put(g, "gesammelt")); mem.gesammelt = g; }
 };
+/* Safari/iOS-Fehler (WebKit 235687/240216): ein aus IndexedDB gelesenes Video, unverändert erneut gespeichert,
+   wird oft unlesbar. Deshalb vor jedem Speichern von jedem Video eine frische Kopie (wie ein neu gewähltes Video). */
+async function frisch(e){
+  const f = Object.assign({}, e);
+  for (const k of ["gebaerde","fingeralphabet","erklaerung_medium","erklaerung_video"]){
+    const b = f[k];
+    if (b instanceof Blob){
+      try { f[k] = new Blob([await b.arrayBuffer()], {type: b.type}); } catch(err){ /* unlesbar: unverändert lassen */ }
+    }
+  }
+  return f;
+}
 
 /* ---------- Zustand ---------- */
 const st = {
@@ -337,6 +382,8 @@ const st = {
   vids: {gebaerde:null, fingeralphabet:null, erklaerung:null},
   open: null,      // {id, key}
   auf: null,       // id der aufgeklappten Karte (nur eine)
+  ges: {},         // Gesammelt: {schueler:[wort,…], fachkraft:[…]}
+  gesWort: null,   // Wort aus „Gesammelt“, das gerade im Formular angelegt wird
   confirmDel: null
 };
 try { const s = localStorage.getItem("gw-sammlung"); if (s && SAMMLUNG[s]) st.sammlung = s; } catch(e){}
@@ -511,6 +558,7 @@ function parseVarianten(text, wort){
 
 function resetForm(){
   st.editId = null;
+  st.gesWort = null;
   st.vids = {gebaerde:null, fingeralphabet:null, erklaerung:null};
   $("form").reset();
   $("f-block").hidden = true;
@@ -598,6 +646,7 @@ $("form").addEventListener("submit", async ev => {
   if (alt) st.eintraege = st.eintraege.map(x => x.id === alt.id ? eintrag : x);
   else st.eintraege.push(eintrag);
   toast(alt ? `„${wort}“ geändert` : `„${wort}“ gespeichert`);
+  if (!alt) await gesEntfernen(eintrag.sammlung, [wort, st.gesWort]);  // angelegt → raus aus „Gesammelt“
   st.open = null;
   resetForm();
   renderList();
@@ -620,6 +669,7 @@ function renderList(){
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
   const L = $("list");
   L.hidden = st.xp.open;
+  renderGes();
   renderExport();
   if (!items.length){
     const wo = matchMedia("(max-width:860px)").matches ? "oben" : "links";
@@ -698,6 +748,76 @@ $("list").addEventListener("click", async ev => {
     toast(`„${e ? e.wort : "Eintrag"}“ gelöscht`);
     renderList();
   }
+});
+
+/* ---------- Menü „⋯“ (22.10.2026) ---------- */
+function menuZu(){ $("mehr-menu").hidden = true; $("mehr").setAttribute("aria-expanded", "false"); }
+$("mehr").addEventListener("click", ev => { ev.stopPropagation(); const zu = $("mehr-menu").hidden; $("mehr-menu").hidden = !zu; $("mehr").setAttribute("aria-expanded", String(zu)); });
+document.addEventListener("click", ev => { if (!$("mehr-menu").hidden && !ev.target.closest("#mehr-menu")) menuZu(); });
+$("btn-export").addEventListener("click", menuZu);
+$("import-file").addEventListener("change", menuZu);
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") menuZu(); });
+
+/* ---------- Gesammelt: Wörter ohne Gebärde, je Sammlung (22.10.2026) ---------- */
+function gesListe(s){ return (st.ges && st.ges[s]) || []; }
+async function gesSpeichern(s, liste){ st.ges = Object.assign({}, st.ges, {[s]: liste}); try { await store.setGes(st.ges); } catch(e){ toast("Speichern hat nicht geklappt."); } }
+async function gesEntfernen(s, woerter){
+  const weg = new Set(woerter.filter(Boolean).map(wortKey));
+  const alt = gesListe(s), neu = alt.filter(w => !weg.has(wortKey(w)));
+  if (neu.length !== alt.length) await gesSpeichern(s, neu);
+}
+async function gesHinzu(woerter){
+  const s = st.sammlung, liste = gesListe(s).slice();
+  const da = new Set(liste.map(wortKey).concat(st.eintraege.filter(e => e.sammlung === s).map(e => wortKey(e.wort))));
+  let n = 0, doppelt = 0;
+  for (const roh of woerter){
+    const w = String(roh).trim().replace(/\s+/g, " ");
+    if (!w) continue;
+    if (da.has(wortKey(w))){ doppelt++; continue; }
+    da.add(wortKey(w)); liste.push(w); n++;
+  }
+  if (n) await gesSpeichern(s, liste);
+  renderGes();
+  toast((n ? `${n} ${n === 1 ? "Wort" : "Wörter"} gesammelt` : "Keine neuen Wörter") + (doppelt ? ` · ${doppelt} schon vorhanden (übersprungen)` : ""));
+}
+function renderGes(){
+  const liste = gesListe(st.sammlung).slice().sort((a, b) => a.localeCompare(b, "de", {sensitivity:"base"}));
+  $("gespanel").hidden = st.xp.open;
+  $("ges-n").textContent = liste.length ? "· " + liste.length : "";
+  $("ges-liste").innerHTML = liste.map(w => `<span class="gw"><button type="button" class="gw-w" data-ges="${esc(w)}" title="Gebärde anlegen">${esc(w)}</button><button type="button" class="gw-x" data-ges-del="${esc(w)}" aria-label="„${esc(w)}“ entfernen" title="Entfernen">×</button></span>`).join("");
+}
+$("ges-add").addEventListener("click", async () => { const t = $("ges-text").value; if (!t.trim()) return; await gesHinzu(t.split(/[,;\n]/)); $("ges-text").value = ""; });
+$("ges-text").addEventListener("keydown", e => { if (e.key === "Enter"){ e.preventDefault(); $("ges-add").click(); } });
+$("ges-liste").addEventListener("click", async ev => {
+  const b = ev.target.closest("button"); if (!b) return;
+  if (b.dataset.gesDel !== undefined){ await gesEntfernen(st.sammlung, [b.dataset.gesDel]); renderGes(); return; }
+  const w = b.dataset.ges;
+  resetForm();
+  st.gesWort = w;
+  $("wort").value = w;
+  $("formtitle").textContent = "„" + w + "“ anlegen";
+  $("cancel").hidden = false;
+  renderList();
+  $("formpanel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+  $("kategorie").focus({preventScroll:true});
+});
+// CSV einlesen: z. B. Fachwörter-Export der Regelschul-App (Kopfzeile „Deutsches Wort“, ein Wort pro Zeile)
+function csvErsteSpalte(text){
+  const out = [];
+  for (const zeile of text.replace(/^﻿/, "").split(/\r?\n/)){
+    let z = zeile.trim(); if (!z) continue;
+    let w = "";
+    if (z[0] === '"'){ let i = 1; for (; i < z.length; i++){ if (z[i] === '"'){ if (z[i+1] === '"'){ w += '"'; i++; } else break; } else w += z[i]; } }
+    else w = z.split(/[;\t]/)[0];
+    out.push(w);
+  }
+  if (out.length && /^deutsches wort$/i.test(out[0].trim())) out.shift();
+  return out;
+}
+$("ges-csv").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  let text; try { text = await f.text(); } catch(err){ toast("Die Datei konnte nicht gelesen werden."); return; }
+  await gesHinzu(csvErsteSpalte(text));
 });
 
 /* ---------- Paket: gemeinsame Helfer ---------- */
@@ -955,6 +1075,7 @@ $("import-file").addEventListener("change", async e => {
   renderKat("Deutsch");
   renderSammlung();
   renderSlots();
+  try { st.ges = await store.getGes(); } catch(e){ st.ges = {}; }
   renderList();
   renderTools();
   try { if (imViewer) downloads = await window.claude.use("downloads"); } catch(e){ downloads = null; }
