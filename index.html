@@ -75,7 +75,7 @@ h1{font-size:clamp(28px,4vw,38px);font-weight:700}
 .note.alarm{color:var(--warn)}
 
 /* Spalten */
-.cols{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:28px;align-items:start}
+.cols{display:grid;grid-template-columns:minmax(0,1fr);gap:28px;align-items:start}   /* Formular ist seit 22.10. ein Fenster */
 @media (max-width:860px){.cols{grid-template-columns:minmax(0,1fr)}}
 
 /* Formular */
@@ -170,6 +170,10 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .ges{display:grid;gap:12px;padding:18px;width:100%;max-width:560px;max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box}
 .gesov{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;padding:24px 16px;box-sizing:border-box}
 .gesov[hidden]{display:none}
+/* Formular als Fenster (22.10.2026 abends) */
+.formov #formpanel{width:100%;max-width:640px;max-height:calc(100vh - 48px);overflow:auto;box-sizing:border-box}
+.formkopf{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:6px}
+.chip.thema{background:var(--surface);border-color:var(--accent);color:var(--accent)}
 /* Test Schritt 1 (22.10.2026): Ablauf ohne Speichern */
 .testov{position:fixed;inset:0;z-index:40;background:var(--bg);overflow:auto;padding:20px 16px 40px;box-sizing:border-box}
 .testov[hidden]{display:none}
@@ -319,8 +323,9 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
   <p class="note alarm" id="note" hidden></p>
 
   <div class="cols">
-    <section class="panel" id="formpanel" aria-labelledby="formtitle">
-      <h2 id="formtitle">Neue Gebärde anlegen</h2>
+    <div class="gesov formov" id="formov" hidden>
+    <section class="panel" id="formpanel" role="dialog" aria-modal="true" aria-labelledby="formtitle">
+      <div class="formkopf"><h2 id="formtitle">Neue Gebärde anlegen</h2><button type="button" class="geszu" id="form-zu" aria-label="Schließen" title="Schließen">×</button></div>
       <form id="form" novalidate>
         <div class="field" id="f-kategorie">
           <label class="lab" for="kategorie">Fach / Kategorie</label>
@@ -330,6 +335,12 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
             <button type="button" class="btn" id="newcat-add">Hinzufügen</button>
           </div>
           <p class="err" hidden></p>
+        </div>
+
+        <div class="field" id="f-thema">
+          <label class="lab" for="thema">Thema <span class="tag">optional</span></label>
+          <input type="text" id="thema" list="themen" autocomplete="off" placeholder="z. B. Kochutensilien">
+          <datalist id="themen"></datalist>
         </div>
 
         <div class="lernbox" id="lernbox">
@@ -386,11 +397,12 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
         </div>
       </form>
     </section>
+    </div>
 
     <section aria-labelledby="listtitle">
       <div class="listhead">
         <h2 id="listtitle">Einträge</h2>
-        <span style="display:flex;gap:12px;align-items:center"><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
+        <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn" id="btn-neu" style="padding:8px 14px;font-size:15px">+ Neue Gebärde</button><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
       </div>
       <div class="gesov" id="gesov" hidden>
       <section class="panel ges" id="gespanel" role="dialog" aria-modal="true" aria-labelledby="gestitle">
@@ -515,6 +527,9 @@ function updKat(){
   const v = $("kategorie").value;
   $("newcat").hidden = v !== "__neu";
   $("lernbox").hidden = v !== "Deutsch";
+  // Themen-Vorschläge: alle Themen, die es im gewählten Fach dieser Sammlung schon gibt
+  const themen = [...new Set(st.eintraege.filter(e => e.sammlung === st.sammlung && e.kategorie === v && e.thema).map(e => e.thema))].sort((a, b) => a.localeCompare(b, "de"));
+  $("themen").innerHTML = themen.map(t => `<option value="${esc(t)}"></option>`).join("");
   if (v === "__neu") $("newcat-name").focus();
 }
 async function addKat(){
@@ -648,7 +663,14 @@ $("lernwort").addEventListener("change", () => {
   }
 });
 $("wort").addEventListener("input", () => clearErr($("f-wort")));
-$("cancel").addEventListener("click", () => { resetForm(); renderList(); });
+$("cancel").addEventListener("click", () => { resetForm(); renderList(); formZu(); });
+/* Formular-Fenster (22.10.2026): „+ Neue Gebärde“, Bearbeiten und „noch zu bearbeiten“ öffnen es; × schließt.
+   Bleibt nach dem Speichern offen für das nächste Wort. Schließen beim Bearbeiten verwirft die Änderungen,
+   ein angefangener neuer Eintrag bleibt beim Schließen erhalten. */
+function formAuf(){ $("formov").hidden = false; }
+function formZu(){ if (st.editId){ resetForm(); renderList(); } $("formov").hidden = true; }
+$("form-zu").addEventListener("click", formZu);
+$("btn-neu").addEventListener("click", () => { if (st.editId){ resetForm(); renderList(); } formAuf(); $("formpanel").scrollTop = 0; });
 
 function parseVarianten(text, wort){
   const seen = new Set([wort.toLowerCase()]);
@@ -687,6 +709,7 @@ function startEdit(id){
   $("erklaerung").value = e.erklaerung_text || "";
   if (!alleKat().includes(e.kategorie)){ st.eigeneKat.push(e.kategorie); }
   renderKat(e.kategorie);
+  $("thema").value = e.thema || "";
   $("lernwort").checked = !!e.lernwort;
   $("f-block").hidden = !e.lernwort;
   $("block").value = e.lernwort && e.lernblock ? e.lernblock : "";
@@ -696,7 +719,7 @@ function startEdit(id){
   $("save").textContent = "Änderungen speichern";
   $("cancel").hidden = false;
   renderSlots(); renderList();
-  $("formpanel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+  formAuf(); $("formpanel").scrollTop = 0;
   $("wort").focus({preventScroll:true});
 }
 
@@ -733,6 +756,7 @@ $("form").addEventListener("submit", async ev => {
     erklaerung_text: $("erklaerung").value.trim(),
     erklaerung_medium: st.vids.erklaerung,
     kategorie: kat,
+    thema: $("thema").value.trim().replace(/\s+/g, " "),
     lernwort: lern,
     lernblock: lern ? block : null,
     erstellt: alt ? alt.erstellt : jetzt,
@@ -779,9 +803,9 @@ function renderList(){
   renderBackupHinweis();
   renderExport();
   if (!items.length){
-    const wo = matchMedia("(max-width:860px)").matches ? "oben" : "links";
+
     L.innerHTML = `<div class="empty"><h3>Noch keine Gebärden in der ${esc(SAMMLUNG[st.sammlung].name)}</h3>
-      <p>Lege ${wo} die erste Gebärde an. Sie erscheint dann hier.</p>
+      <p>Tippe auf „+ Neue Gebärde“, um die erste Gebärde anzulegen. Sie erscheint dann hier.</p>
       <div class="steps"><span>1. Deutsches Wort eintragen</span><span>2. Gebärdenvideo anhängen${faPflicht() ? " und Fingeralphabet-Video" : ""}</span><span>3. Fach wählen und speichern</span></div></div>`;
     return;
   }
@@ -802,7 +826,7 @@ function renderList(){
     }
     const confirm = st.confirmDel === e.id ? `<div class="confirm" role="alert"><p>„${esc(e.wort)}“ wirklich löschen? Das lässt sich nicht rückgängig machen.</p>
       <div class="row"><button type="button" class="btn danger solid" data-del-yes="${e.id}">Endgültig löschen</button><button type="button" class="btn ghost" data-del-no="1">Abbrechen</button></div></div>` : "";
-    const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.lernwort ? `<span class="chip lern">Lernwort · Block ${e.lernblock}</span>` : ""}</div>`;
+    const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.thema ? `<span class="chip thema">${esc(e.thema)}</span>` : ""}${e.lernwort ? `<span class="chip lern">Lernwort · Block ${e.lernblock}</span>` : ""}</div>`;
     const offen = st.auf === e.id;
     if (!offen) return `<article class="card zu${st.editId === e.id ? " editing" : ""}">
       <button type="button" class="auf" data-auf="${e.id}" aria-expanded="false"><span class="word">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span>${chips}</button>
@@ -886,7 +910,7 @@ async function backupErstellen(){
     const zip = new JSZip(), index = [];
     auswahl.forEach(e => {
       const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
-      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, varianten:e.varianten || [], kategorie:e.kategorie,
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], kategorie:e.kategorie,
         lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
         erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
       MEDIEN.forEach(k => { const m = medium(e, k); if (m){ const name = k + "." + endung(m); zip.file(ordner + "/" + name, m, {binary:true}); meta.dateien[k] = name; } });
@@ -973,7 +997,7 @@ $("ges-liste").addEventListener("click", async ev => {
   $("formtitle").textContent = "„" + w + "“ anlegen";
   $("cancel").hidden = false;
   renderList();
-  $("formpanel").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+  formAuf(); $("formpanel").scrollTop = 0;
   $("kategorie").focus({preventScroll:true});
 });
 // CSV einlesen: z. B. Fachwörter-Export der Regelschul-App (Kopfzeile „Deutsches Wort“, ein Wort pro Zeile)
@@ -1006,7 +1030,7 @@ const ARTEN = {
   falesen:  {name:"Fingeralphabet lesen", info:"Fingeralphabet ansehen, Wort aufschreiben."},
   artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."}
 };
-const T = {phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", einzeln:new Set(),
+const T = {phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(),
   woerter:[], i:0, fotoUrl:"", flUrls:[], flKey:"", blitzTimer:null};
 function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
@@ -1017,10 +1041,12 @@ function artPool(art){
   if (art === "artikel") return alle.filter(e => e.artikel);
   return alle;
 }
+function themaKey(e){ return e.kategorie + "\u0001" + e.thema; }
 function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function tAuswahl(){
   const alle = artPool(T.art);
   if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
+  if (T.quelle === "thema") return alle.filter(e => e.thema && themaKey(e) === T.thema);                          // ganzes Thema
   if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
   const pool = T.quelle === "fach" ? alle.filter(e => e.kategorie === T.fach) : alle;
   return mischen(pool).slice(0, T.anzahl);
@@ -1073,6 +1099,10 @@ function renderTest(){
     if (!bloecke.map(String).includes(T.block)) T.block = bloecke.length ? String(bloecke[bloecke.length - 1]) : "";
     if (!faecher.includes(T.fach)) T.fach = faecher[0] || "";
     if (T.quelle === "block" && !bloecke.length) T.quelle = "gesamt";
+    const themen = [...new Map(alle.filter(e => e.thema).map(e => [themaKey(e), e])).values()]
+      .sort((a, b) => (a.kategorie + a.thema).localeCompare(b.kategorie + b.thema, "de"));
+    if (!themen.some(e => themaKey(e) === T.thema)) T.thema = themen.length ? themaKey(themen[0]) : "";
+    if (T.quelle === "thema" && !themen.length) T.quelle = "gesamt";
     const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
     const n = tAuswahl().length;
     const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
@@ -1083,6 +1113,7 @@ function renderTest(){
       <h3>Wörter</h3>
       ${opt("gesamt", "Gesamtwortschatz" + (T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
       ${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") + (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
+      ${themen.length ? opt("thema", "Thema (ganzes Thema)") + (T.quelle === "thema" ? `<select id="t-thema">${themen.map(e => `<option value="${esc(themaKey(e))}" ${themaKey(e) === T.thema ? "selected" : ""}>${esc(e.kategorie)} · ${esc(e.thema)}</option>`).join("")}</select>` : "") : ""}
       ${opt("fach", "Fach")}${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
       ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
       ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
@@ -1236,6 +1267,7 @@ $("testin").addEventListener("change", ev => {
   else if (t.name === "tq"){ T.quelle = t.value; renderTest(); }
   else if (t.id === "t-block"){ T.block = t.value; renderTest(); }
   else if (t.id === "t-fach"){ T.fach = t.value; renderTest(); }
+  else if (t.id === "t-thema"){ T.thema = t.value; renderTest(); }
   else if (t.id === "t-anzahl"){ T.anzahl = Math.min(50, Math.max(10, parseInt(t.value, 10) || 25)); renderTest(); }
   else if (t.dataset.te){ t.checked ? T.einzeln.add(t.dataset.te) : T.einzeln.delete(t.dataset.te); const n = tAuswahl().length;
     $("t-info").textContent = n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."; document.querySelector('[data-t="los"]').disabled = !n; }
@@ -1401,7 +1433,7 @@ async function exportieren(){
     const index = [];
     auswahl.forEach(e => {
       const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
-      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, varianten:e.varianten || [], kategorie:e.kategorie,
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], kategorie:e.kategorie,
         lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
         erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
       MEDIEN.forEach(k => {
@@ -1489,7 +1521,7 @@ $("import-file").addEventListener("change", async e => {
         sammlung: ziel, artikel: ["der","die","das"].includes(meta.artikel) ? meta.artikel : "", wort: String(meta.wort).trim(), varianten: Array.isArray(meta.varianten) ? meta.varianten : [],
         gebaerde: blobs.gebaerde, fingeralphabet: blobs.fingeralphabet || null,
         erklaerung_text: meta.erklaerung_text || "", erklaerung_medium: blobs.erklaerung || null,
-        kategorie: meta.kategorie || "Deutsch", lernwort: !!meta.lernwort && (meta.kategorie || "Deutsch") === "Deutsch",
+        kategorie: meta.kategorie || "Deutsch", thema: typeof meta.thema === "string" ? meta.thema : "", lernwort: !!meta.lernwort && (meta.kategorie || "Deutsch") === "Deutsch",
         lernblock: meta.lernwort ? (meta.lernblock || null) : null,
         erstellt: alt ? alt.erstellt : (meta.erstellt || jetzt), geaendert: meta.geaendert || jetzt,
         exportiert: alt ? (alt.exportiert || null) : null
