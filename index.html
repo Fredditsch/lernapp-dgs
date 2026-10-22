@@ -1098,12 +1098,13 @@ function renderTest(){
       T.gerendert = T.i; T.flKey = "";
     }
     // Stern (Variante C, Freddy 22.10.): leuchtet/pulsiert; bei einer Hilfe wackelt er und „−n“ schwebt hoch
+    // Zahl senkrecht: KEIN dominant-baseline (Safari legt es anders aus) – Grundlinie = Sternmitte (y 57,7) + halbe Ziffernhöhe (≈ 0,36 × 40 px)
     const jetzt = tMoeglich(w), vorher = T.sternWort === T.i ? T.sternPunkte : jetzt, minus = vorher - jetzt;
     T.sternWort = T.i; T.sternPunkte = jetzt;
     const stern = T.art === "artikel" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
       <defs><radialGradient id="sternglanz" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f1c"/></radialGradient></defs>
       <path d="M60 8l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="url(#sternglanz)" stroke="#ff9f1c" stroke-width="3" stroke-linejoin="round"/>
-      <text x="60" y="66" text-anchor="middle" dominant-baseline="central" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
+      <text x="60" y="72" text-anchor="middle" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
     $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`);
     $("t-stern").innerHTML = stern;   // Stern unter dem Video, rechts neben den Hilfe-Knöpfen (Freddy 22.10., 18:12)
     renderFlaeche(w);
