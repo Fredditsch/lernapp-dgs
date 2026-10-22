@@ -194,6 +194,29 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .erg td,.erg th{padding:6px 8px;border-bottom:1px solid var(--line);text-align:left}
 .erg td.r,.erg th.r{text-align:right}
 .erg{width:100%;border-collapse:collapse;background:var(--surface);border-radius:var(--r)}
+/* Nachmittag 22.10.2026: Anzeigefläche, Stern, Übungsarten, Artikel, Backup */
+.flaeche .player video,.flaeche .player img{width:100%;max-height:60vh}
+.leerflaeche{display:grid;place-items:center;gap:10px;min-height:220px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:center}
+.blitzwort{font-family:var(--font-display);font-size:44px;font-weight:700;overflow-wrap:anywhere}
+.hilfen .btn[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.hilfen .btn[disabled]{opacity:.45;cursor:default}
+.stern{display:inline-grid;place-items:center;width:46px;height:46px;background:var(--accent);color:var(--accent-ink);font-weight:800;font-size:16px;padding-top:4px;box-sizing:border-box;
+  clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.arten{display:grid;gap:8px}
+.arten .art{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;background:var(--surface);cursor:pointer}
+.arten .art.an{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.arten .art input{margin-top:4px}
+.testwahl h3{font-size:17px;margin-top:4px}
+.artwahl{font-size:20px;min-width:80px;justify-content:center}
+.artwahl.ja{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
+.artwahl.nein{background:var(--warn);border-color:var(--warn);color:var(--surface)}
+.rueck{font-size:18px;font-weight:700}.rueck.ja{color:#1f7a4d}.rueck.nein{color:var(--warn)}
+.art{color:var(--muted);font-weight:600}
+.wortzeile{display:flex;gap:8px}
+.wortzeile select{flex:none;width:auto;min-width:76px}
+.wortzeile input{flex:1;min-width:0}
+.backuphinweis{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--accent-soft);border-radius:var(--r);padding:10px 14px;margin-bottom:14px;font-size:14px}
+.backuphinweis .btn{padding:6px 12px}
 .geskopf{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .geszu{border:0;background:none;font-size:28px;line-height:1;padding:0 4px;color:var(--muted);cursor:pointer}
 /* Sticker „noch zu bearbeiten“ unter dem gewählten Sammlungs-Knopf (Freddy 22.10.2026) */
@@ -253,7 +276,9 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
       <div class="tools" id="tools">
         <button type="button" class="btn" id="btn-export">Paket exportieren …</button>
         <label class="btn" for="import-file">Paket importieren …<input type="file" id="import-file" accept=".zip,application/zip"></label>
+        <button type="button" class="btn" id="btn-backup">Backup erstellen …</button>
         <span class="hint" id="tools-hint"></span>
+        <span class="hint" id="speicher-info"></span>
       </div>
     </div>
     </div>
@@ -287,7 +312,8 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 
         <div class="field" id="f-wort">
           <label class="lab" for="wort">Deutsches Wort <span class="tag req">Pflicht</span></label>
-          <input type="text" id="wort" autocomplete="off" placeholder="z. B. gehen">
+          <div class="wortzeile"><select id="artikel" aria-label="Artikel"><option value="">–</option><option>der</option><option>die</option><option>das</option></select>
+          <input type="text" id="wort" autocomplete="off" placeholder="z. B. gehen"></div>
           <p class="err" hidden></p>
         </div>
 
@@ -342,6 +368,7 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
         <div><label class="btn" for="ges-csv">Liste einlesen (CSV) …<input type="file" id="ges-csv" accept=".csv,text/csv,text/plain"></label></div>
       </section>
       </div>
+      <div class="backuphinweis" id="backup-hinweis" hidden></div>
       <div id="report"></div>
       <div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
       <section class="panel xp" id="exportpanel" hidden aria-labelledby="xptitle"></section>
@@ -397,6 +424,8 @@ const store = {
   async del(id){ if (db) return run("eintraege","readwrite", s => s.delete(id)); mem.eintraege.delete(id); },
   async getKat(){ return db ? (await run("meta","readonly", s => s.get("kategorien"))) || [] : mem.kategorien; },
   async setKat(k){ if (db) return run("meta","readwrite", s => s.put(k, "kategorien")); mem.kategorien = k; },
+  async getMeta(k){ return db ? await run("meta","readonly", s => s.get(k)) : mem[k]; },
+  async setMeta(k, v){ if (db) return run("meta","readwrite", s => s.put(v, k)); mem[k] = v; },
   async getGes(){ return db ? (await run("meta","readonly", s => s.get("gesammelt"))) || {} : mem.gesammelt; },
   async setGes(g){ if (db) return run("meta","readwrite", s => s.put(g, "gesammelt")); mem.gesammelt = g; }
 };
@@ -620,6 +649,7 @@ function startEdit(id){
   st.confirmDel = null;
   clearAllErr();
   $("wort").value = e.wort;
+  $("artikel").value = e.artikel || "";
   $("varianten").value = (e.varianten || []).join(", ");
   $("erklaerung").value = e.erklaerung_text || "";
   if (!alleKat().includes(e.kategorie)){ st.eigeneKat.push(e.kategorie); }
@@ -662,6 +692,7 @@ $("form").addEventListener("submit", async ev => {
   const eintrag = {
     id: alt ? alt.id : (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)),
     sammlung: alt ? alt.sammlung : st.sammlung,
+    artikel: $("artikel").value,
     wort,
     varianten: parseVarianten($("varianten").value, wort),
     gebaerde: st.vids.gebaerde,
@@ -712,6 +743,7 @@ function renderList(){
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
+  renderBackupHinweis();
   renderExport();
   if (!items.length){
     const wo = matchMedia("(max-width:860px)").matches ? "oben" : "links";
@@ -733,18 +765,18 @@ function renderList(){
       const blob = k === "erklaerung" ? erklMedium(e) : e[k];
       if (blob) player = istBild(blob)
         ? `<div class="player"><img src="${url(blob)}" alt="Erklärungsbild zu ${esc(e.wort)}"></div>`
-        : `<div class="player"><video controls autoplay loop muted playsinline src="${url(blob)}" aria-label="${VID_LABEL[k]}-Video zu ${esc(e.wort)}"></video></div>`;
+        : `<div class="player"><video autoplay loop muted playsinline src="${url(blob)}" aria-label="${VID_LABEL[k]}-Video zu ${esc(e.wort)}"></video></div>`;
     }
     const confirm = st.confirmDel === e.id ? `<div class="confirm" role="alert"><p>„${esc(e.wort)}“ wirklich löschen? Das lässt sich nicht rückgängig machen.</p>
       <div class="row"><button type="button" class="btn danger solid" data-del-yes="${e.id}">Endgültig löschen</button><button type="button" class="btn ghost" data-del-no="1">Abbrechen</button></div></div>` : "";
     const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.lernwort ? `<span class="chip lern">Lernwort · Block ${e.lernblock}</span>` : ""}</div>`;
     const offen = st.auf === e.id;
     if (!offen) return `<article class="card zu${st.editId === e.id ? " editing" : ""}">
-      <button type="button" class="auf" data-auf="${e.id}" aria-expanded="false"><span class="word">${esc(e.wort)}</span>${chips}</button>
+      <button type="button" class="auf" data-auf="${e.id}" aria-expanded="false"><span class="word">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span>${chips}</button>
     </article>`;
     return `<article class="card${st.editId === e.id ? " editing" : ""}">
       <button type="button" class="auf" data-auf="${e.id}" aria-expanded="true">
-        <span style="min-width:0"><span class="word" style="display:block">${esc(e.wort)}</span>
+        <span style="min-width:0"><span class="word" style="display:block">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span>
         ${e.varianten && e.varianten.length ? `<span class="variants" style="display:block">Varianten: ${esc(e.varianten.join(", "))}</span>` : ""}</span>
         ${chips}
       </button>
@@ -797,33 +829,92 @@ function menuZu(){ $("mehr-menu").hidden = true; $("mehr").setAttribute("aria-ex
 $("mehr").addEventListener("click", ev => { ev.stopPropagation(); const zu = $("mehr-menu").hidden; $("mehr-menu").hidden = !zu; $("mehr").setAttribute("aria-expanded", String(zu)); });
 document.addEventListener("click", ev => { if (!$("mehr-menu").hidden && !ev.target.closest("#mehr-menu")) menuZu(); });
 $("btn-export").addEventListener("click", menuZu);
+$("mehr").addEventListener("click", speicherAnzeige);
+async function speicherAnzeige(){
+  const el = $("speicher-info"); if (!navigator.storage || !navigator.storage.estimate) { el.textContent = ""; return; }
+  try {
+    const est = await navigator.storage.estimate(), fest = navigator.storage.persisted ? await navigator.storage.persisted() : false;
+    const mb = (est.usage || 0) / 1048576;
+    el.textContent = `Speicher: ${mb < 10 ? mb.toFixed(1).replace(".", ",") : Math.round(mb)} MB belegt · ${fest ? "geschützt" : "nicht dauerhaft geschützt"}`;
+  } catch(e){ el.textContent = ""; }
+}
+/* Backup (22.10.2026): alle Gebärden der Sammlung + „noch zu bearbeiten“ + eigene Kategorien, fester Dateiname
+   (in der Dateien-App „Ersetzen“ wählen). Setzt keine Markierung „exportiert“. Erinnerung einmal pro Woche. */
+const BACKUP_TAGE = 7;
+function backupName(s){ return `Lernapp-Backup-${s === "schueler" ? "Schueler" : "Fachkraefte"}.zip`; }
+async function backupErstellen(){
+  menuZu();
+  if (!kannSpeichern() || typeof JSZip === "undefined"){ toast("Backup ist in dieser Ansicht nicht verfügbar."); return; }
+  const s = st.sammlung, auswahl = st.eintraege.filter(e => e.sammlung === s);
+  if (!auswahl.length && !gesListe(s).length){ toast("Noch nichts zum Sichern."); return; }
+  $("btn-backup").disabled = true; toast("Backup wird erstellt …");
+  let blob;
+  try {
+    const zip = new JSZip(), index = [];
+    auswahl.forEach(e => {
+      const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, varianten:e.varianten || [], kategorie:e.kategorie,
+        lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
+        erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
+      MEDIEN.forEach(k => { const m = medium(e, k); if (m){ const name = k + "." + endung(m); zip.file(ordner + "/" + name, m, {binary:true}); meta.dateien[k] = name; } });
+      zip.file(ordner + "/eintrag.json", JSON.stringify(meta, null, 2));
+      index.push({id:e.id, wort:e.wort, ordner});
+    });
+    zip.file("paket.json", JSON.stringify({format:"gebaerden-woerterbuch-paket", version:1, backup:true, sammlung:s,
+      erstellt:new Date().toISOString(), anzahl:index.length, eintraege:index, gesammelt:gesListe(s), kategorien:st.eigeneKat}, null, 2));
+    blob = await zip.generateAsync({type:"blob", compression:"STORE"});
+  } catch(err){ $("btn-backup").disabled = false; toast("Backup konnte nicht erstellt werden."); return; }
+  try { await speichern(backupName(s), blob); }
+  catch(err){ $("btn-backup").disabled = false; toast(err && err.code === "declined" ? "Backup abgebrochen." : "Backup ist hier gerade nicht möglich."); return; }
+  $("btn-backup").disabled = false;
+  const b = Object.assign({}, st.backup, {[s]: new Date().toISOString()});
+  st.backup = b; try { await store.setMeta("backup", b); } catch(e){}
+  toast("Backup gespeichert: " + backupName(s)); renderBackupHinweis();
+}
+$("btn-backup").addEventListener("click", backupErstellen);
+function renderBackupHinweis(){
+  const el = $("backup-hinweis"), s = st.sammlung;
+  const n = st.eintraege.filter(e => e.sammlung === s).length;
+  const zuletzt = st.backup && st.backup[s] ? new Date(st.backup[s]) : null;
+  const tage = zuletzt ? Math.floor((Date.now() - zuletzt.getTime()) / 86400000) : null;
+  const faellig = n > 0 && (tage === null || tage >= BACKUP_TAGE) && !(st.backupSpaeter || {})[s] && kannSpeichern();
+  el.hidden = !faellig;
+  if (faellig) el.innerHTML = `<span>${tage === null ? "Noch kein Backup dieser Sammlung." : `Letztes Backup vor ${tage} Tagen.`} Zeit für ein neues Backup?</span>
+    <button type="button" class="btn primary" id="bh-jetzt">Backup erstellen</button><button type="button" class="btn ghost" id="bh-spaeter">Später</button>`;
+}
+$("backup-hinweis").addEventListener("click", ev => {
+  if (ev.target.id === "bh-jetzt") backupErstellen();
+  if (ev.target.id === "bh-spaeter"){ st.backupSpaeter = Object.assign({}, st.backupSpaeter, {[st.sammlung]: true}); renderBackupHinweis(); }
+});
 $("import-file").addEventListener("change", menuZu);
 document.addEventListener("keydown", ev => { if (ev.key === "Escape") menuZu(); });
 
 /* ---------- Gesammelt: Wörter ohne Gebärde, je Sammlung (22.10.2026) ---------- */
 function gesListe(s){ return (st.ges && st.ges[s]) || []; }
+function ohneArtikel(w){ return String(w).trim().replace(/^(der|die|das)\s+/i, ""); }
+function gesKey(w){ return wortKey(ohneArtikel(w)); }
 async function gesSpeichern(s, liste){ st.ges = Object.assign({}, st.ges, {[s]: liste}); try { await store.setGes(st.ges); } catch(e){ toast("Speichern hat nicht geklappt."); } }
 async function gesEntfernen(s, woerter){
-  const weg = new Set(woerter.filter(Boolean).map(wortKey));
-  const alt = gesListe(s), neu = alt.filter(w => !weg.has(wortKey(w)));
+  const weg = new Set(woerter.filter(Boolean).map(gesKey));
+  const alt = gesListe(s), neu = alt.filter(w => !weg.has(gesKey(w)));
   if (neu.length !== alt.length) await gesSpeichern(s, neu);
 }
 async function gesHinzu(woerter){
   const s = st.sammlung, liste = gesListe(s).slice();
-  const da = new Set(liste.map(wortKey).concat(st.eintraege.filter(e => e.sammlung === s).map(e => wortKey(e.wort))));
+  const da = new Set(liste.map(gesKey).concat(st.eintraege.filter(e => e.sammlung === s).map(e => wortKey(e.wort))));
   let n = 0, doppelt = 0;
   for (const roh of woerter){
     const w = String(roh).trim().replace(/\s+/g, " ");
     if (!w) continue;
-    if (da.has(wortKey(w))){ doppelt++; continue; }
-    da.add(wortKey(w)); liste.push(w); n++;
+    if (da.has(gesKey(w))){ doppelt++; continue; }
+    da.add(gesKey(w)); liste.push(w); n++;
   }
   if (n) await gesSpeichern(s, liste);
   renderGes();
   toast((n ? `${n} ${n === 1 ? "Wort" : "Wörter"} gesammelt` : "Keine neuen Wörter") + (doppelt ? ` · ${doppelt} schon vorhanden (übersprungen)` : ""));
 }
 function renderGes(){
-  const liste = gesListe(st.sammlung).slice().sort((a, b) => a.localeCompare(b, "de", {sensitivity:"base"}));
+  const liste = gesListe(st.sammlung).slice().sort((a, b) => ohneArtikel(a).localeCompare(ohneArtikel(b), "de", {sensitivity:"base"}));
   $("ges-n").textContent = liste.length ? "· " + liste.length : "";
   $("zubearb").textContent = "noch zu bearbeiten" + (liste.length ? " · " + liste.length : "");
   $("segunter").classList.toggle("rechts", st.sammlung === "fachkraft");
@@ -843,7 +934,9 @@ $("ges-liste").addEventListener("click", async ev => {
   gesZu();
   resetForm();
   st.gesWort = w;
-  $("wort").value = w;
+  const m = String(w).trim().match(/^(der|die|das)\s+(.+)$/i);
+  $("artikel").value = m ? m[1].toLowerCase() : "";
+  $("wort").value = m ? m[2] : w;
   $("formtitle").textContent = "„" + w + "“ anlegen";
   $("cancel").hidden = false;
   renderList();
@@ -869,67 +962,107 @@ $("ges-csv").addEventListener("change", async e => {
   await gesHinzu(csvErsteSpalte(text));
 });
 
-/* ---------- Test Schritt 1 (22.10.2026): Ablauf ohne Speichern ----------
-   Gebärde sehen → Wort auf Papier schreiben → Hilfen (Anfangsbuchstabe, dann Fingeralphabet; Erklärung −1)
-   → Foto vom Zettel → Selbstauswertung ✓/✗ → Punkte. Nichts wird gespeichert, das Foto wird verworfen. */
-const T = {phase:null, quelle:"gesamt", anzahl:25, block:"", fach:"", einzeln:new Set(), woerter:[], i:0, foto:null, fotoUrl:"", urls:[]};
-function tUrl(blob){ const u = URL.createObjectURL(blob); T.urls.push(u); return u; }
-function tFrei(){ while (T.urls.length) URL.revokeObjectURL(T.urls.pop()); }
+/* ---------- Test / Übungsarten (22.10.2026) ----------
+   Arten: Gebärde → Wort, Fachbegriffe, Blitzlesen, Fingeralphabet lesen, Artikel.
+   Wort aufschreiben → Foto vom Zettel → Selbstauswertung ✓/✗ → Punkte (Artikel: direkt auswählen, ohne Foto).
+   Nichts wird gespeichert, das Foto wird verworfen. Gesamtwortschatz: doppelte Punkte (erst im Ergebnis). */
+const ARTEN = {
+  gebaerde: {name:"Gebärde → Wort", info:"Gebärde ansehen, Wort aufschreiben."},
+  fach:     {name:"Fachbegriffe", info:"Erklärungsbild/-video ansehen, Fachbegriff aufschreiben. Ohne Gebärde."},
+  blitz:    {name:"Blitzlesen", info:"Das Wort erscheint eine halbe Sekunde, dann aufschreiben."},
+  falesen:  {name:"Fingeralphabet lesen", info:"Fingeralphabet ansehen, Wort aufschreiben."},
+  artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."}
+};
+const T = {phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", einzeln:new Set(),
+  woerter:[], i:0, fotoUrl:"", flUrls:[], flKey:"", blitzTimer:null};
+function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
+function artPool(art){
+  const alle = schuelerEintraege();
+  if (art === "fach") return alle.filter(e => erklMedium(e));
+  if (art === "falesen") return alle.filter(e => e.fingeralphabet);
+  if (art === "artikel") return alle.filter(e => e.artikel);
+  return alle;
+}
 function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function tAuswahl(){
-  const alle = schuelerEintraege();
+  const alle = artPool(T.art);
   if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
   if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
   const pool = T.quelle === "fach" ? alle.filter(e => e.kategorie === T.fach) : alle;
   return mischen(pool).slice(0, T.anzahl);
 }
-function tPunkte(w){
-  if (!w.richtig) return 0;
-  let p = w.fa >= 1 ? Math.max(1, 4 - w.fa) : w.abc ? 4 : 5;
-  if (w.erkl) p -= 1;
-  p = Math.max(0, p);
-  return T.quelle === "gesamt" ? p * 2 : p;     // Gesamtwortschatz: doppelte Punkte
+/* Punkte eines Wortes vor dem Verdoppeln, als ob es richtig gelöst würde */
+function tMoeglich(w){
+  let p;
+  if (T.art === "gebaerde"){ p = w.fa >= 1 ? Math.max(1, 4 - w.fa) : w.abc ? 4 : 5; if (w.erkl) p -= 1; }
+  else if (T.art === "fach") p = 5 - (w.abc ? 1 : 0) - 2 * w.fa;
+  else if (T.art === "blitz") p = 5 - (w.geb ? 1 : 0) - (w.abc ? 1 : 0);
+  else if (T.art === "falesen") p = 5 - w.wdh;
+  else p = 5;
+  return Math.max(0, p);
 }
-function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${T.phase === "ergebnis" ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
+function tPunkte(w){
+  if (T.art === "artikel") return w.wahl === w.e.artikel ? 1 : 0;
+  if (!w.richtig) return 0;
+  return tMoeglich(w) * (T.quelle === "gesamt" ? 2 : 1);
+}
+function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` (−${d})` : " (±0)"; }
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${T.phase === "ergebnis" || T.phase === "start" ? "Schließen" : "Test abbrechen"}</button></span></div>`; }
+function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
+function flUrl(blob){ const u = URL.createObjectURL(blob); T.flUrls.push(u); return u; }
+function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTimer = null; } }
+
 function renderTest(){
   const el = $("testin");
-  tFrei();
+  if (T.phase !== "wort"){ flFrei(); T.flKey = ""; }
   if (T.phase === "start"){
-    const alle = schuelerEintraege();
+    const alle = artPool(T.art);
     const bloecke = [...new Set(alle.filter(e => e.lernwort && e.lernblock).map(e => e.lernblock))].sort((a, b) => a - b);
     const faecher = [...new Set(alle.map(e => e.kategorie))].sort((a, b) => a.localeCompare(b, "de"));
-    if (!T.block && bloecke.length) T.block = String(bloecke[bloecke.length - 1]);
-    if (!T.fach && faecher.length) T.fach = faecher[0];
+    if (!bloecke.map(String).includes(T.block)) T.block = bloecke.length ? String(bloecke[bloecke.length - 1]) : "";
+    if (!faecher.includes(T.fach)) T.fach = faecher[0] || "";
+    if (T.quelle === "block" && !bloecke.length) T.quelle = "gesamt";
     const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
     const n = tAuswahl().length;
     const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
     el.innerHTML = tKopf("Test") + `<section class="panel testwahl">
-      <p class="hint">Schau dir die Gebärde an und schreib das Wort nummeriert auf einen Zettel.</p>
-      ${opt("gesamt", "Gesamtwortschatz <span class='chip lern'>doppelte Punkte</span>")}
+      <h3>Übungsart</h3>
+      <div class="arten">${Object.entries(ARTEN).map(([k, a]) => { const m = artPool(k).length;
+        return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>
+      <h3>Wörter</h3>
+      ${opt("gesamt", "Gesamtwortschatz" + (T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
       ${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") + (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
       ${opt("fach", "Fach")}${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
-      ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(e.wort)}</label>`).join("")}</div>` : ""}
+      ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
       ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
       <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>
       <div><button type="button" class="btn primary" data-t="los" ${n ? "" : "disabled"}>Test starten</button></div></section>`;
     return;
   }
   if (T.phase === "wort"){
-    const w = T.woerter[T.i], e = w.e, letzte = T.i === T.woerter.length - 1;
-    const erkl = e.erklaerung_text || erklMedium(e);
-    const erklM = erklMedium(e);
-    el.innerHTML = tKopf("Test", `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`) + `
-      <div class="player"><video autoplay loop muted playsinline controls src="${tUrl(e.gebaerde)}" aria-label="Gebärde"></video></div>
-      <div class="hilfen">
-        <button type="button" class="btn" data-t="abc" ${w.abc ? "disabled" : ""}>Anfangsbuchstabe</button>
-        <button type="button" class="btn" data-t="fa" ${!w.abc || !e.fingeralphabet ? "disabled" : ""}>Fingeralphabet${w.fa ? " (" + w.fa + "×)" : ""}</button>
-        ${erkl ? `<button type="button" class="btn" data-t="erkl" ${w.erkl ? "disabled" : ""}>Erklärung (−1 Punkt)</button>` : ""}
-      </div>
-      ${w.abc ? `<div class="abc">${esc(e.wort.charAt(0))} …</div>` : ""}
-      ${w.fa ? `<div class="player" id="t-fa"><video autoplay muted playsinline controls src="${tUrl(e.fingeralphabet)}" aria-label="Fingeralphabet"></video></div>` : ""}
-      ${w.erkl ? `${e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : ""}${erklM ? (istBild(erklM) ? `<div class="player"><img src="${tUrl(erklM)}" alt="Erklärung"></div>` : `<div class="player"><video autoplay loop muted playsinline controls src="${tUrl(erklM)}" aria-label="Erklärung"></video></div>`) : ""}` : ""}
-      <div><button type="button" class="btn primary" data-t="weiter">${letzte ? "Fertig – Foto vom Zettel machen" : "Weiter"}</button></div>`;
+    const w = T.woerter[T.i], letzte = T.i === T.woerter.length - 1;
+    if (!$("t-flaeche") || T.gerendert !== T.i){
+      el.innerHTML = `<div id="t-kopf"></div><div class="flaeche" id="t-flaeche"></div><div class="hilfen" id="t-hilfen"></div><div id="t-unter"></div>
+        <div><button type="button" class="btn primary" data-t="weiter" id="t-weiter"></button></div>`;
+      T.gerendert = T.i; T.flKey = "";
+    }
+    const stern = T.art === "artikel" ? "" : `<span class="stern" aria-label="${tMoeglich(w)} Punkte möglich">${tMoeglich(w)}</span>`;
+    $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>${stern}`);
+    renderFlaeche(w);
+    renderHilfen(w);
+    const e = w.e;
+    let unter = "";
+    if (w.abc) unter += `<div class="abc">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort.charAt(0))} …</div>`;
+    if (T.art === "gebaerde" && w.erkl && w.ansicht === "erkl" && e.erklaerung_text) unter += `<div class="expl">${esc(e.erklaerung_text)}</div>`;
+    if (T.art === "artikel" && w.wahl){
+      const ok = w.wahl === e.artikel;
+      unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} Es heißt: <strong>${esc(artikelWort(e))}</strong></p>`;
+    }
+    $("t-unter").innerHTML = unter;
+    const weiter = $("t-weiter");
+    weiter.textContent = letzte ? (T.art === "artikel" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
+    weiter.disabled = (T.art === "artikel" && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
     return;
   }
   if (T.phase === "foto"){
@@ -943,57 +1076,128 @@ function renderTest(){
     const fertig = T.woerter.every(w => w.richtig !== null);
     el.innerHTML = tKopf("Selbst auswerten") + `
       <div class="testfoto"><img src="${T.fotoUrl}" alt="Foto vom Zettel"></div>
-      <p class="hint">Vergleiche mit deinem Zettel: Ist das Wort richtig geschrieben?</p>
-      <div class="urteile">${T.woerter.map((w, i) => `<div class="urteil"><span class="testnr">${i + 1}.</span><span class="w">${esc(w.e.wort)}</span>
+      <p class="hint">Vergleiche mit deinem Zettel: Ist das Wort richtig geschrieben? (Der Artikel zählt hier nicht.)</p>
+      <div class="urteile">${T.woerter.map((w, i) => `<div class="urteil"><span class="testnr">${i + 1}.</span><span class="w">${w.e.artikel ? `<span class="art">${esc(w.e.artikel)}</span> ` : ""}${esc(w.e.wort)}</span>
         <span class="knoepfe"><button type="button" class="btn ja" data-ja="${i}" aria-pressed="${w.richtig === true}" aria-label="richtig">✓</button><button type="button" class="btn nein" data-nein="${i}" aria-pressed="${w.richtig === false}" aria-label="falsch">✗</button></span></div>`).join("")}</div>
       <div><button type="button" class="btn primary" data-t="auswerten" ${fertig ? "" : "disabled"}>Auswerten</button></div>`;
     return;
   }
   if (T.phase === "ergebnis"){
+    if (T.art === "artikel"){
+      const r = T.woerter.filter(w => w.wahl === w.e.artikel).length;
+      el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+        <p style="font-size:20px"><strong>${r} von ${T.woerter.length} richtig</strong></p>
+        <table class="erg"><tr><th>Wort</th><th>Deine Wahl</th></tr>
+        ${T.woerter.map(w => `<tr><td>${w.wahl === w.e.artikel ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${esc(w.wahl || "–")}</td></tr>`).join("")}</table>
+        <p class="hint">Das Ergebnis wird noch nicht gespeichert.</p>
+        <div><button type="button" class="btn primary" data-t="abbrechen">Fertig</button></div></section>`;
+      return;
+    }
     const summe = T.woerter.reduce((a, w) => a + tPunkte(w), 0), max = T.woerter.length * (T.quelle === "gesamt" ? 10 : 5);
-    const hilfe = w => [w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
+    const hilfe = w => [w.geb ? "Gebärde" : "", w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.wdh ? "nochmal " + w.wdh + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
     el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
       <p style="font-size:20px"><strong>${summe} von ${max} Punkten</strong> · Schnitt ${(summe / T.woerter.length).toLocaleString("de-DE", {maximumFractionDigits:1})} pro Wort${T.quelle === "gesamt" ? " (doppelte Punkte)" : ""}</p>
       <table class="erg"><tr><th>Wort</th><th>Hilfen</th><th class="r">Punkte</th></tr>
-      ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(w.e.wort)}</td><td>${hilfe(w)}</td><td class="r">${tPunkte(w)}</td></tr>`).join("")}</table>
+      ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${hilfe(w)}</td><td class="r">${tPunkte(w)}</td></tr>`).join("")}</table>
       <p class="hint">Das Ergebnis wird noch nicht gespeichert. Das Foto ist gelöscht.</p>
       <div><button type="button" class="btn primary" data-t="abbrechen">Fertig</button></div></section>`;
   }
 }
+/* Anzeigefläche: wird nur neu aufgebaut, wenn sich die Ansicht ändert (oder Fingeralphabet erneut abgespielt wird) */
+function renderFlaeche(w){
+  const e = w.e, key = w.ansicht + "|" + (w.ansicht === "fa" ? w.fa + w.wdh : "");
+  if (key === T.flKey) return;
+  T.flKey = key; flFrei();
+  const fl = $("t-flaeche");
+  const vid = (blob, schleife, label) => `<div class="player"><video autoplay ${schleife ? "loop " : ""}muted playsinline src="${flUrl(blob)}" aria-label="${label}"></video></div>`;
+  if (w.ansicht === "gebaerde") fl.innerHTML = vid(e.gebaerde, true, "Gebärde");
+  else if (w.ansicht === "fa") fl.innerHTML = vid(e.fingeralphabet, false, "Fingeralphabet");
+  else if (w.ansicht === "erkl"){
+    const m = erklMedium(e);
+    fl.innerHTML = m ? (istBild(m) ? `<div class="player"><img src="${flUrl(m)}" alt="Erklärung"></div>` : vid(m, true, "Erklärung"))
+      : `<div class="leerflaeche"><div class="expl">${esc(e.erklaerung_text || "")}</div></div>`;
+  }
+  else if (w.ansicht === "bereit") fl.innerHTML = `<div class="leerflaeche"><button type="button" class="btn primary" data-t="zeigen">Wort zeigen</button><p class="hint">Das Wort erscheint nur eine halbe Sekunde.</p></div>`;
+  else if (w.ansicht === "wort") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(artikelWort(e))}</div></div>`;
+  else if (w.ansicht === "artikel") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">… ${esc(e.wort)}</div></div>`;
+  else fl.innerHTML = `<div class="leerflaeche"><p class="hint">Schreib das Wort auf.</p></div>`;
+}
+function knopf(t, text, an, aus){ return `<button type="button" class="btn" data-t="${t}" aria-pressed="${!!an}" ${aus ? "disabled" : ""}>${text}</button>`; }
+function renderHilfen(w){
+  const e = w.e, h = [];
+  if (T.art === "gebaerde"){
+    h.push(knopf("geb", "Gebärde", w.ansicht === "gebaerde"));
+    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc));
+    // Fingeralphabet erst nach dem Anfangsbuchstaben: Kosten so anzeigen, wie sie dann gelten
+    h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
+    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + (w.erkl ? "" : kosten(w, {erkl:true})), w.ansicht === "erkl"));
+  } else if (T.art === "fach"){
+    h.push(knopf("erklsehen", "Erklärung", w.ansicht === "erkl"));
+    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc));
+    h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
+  } else if (T.art === "blitz"){
+    h.push(knopf("blitzgeb", "Gebärde" + (w.geb ? "" : kosten(w, {geb:true})), w.ansicht === "gebaerde", !w.gezeigt));
+    h.push(knopf("abc", "Anfangsbuchstabe" + (w.abc ? "" : kosten(w, {abc:true})), false, w.abc || !w.gezeigt));
+  } else if (T.art === "falesen"){
+    h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
+  } else if (T.art === "artikel"){
+    ["der","die","das"].forEach(a => h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : ""}" data-wahl="${a}" ${w.wahl ? "disabled" : ""}>${a}</button>`));
+  }
+  $("t-hilfen").innerHTML = h.join("");
+}
+function startAnsicht(){
+  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel"}[T.art];
+}
 function testZu(){
-  tFrei(); if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
-  T.phase = null; T.woerter = []; T.foto = null; T.fotoUrl = "";
+  stoppeBlitz(); flFrei(); T.flKey = ""; if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
+  T.phase = null; T.woerter = []; T.fotoUrl = ""; T.gerendert = null;
   $("testov").hidden = true; $("testin").innerHTML = ""; document.body.style.overflow = "";
 }
 $("btn-test").addEventListener("click", () => { T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
 $("testin").addEventListener("change", ev => {
   const t = ev.target;
-  if (t.name === "tq"){ T.quelle = t.value; renderTest(); }
+  if (t.name === "tart"){ T.art = t.value; T.einzeln = new Set(); renderTest(); }
+  else if (t.name === "tq"){ T.quelle = t.value; renderTest(); }
   else if (t.id === "t-block"){ T.block = t.value; renderTest(); }
   else if (t.id === "t-fach"){ T.fach = t.value; renderTest(); }
   else if (t.id === "t-anzahl"){ T.anzahl = Math.min(50, Math.max(10, parseInt(t.value, 10) || 25)); renderTest(); }
   else if (t.dataset.te){ t.checked ? T.einzeln.add(t.dataset.te) : T.einzeln.delete(t.dataset.te); const n = tAuswahl().length;
     $("t-info").textContent = n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."; document.querySelector('[data-t="los"]').disabled = !n; }
-  else if (t.id === "t-foto"){ const f = t.files[0]; if (!f) return; T.foto = f; T.fotoUrl = URL.createObjectURL(f); T.phase = "auswertung"; renderTest(); window.scrollTo(0, 0); $("testov").scrollTop = 0; }
+  else if (t.id === "t-foto"){ const f = t.files[0]; if (!f) return; T.fotoUrl = URL.createObjectURL(f); T.phase = "auswertung"; renderTest(); $("testov").scrollTop = 0; }
 });
 $("testin").addEventListener("click", ev => {
   const b = ev.target.closest("button"); if (!b) return;
   const w = T.woerter[T.i];
   if (b.dataset.ja !== undefined){ T.woerter[+b.dataset.ja].richtig = true; renderTest(); return; }
   if (b.dataset.nein !== undefined){ T.woerter[+b.dataset.nein].richtig = false; renderTest(); return; }
+  if (b.dataset.wahl){ if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
   const a = b.dataset.t;
   if (a === "abbrechen"){
     if (T.phase !== "ergebnis" && T.phase !== "start" && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = "Wirklich abbrechen?"; return; }
     testZu();
   } else if (a === "los"){
-    T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, richtig:null}));
+    T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()}));
     if (T.quelle !== "gesamt" && T.quelle !== "fach") T.woerter = mischen(T.woerter);
-    T.i = 0; T.phase = "wort"; renderTest();
-  } else if (a === "abc"){ w.abc = true; renderTest(); }
-  else if (a === "fa"){ w.fa++; renderTest(); }
-  else if (a === "erkl"){ w.erkl = true; renderTest(); }
-  else if (a === "weiter"){ if (T.i < T.woerter.length - 1){ T.i++; renderTest(); } else { T.phase = "foto"; renderTest(); } $("testov").scrollTop = 0; }
-  else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.foto = null; T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
+    T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest();
+  }
+  else if (a === "geb"){ w.ansicht = "gebaerde"; renderTest(); }
+  else if (a === "abc"){ w.abc = true; renderTest(); }
+  else if (a === "fa"){ w.fa++; w.ansicht = "fa"; renderTest(); }
+  else if (a === "erkl"){ w.erkl = true; w.ansicht = "erkl"; renderTest(); }
+  else if (a === "erklsehen"){ w.ansicht = "erkl"; renderTest(); }
+  else if (a === "nochmal"){ w.wdh++; w.ansicht = "fa"; renderTest(); }
+  else if (a === "blitzgeb"){ w.geb = true; w.ansicht = w.ansicht === "gebaerde" ? "leer" : "gebaerde"; renderTest(); }
+  else if (a === "zeigen"){
+    w.ansicht = "wort"; renderTest();
+    stoppeBlitz(); T.blitzTimer = setTimeout(() => { T.blitzTimer = null; w.gezeigt = true; w.ansicht = "leer"; if (T.phase === "wort") renderTest(); }, 500);
+  }
+  else if (a === "weiter"){
+    stoppeBlitz();
+    if (T.i < T.woerter.length - 1){ T.i++; renderTest(); }
+    else { T.phase = T.art === "artikel" ? "ergebnis" : "foto"; renderTest(); }
+    $("testov").scrollTop = 0;
+  }
+  else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
 });
 
 /* ---------- Paket: gemeinsame Helfer ---------- */
@@ -1117,7 +1321,7 @@ async function exportieren(){
     const index = [];
     auswahl.forEach(e => {
       const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
-      const meta = {id:e.id, sammlung:e.sammlung, wort:e.wort, varianten:e.varianten || [], kategorie:e.kategorie,
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, varianten:e.varianten || [], kategorie:e.kategorie,
         lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
         erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
       MEDIEN.forEach(k => {
@@ -1202,7 +1406,7 @@ $("import-file").addEventListener("change", async e => {
       const jetzt = new Date().toISOString();
       const eintrag = {
         id: alt ? alt.id : ids.has(meta.id) || !meta.id ? (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)) : meta.id,
-        sammlung: ziel, wort: String(meta.wort).trim(), varianten: Array.isArray(meta.varianten) ? meta.varianten : [],
+        sammlung: ziel, artikel: ["der","die","das"].includes(meta.artikel) ? meta.artikel : "", wort: String(meta.wort).trim(), varianten: Array.isArray(meta.varianten) ? meta.varianten : [],
         gebaerde: blobs.gebaerde, fingeralphabet: blobs.fingeralphabet || null,
         erklaerung_text: meta.erklaerung_text || "", erklaerung_medium: blobs.erklaerung || null,
         kategorie: meta.kategorie || "Deutsch", lernwort: !!meta.lernwort && (meta.kategorie || "Deutsch") === "Deutsch",
@@ -1220,6 +1424,14 @@ $("import-file").addEventListener("change", async e => {
       fehler.push(ref.wort || "?");
     }
   }
+  let gesN = 0;
+  if (Array.isArray(paket.kategorien)) paket.kategorien.forEach(k => { if (k && !alleKat().includes(k)) st.eigeneKat.push(k); });
+  if (Array.isArray(paket.gesammelt) && paket.gesammelt.length){
+    const liste = gesListe(ziel).slice();
+    const da = new Set(liste.map(gesKey).concat(st.eintraege.filter(e => e.sammlung === ziel).map(e => wortKey(e.wort))));
+    for (const w of paket.gesammelt){ const k = gesKey(w); if (w && !da.has(k)){ da.add(k); liste.push(String(w)); gesN++; } }
+    if (gesN) await gesSpeichern(ziel, liste);
+  }
   try { await store.setKat(st.eigeneKat); } catch(err){}
   renderKat($("kategorie").value);
   if (ziel !== st.sammlung){
@@ -1234,7 +1446,8 @@ $("import-file").addEventListener("change", async e => {
   const liste = a => esc(a.join(", "));
   showReport(`<p><strong>Import in die ${esc(SAMMLUNG[ziel].name)}:</strong> ${neu.length} neu, ${ersetzt.length} ersetzt${fehler.length ? ", " + fehler.length + " fehlerhaft" : ""}.</p>
     ${ersetzt.length ? `<p class="hint">Schon vorhanden, durch die Version aus dem Paket ersetzt: ${liste(ersetzt)}</p>` : ""}
-    ${fehler.length ? `<p class="hint">Nicht lesbar oder ohne Gebärdenvideo: ${liste(fehler)}</p>` : ""}`, fehler.length > 0 && !neu.length && !ersetzt.length);
+    ${fehler.length ? `<p class="hint">Nicht lesbar oder ohne Gebärdenvideo: ${liste(fehler)}</p>` : ""}
+    ${gesN ? `<p class="hint">${gesN} ${gesN === 1 ? "Wort" : "Wörter"} in „noch zu bearbeiten“ übernommen.</p>` : ""}`, fehler.length > 0 && !neu.length && !ersetzt.length);
 });
 
 /* ---------- Start ---------- */
@@ -1252,10 +1465,13 @@ $("import-file").addEventListener("change", async e => {
   renderSammlung();
   renderSlots();
   try { st.ges = await store.getGes(); } catch(e){ st.ges = {}; }
+  try { st.backup = (await store.getMeta("backup")) || {}; } catch(e){ st.backup = {}; }
+  try { if (db && navigator.storage && navigator.storage.persist && !(await navigator.storage.persisted())) await navigator.storage.persist(); } catch(e){}
   renderList();
   renderTools();
   try { if (imViewer) downloads = await window.claude.use("downloads"); } catch(e){ downloads = null; }
   renderTools();
+  renderBackupHinweis();   // in claude.ai erst jetzt bekannt, ob gespeichert werden kann
 })();
 })();
 </script>
