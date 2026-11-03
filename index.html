@@ -176,6 +176,14 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .chip.thema{background:var(--surface);border-color:var(--accent);color:var(--accent)}
 /* Mathemodus (22.10.2026) */
 .blitzwort.mathesatz{font-size:26px;line-height:1.3;max-width:560px}
+/* Kopfrechnen: Zahlenfeld (03.11.2026) */
+.hilfen .zfeld{flex:1 1 100%}
+.zfeld{display:grid;gap:12px;justify-items:center}
+.zanzeige{min-width:170px;min-height:66px;font-family:var(--font-display);font-size:40px;font-weight:700;text-align:center;border:2px solid var(--line);border-radius:var(--r);background:var(--surface);padding:4px 18px}
+.zanzeige.ja{border-color:#1f7a4d;color:#1f7a4d}.zanzeige.nein{border-color:var(--warn);color:var(--warn)}
+.ztasten{display:grid;grid-template-columns:repeat(3,76px);gap:10px}
+.ztasten .btn{min-height:62px;font-size:26px;font-weight:700;justify-content:center;touch-action:manipulation}
+.ztasten .btn.ok{background:#1f7a4d;border-color:#1f7a4d;color:#fff}
 .rechen{min-width:120px;font-size:19px}
 .rechen .rz{font-size:26px;font-weight:900;margin-right:2px}
 .rechen.richtig{border-color:#1f7a4d;border-width:3px;opacity:1!important}
@@ -803,7 +811,7 @@ function renderList(){
     .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
   $("btn-test").hidden = st.sammlung !== "schueler"; // 03.11.2026: auch bei leerer Sammlung (Mathe braucht keine Gebärden)
-  $("btn-ueben").hidden = !items.length;
+  $("btn-ueben").hidden = !items.length && st.sammlung !== "schueler"; // 03.11.2026: Schüler können ohne Gebärden rechnen üben
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
@@ -1036,8 +1044,82 @@ const ARTEN = {
   blitz:    {name:"Blitzlesen", info:"Das Wort erscheint eine halbe Sekunde, dann aufschreiben."},
   falesen:  {name:"Fingeralphabet lesen", info:"Fingeralphabet ansehen, Wort aufschreiben."},
   artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."},
-  mathe:    {name:"Mathe: Rechenart erkennen", info:"Wort oder Satz lesen, Rechenart wählen (plus, minus, mal, geteilt)."}
+  mathe:    {name:"Mathe: Rechenart erkennen", info:"Wort oder Satz lesen, Rechenart wählen (plus, minus, mal, geteilt)."},
+  rechnen:  {name:"Kopfrechnen", info:"Aufgabe rechnen, Ergebnis eintippen (bis 20, bis 100, Einmaleins)."}
 };
+/* Kopfrechnen (03.11.2026, Freddy): Aufgaben werden jedes Mal zufällig erzeugt. Nur positive Zahlen, die Null kommt ab und zu vor,
+   etwa 7 von 10 Aufgaben mit Zehnerübergang (wo möglich), nie durch 0 teilen. Eingabe über eigenes Zahlenfeld (am Mac auch Tastatur). */
+const RBEREICH = {z20:{name:"Plus und Minus bis 20", max:20, ops:{"+":"nur Plus","-":"nur Minus","pm":"gemischt"}},
+  z100:{name:"Plus und Minus bis 100", max:100, ops:{"+":"nur Plus","-":"nur Minus","pm":"gemischt"}},
+  e1x1:{name:"Kleines Einmaleins", ops:{"*":"nur Mal","/":"nur Geteilt","md":"gemischt"}}};
+const RZ = {"+":"+","-":"−","*":"·","/":":"};
+function zufall(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
+function rAufgabe(bereich, op){
+  if (op === "pm") op = Math.random() < .5 ? "+" : "-";
+  if (op === "md") op = Math.random() < .5 ? "*" : "/";
+  const nullAuf = Math.random() < .08, ueber = Math.random() < .76; // .76 ohne Null-Aufgaben ≈ 7 von 10 insgesamt
+  let a = 0, b = 0, l;
+  if (op === "*" || op === "/"){
+    const x = nullAuf ? 0 : zufall(1, 10), y = zufall(1, 10);
+    if (op === "*"){ [a, b] = Math.random() < .5 ? [x, y] : [y, x]; l = a * b; }
+    else { a = x * y; b = y; l = x; }
+  } else {
+    const N = RBEREICH[bereich].max;
+    for (let n = 0; n < 500; n++){
+      if (op === "+"){
+        if (nullAuf){ a = zufall(0, N); b = 0; if (Math.random() < .5) [a, b] = [b, a]; break; }
+        a = zufall(1, N - 1); b = zufall(1, N - a);
+        if (((a % 10) + (b % 10) >= 10) === ueber) break;
+      } else {
+        if (nullAuf){ a = zufall(0, N); b = Math.random() < .5 ? 0 : a; break; }
+        a = zufall(2, N); b = zufall(1, a - 1);
+        if (((a % 10) < (b % 10)) === ueber) break;
+      }
+    }
+    l = op === "+" ? a + b : a - b;
+  }
+  return {id:"r" + Math.random().toString(36).slice(2), wort:a + " " + RZ[op] + " " + b, loesung:l, rop:op};
+}
+function rAufgaben(n){ const r = [], schon = new Set(); for (let v = 0; r.length < n && v < 5000; v++){ const x = rAufgabe(T.rb, T.rop); if (schon.has(x.wort)) continue; schon.add(x.wort); r.push(x); } return r; } // keine Aufgabe doppelt im Test
+function rWahlHtml(ueben){
+  const B = RBEREICH[T.rb];
+  return `<h3>Bereich</h3><div class="arten">${Object.entries(RBEREICH).map(([k, x]) => `<label class="art${T.rb === k ? " an" : ""}"><input type="radio" name="rb" value="${k}" ${T.rb === k ? "checked" : ""}><span><strong>${x.name}</strong></span></label>`).join("")}</div>
+    <h3>Rechenart</h3><div class="arten">${Object.entries(B.ops).map(([k, t]) => `<label class="art${T.rop === k ? " an" : ""}"><input type="radio" name="rop" value="${k}" ${T.rop === k ? "checked" : ""}><span><strong>${t}</strong></span></label>`).join("")}</div>`
+    + (ueben ? "" : `<label class="lab" for="t-anzahl">Anzahl Aufgaben (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben, jedes Mal neu ausgedacht</p>`);
+}
+/* Üben in der Schüler-Sammlung (03.11.2026): Gebärden, Kopfrechnen oder Rechenart erkennen – Rechnen ohne Ende, ohne Bilanz */
+function uArtWahlHtml(){
+  const g = st.eintraege.filter(e => e.sammlung === st.sammlung).length;
+  const arten = {gebaerden:{name:"Gebärden üben", info:g ? `Wort sehen, Gebärde selbst machen, dann kontrollieren (${g} Wörter).` : "– noch keine Gebärden", an:!!g},
+    rechnen:{name:ARTEN.rechnen.name, info:"Immer neue Aufgaben, bis du aufhörst.", an:true},
+    mathe:{name:ARTEN.mathe.name, info:"Immer neue Aufgaben, bis du aufhörst.", an:true}};
+  return `<h3>Was möchtest du üben?</h3><div class="arten">${Object.entries(arten).map(([k, a]) => `<label class="art${T.uart === k ? " an" : ""}"><input type="radio" name="uart" value="${k}" ${T.uart === k ? "checked" : ""} ${a.an ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info}</span></span></label>`).join("")}</div>`;
+}
+function aktArt(){ return T.phase === "rueben" ? T.uart : T.art; }
+function rRueck(w){ return `<p class="rueck ${w.ok ? "ja" : "nein"}">${w.ok ? "Richtig!" : "Leider falsch."} ${esc(w.e.wort)} = <strong>${w.e.loesung}</strong></p>`; }
+function matheRueck(w){ const e = w.e, ok = w.wahl === e.mathe;
+  return `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} „${esc(e.wort)}“ heißt: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
+    + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : ""); }
+function zFeld(w){
+  const fertig = !!w.wahl, cls = fertig ? (w.ok ? " ja" : " nein") : "";
+  const t = k => `<button type="button" class="btn${k === "ok" ? " ok" : ""}" data-z="${k}" ${fertig ? "disabled" : ""} aria-label="${k === "del" ? "Löschen" : k === "ok" ? "Bestätigen" : k}">${k === "del" ? "⌫" : k === "ok" ? "OK" : k}</button>`;
+  return `<div class="zfeld"><div class="zanzeige${cls}" aria-live="polite">${esc(w.eingabe || "") || "&nbsp;"}</div><div class="ztasten">${["1","2","3","4","5","6","7","8","9","del","0","ok"].map(t).join("")}</div></div>`;
+}
+function zTaste(k){ // Zahlenfeld: Ziffern, Löschen, OK
+  const w = T.woerter[T.i]; if (!w || w.wahl) return;
+  const s = w.eingabe || "";
+  if (k === "del") w.eingabe = s.slice(0, -1);
+  else if (k === "ok"){ if (!s) return; w.wahl = s; w.ok = Number(s) === w.e.loesung; }
+  else if (/^\d$/.test(k) && s.length < 3) w.eingabe = s === "0" ? k : s + k;
+  else return;
+  renderTest();
+}
+function rNeu(){ // Üben ohne Ende: immer eine neue Aufgabe
+  let e;
+  if (T.uart === "rechnen"){ const alt = T.woerter[0] && T.woerter[0].e.wort; do e = rAufgabe(T.rb, T.rop); while (e.wort === alt); }
+  else { if (!T.deck || !T.deck.length) T.deck = mischen(MATHE_E); e = T.deck.pop(); }
+  T.woerter = [{e, wahl:null, eingabe:"", ansicht:T.uart}]; T.i = 0; T.rn = (T.rn || 0) + 1; T.flKey = ""; T.phase = "rueben"; renderTest(); $("testov").scrollTop = 0;
+}
 /* Mathemodus (22.10.2026, Liste von Freddy übernommen, Klasse 7–8 Werkrealschule): fest eingebaut, unabhängig vom Wortschatz.
    [Text, Rechenart, Erklärung (deutsche Entsprechung des Fachworts)] – Quelle: werkstatt/vokabelheft/mathe_signalwoerter.md */
 const RECHEN = {"+":{z:"+", n:"plus"}, "-":{z:"−", n:"minus"}, "*":{z:"×", n:"mal"}, "/":{z:"÷", n:"geteilt"}};
@@ -1058,11 +1140,12 @@ const MATHE_LISTE = [
 const MATHE_E = MATHE_LISTE.map(([t, op, erkl], i) => ({id:"mathe" + i, wort:t, artikel:"", mathe:op, matheErkl:erkl || ""}));
 /* Übungsmodus (22.10.2026 abends, beide Sammlungen): deutsches Wort (+ Erklärung) sehen → Gebärde selbst machen →
    „Gebärde anzeigen“ → selbst angeben „gewusst“/„nicht gewusst“. Nichts wird gespeichert. */
-const T = {modus:"test", phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(),
+const T = {modus:"test", phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(), rb:"z20", rop:"pm", uart:"", rn:0, deck:[],
   woerter:[], i:0, fotoUrl:"", flUrls:[], flKey:"", blitzTimer:null};
 function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
 function artPool(art){
+  if (art === "rechnen") return [{id:"rechnen"}]; // Aufgaben werden erzeugt (03.11.2026)
   if (art === "mathe" && T.modus !== "ueben") return MATHE_E;
   if (T.modus === "ueben") return st.eintraege.filter(e => e.sammlung === st.sammlung);
   const alle = schuelerEintraege();
@@ -1076,6 +1159,7 @@ function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ cons
 function tAuswahl(){
   const alle = artPool(T.art);
   if (T.art === "mathe" && T.modus !== "ueben") return mischen(alle).slice(0, T.anzahl);
+  if (T.art === "rechnen" && T.modus !== "ueben") return rAufgaben(T.anzahl);
   if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
   if (T.quelle === "thema") return alle.filter(e => e.thema && themaKey(e) === T.thema);                          // ganzes Thema
   if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
@@ -1101,6 +1185,7 @@ function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign(
 const KOST1 = ` <span class="kost">−1</span>`;
 /* Bewertung am Ende (Freddy 22.10.): Schnitt 0–5 ohne Verdopplung; 5 = „Perfekt!!“, ≥ 3 = „Super“, < 3 = „Übe noch ein bisschen“ */
 function tSchnitt(){
+  if (T.art === "rechnen") return 5 * T.woerter.filter(w => w.ok).length / T.woerter.length;
   if (T.art === "mathe") return 5 * T.woerter.filter(w => w.wahl === w.e.mathe).length / T.woerter.length;
   if (T.art === "artikel") return 5 * T.woerter.filter(w => w.wahl === w.e.artikel).length / T.woerter.length;
   return T.woerter.reduce((a, w) => a + (w.richtig ? tMoeglich(w) : 0), 0) / T.woerter.length;
@@ -1116,7 +1201,7 @@ function tNeuStart(woerter){
   T.woerter = mischen(woerter.map(w => ({e:w.e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()})));
   T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0;
 }
-function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" || T.phase === "rueben" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
 function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
 function flUrl(blob){ const u = URL.createObjectURL(blob); T.flUrls.push(u); return u; }
 function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTimer = null; } }
@@ -1138,12 +1223,14 @@ function renderTest(){
     const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
     const n = tAuswahl().length;
     const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
-    const ueben = T.modus === "ueben";
-    el.innerHTML = tKopf(ueben ? "Gebärden üben" : "Test") + `<section class="panel testwahl">
-      ${ueben ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : `<h3>Übungsart</h3>
+    const ueben = T.modus === "ueben", uWahl = ueben && st.sammlung === "schueler", ug = !ueben || T.uart === "gebaerden";
+    const rWahl = (!ueben && T.art === "rechnen") || (ueben && T.uart === "rechnen"), nn = rWahl || (ueben && T.uart === "mathe") ? 1 : n;
+    el.innerHTML = tKopf(ueben ? (uWahl ? "Üben" : "Gebärden üben") : "Test") + `<section class="panel testwahl">
+      ${uWahl ? uArtWahlHtml() : ""}
+      ${ueben ? (ug ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : "") : `<h3>Übungsart</h3>
       <div class="arten">${Object.entries(ARTEN).map(([k, a]) => { const m = artPool(k).length;
-        return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>`}
-      ${!ueben && T.art === "mathe" ? `<h3>Aufgaben</h3><p class="hint">Fachwörter, Alltagswörter und Sätze aus der Mathe-Liste (${MATHE_E.length}), gemischt.</p>
+        return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${k === "rechnen" ? "" : m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>`}
+      ${rWahl ? rWahlHtml(ueben) : ueben && !ug ? "" : !ueben && T.art === "mathe" ? `<h3>Aufgaben</h3><p class="hint">Fachwörter, Alltagswörter und Sätze aus der Mathe-Liste (${MATHE_E.length}), gemischt.</p>
       <label class="lab" for="t-anzahl">Anzahl Aufgaben (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
       <p class="hint" id="t-info">${n} Aufgaben</p>` : `<h3>Wörter</h3>
       ${opt("gesamt", "Gesamtwortschatz" + (!ueben && T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
@@ -1153,7 +1240,7 @@ function renderTest(){
       ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
       ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
       <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>`}
-      <div><button type="button" class="btn primary" data-t="los" ${n ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
+      <div><button type="button" class="btn primary" data-t="los" ${nn ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
     return;
   }
   if (T.phase === "wort"){
@@ -1167,11 +1254,11 @@ function renderTest(){
     // Zahl senkrecht: KEIN dominant-baseline (Safari legt es anders aus) – Grundlinie = Sternmitte (y 57,7) + halbe Ziffernhöhe (≈ 0,36 × 40 px)
     const jetzt = tMoeglich(w), vorher = T.sternWort === T.i ? T.sternPunkte : jetzt, minus = vorher - jetzt;
     T.sternWort = T.i; T.sternPunkte = jetzt;
-    const stern = T.art === "artikel" || T.art === "mathe" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
+    const stern = T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
       <defs><radialGradient id="sternglanz" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f1c"/></radialGradient></defs>
       <path d="M60 8l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="url(#sternglanz)" stroke="#ff9f1c" stroke-width="3" stroke-linejoin="round"/>
       <text x="60" y="72" text-anchor="middle" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
-    $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`);
+    $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">${T.art === "rechnen" ? "Aufgabe" : "Wort"} ${T.i + 1} von ${T.woerter.length}</span>`);
     $("t-stern").innerHTML = stern;   // Stern unter dem Video, rechts neben den Hilfe-Knöpfen (Freddy 22.10., 18:12)
     renderFlaeche(w);
     renderHilfen(w);
@@ -1188,10 +1275,19 @@ function renderTest(){
       unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} „${esc(e.wort)}“ heißt: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
         + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : "");
     }
+    if (T.art === "rechnen" && w.wahl) unter += rRueck(w);
     $("t-unter").innerHTML = unter;
     const weiter = $("t-weiter");
-    weiter.textContent = letzte ? (T.art === "artikel" || T.art === "mathe" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
-    weiter.disabled = ((T.art === "artikel" || T.art === "mathe") && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
+    weiter.textContent = letzte ? (T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
+    weiter.disabled = ((T.art === "artikel" || T.art === "mathe" || T.art === "rechnen") && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
+    return;
+  }
+  if (T.phase === "rueben"){ // Üben ohne Ende (03.11.2026)
+    const w = T.woerter[0];
+    el.innerHTML = tKopf(T.uart === "rechnen" ? ARTEN.rechnen.name + " üben" : ARTEN.mathe.name, `<span class="testnr">Aufgabe ${T.rn}</span>`) + `<div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div></div><div id="t-unter"></div>
+      <div><button type="button" class="btn primary" data-t="rnext" ${w.wahl ? "" : "disabled"}>Nächste Aufgabe</button></div>`;
+    T.flKey = ""; renderFlaeche(w); renderHilfen(w);
+    $("t-unter").innerHTML = w.wahl ? (T.uart === "rechnen" ? rRueck(w) : matheRueck(w)) : "";
     return;
   }
   if (T.phase === "uwort"){
@@ -1239,6 +1335,17 @@ function renderTest(){
     return;
   }
   if (T.phase === "ergebnis"){
+    if (T.art === "rechnen"){
+      const r = T.woerter.filter(w => w.ok).length;
+      el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
+        ${lobHtml(tSchnitt())}
+        <p style="font-size:20px"><strong>${r} von ${T.woerter.length} richtig</strong></p>
+        <table class="erg"><tr><th>Aufgabe</th><th>Deine Antwort</th><th>Richtig</th></tr>
+        ${T.woerter.map(w => `<tr><td>${w.ok ? "✓" : "✗"} ${esc(w.e.wort)}</td><td>${esc(w.wahl || "–")}</td><td>${w.e.loesung}</td></tr>`).join("")}</table>
+        <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
+        <div class="hilfen">${r < T.woerter.length ? `<button type="button" class="btn primary" data-t="rnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${r < T.woerter.length ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
+      return;
+    }
     if (T.art === "mathe"){
       const r = T.woerter.filter(w => w.wahl === w.e.mathe).length;
       el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
@@ -1300,30 +1407,33 @@ function renderFlaeche(w){
   else if (w.ansicht === "bereit") fl.innerHTML = `<div class="leerflaeche"><button type="button" class="btn primary" data-t="zeigen">Wort zeigen</button><p class="hint">Das Wort erscheint nur eine halbe Sekunde.</p></div>`;
   else if (w.ansicht === "wort") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(artikelWort(e))}</div></div>`;
   else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${esc(e.wort)}</div></div>`;
+  else if (w.ansicht === "rechnen") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(e.wort)} = ?</div></div>`;
   else if (w.ansicht === "artikel") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">… ${esc(e.wort)}</div></div>`;
   else fl.innerHTML = `<div class="leerflaeche"><p class="hint">Schreib das Wort auf.</p></div>`;
 }
 function knopf(t, text, an, aus){ return `<button type="button" class="btn" data-t="${t}" aria-pressed="${!!an}" ${aus ? "disabled" : ""}>${text}</button>`; }
 function renderHilfen(w){
-  const e = w.e, h = [];
-  if (T.art === "gebaerde"){
+  const e = w.e, h = [], art = aktArt();
+  if (art === "gebaerde"){
     h.push(knopf("geb", "Gebärde", w.ansicht === "gebaerde"));
     h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
     // Fingeralphabet erst nach dem Anfangsbuchstaben: Kosten so anzeigen, wie sie dann gelten
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
     if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + KOST1, w.ansicht === "erkl"));
-  } else if (T.art === "fach"){
+  } else if (art === "fach"){
     h.push(knopf("erklsehen", "Erklärung", w.ansicht === "erkl"));
     h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
-  } else if (T.art === "blitz"){
+  } else if (art === "blitz"){
     h.push(knopf("blitzgeb", "Gebärde" + KOST1, w.ansicht === "gebaerde", !w.gezeigt));
     h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc || !w.gezeigt));
-  } else if (T.art === "falesen"){
+  } else if (art === "falesen"){
     h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
-  } else if (T.art === "mathe"){
+  } else if (art === "mathe"){
     Object.entries(RECHEN).forEach(([op, x]) => h.push(`<button type="button" class="btn artwahl rechen${w.wahl === op ? (op === e.mathe ? " ja" : " nein") : (w.wahl && op === e.mathe ? " richtig" : "")}" data-mwahl="${op}" ${w.wahl ? "disabled" : ""}><span class="rz">${x.z}</span> ${x.n}</button>`));
-  } else if (T.art === "artikel"){
+  } else if (art === "rechnen"){
+    h.push(zFeld(w));
+  } else if (art === "artikel"){
     ["der","die","das"].forEach(a => h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : ""}" data-wahl="${a}" ${w.wahl ? "disabled" : ""}>${a}</button>`));
   }
   $("t-hilfen").innerHTML = h.join("");
@@ -1334,7 +1444,7 @@ function ergKnoepfe(){
     <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">Fertig</button></div>`;
 }
 function startAnsicht(){
-  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe"}[T.art];
+  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe", rechnen:"rechnen"}[T.art];
 }
 function testZu(){
   stoppeBlitz(); flFrei(); T.flKey = ""; if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
@@ -1345,10 +1455,13 @@ function uebenStart(woerter){
   T.woerter = mischen(woerter.map(e => ({e, zeige:null, gesehen:false, gewusst:null})));
   T.i = 0; T.gerendert = null; T.phase = "uwort"; renderTest(); $("testov").scrollTop = 0;
 }
-$("btn-ueben").addEventListener("click", () => { T.modus = "ueben"; T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+$("btn-ueben").addEventListener("click", () => { T.modus = "ueben"; { const g = st.eintraege.some(e => e.sammlung === st.sammlung); if (st.sammlung !== "schueler") T.uart = "gebaerden"; else if (!T.uart || (T.uart === "gebaerden" && !g)) T.uart = g ? "gebaerden" : "rechnen"; } T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
 $("btn-test").addEventListener("click", () => { T.modus = "test"; if (!artPool(T.art).length) T.art = Object.keys(ARTEN).find(k => artPool(k).length) || T.art; /* 03.11.2026: leere Art → erste mit Inhalt (z. B. Mathe) */ T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
 $("testin").addEventListener("change", ev => {
   const t = ev.target;
+  if (t.name === "uart"){ T.uart = t.value; renderTest(); return; }
+  if (t.name === "rb"){ T.rb = t.value; if (!(T.rop in RBEREICH[T.rb].ops)) T.rop = T.rb === "e1x1" ? "md" : "pm"; renderTest(); return; }
+  if (t.name === "rop"){ T.rop = t.value; renderTest(); return; }
   if (t.name === "tart"){ T.art = t.value; T.einzeln = new Set(); renderTest(); }
   else if (t.name === "tq"){ T.quelle = t.value; renderTest(); }
   else if (t.id === "t-block"){ T.block = t.value; renderTest(); }
@@ -1366,11 +1479,14 @@ $("testin").addEventListener("click", ev => {
   if (b.dataset.nein !== undefined){ T.woerter[+b.dataset.nein].richtig = false; renderTest(); return; }
   if (b.dataset.wahl){ if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
   if (b.dataset.mwahl){ if (!w.wahl){ w.wahl = b.dataset.mwahl; renderTest(); } return; }
+  if (b.dataset.z !== undefined){ zTaste(b.dataset.z); return; }
   const a = b.dataset.t;
   if (a === "abbrechen"){
-    if (!["ergebnis","start","ueben","uergebnis"].includes(T.phase) && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = T.phase === "uwort" ? "Wirklich beenden?" : "Wirklich abbrechen?"; return; }
+    if (!["ergebnis","start","ueben","uergebnis","rueben"].includes(T.phase) && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = T.phase === "uwort" ? "Wirklich beenden?" : "Wirklich abbrechen?"; return; }
     testZu();
-  } else if (a === "los" && T.modus === "ueben"){ T.uAlle = tAuswahl(); uebenStart(T.uAlle); }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
+  } else if (a === "los" && T.modus === "ueben"){ if (T.uart === "rechnen" || T.uart === "mathe"){ T.rn = 0; T.deck = []; T.woerter = []; rNeu(); } else { T.uAlle = tAuswahl(); uebenStart(T.uAlle); } }
+  else if (a === "rnext"){ rNeu(); }
+  else if (a === "rnochmal"){ T.woerter = mischen(T.woerter.filter(x => !x.ok).map(x => ({e:x.e, wahl:null, eingabe:"", ansicht:"rechnen"}))); T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0; }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
   else if (a === "ugeb"){ w.zeige = "geb"; w.gesehen = true; renderTest(); }
   else if (a === "uerkl"){ w.zeige = "erkl"; renderTest(); }
   else if (a === "gewusst" || a === "nichtgewusst"){
@@ -1400,7 +1516,7 @@ $("testin").addEventListener("click", ev => {
   else if (a === "weiter"){
     stoppeBlitz();
     if (T.i < T.woerter.length - 1){ T.i++; renderTest(); }
-    else { T.phase = T.art === "artikel" || T.art === "mathe" ? "ergebnis" : "foto"; renderTest(); }
+    else { T.phase = T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "ergebnis" : "foto"; renderTest(); }
     $("testov").scrollTop = 0;
   }
   else if (a === "wiederholen"){ tNeuStart(T.woerter); }
@@ -1408,6 +1524,19 @@ $("testin").addEventListener("click", ev => {
   else if (a === "uweiter"){ T.ui++; renderTest(); }
   else if (a === "uzurueck"){ T.ui--; renderTest(); }
   else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
+});
+
+/* Kopfrechnen am Mac (03.11.2026): Ziffern tippen, Rückschritt löscht, Enter bestätigt bzw. geht weiter */
+document.addEventListener("keydown", ev => {
+  if ($("testov").hidden || ev.metaKey || ev.ctrlKey || ev.altKey) return;
+  if (ev.target && /^(INPUT|SELECT|TEXTAREA)$/.test(ev.target.tagName)) return;
+  if (!((T.phase === "wort" && T.art === "rechnen") || (T.phase === "rueben" && T.uart === "rechnen"))) return;
+  const w = T.woerter[T.i];
+  if (/^\d$/.test(ev.key)) zTaste(ev.key);
+  else if (ev.key === "Backspace") zTaste("del");
+  else if (ev.key === "Enter"){ if (w && !w.wahl) zTaste("ok"); else { const b = T.phase === "rueben" ? document.querySelector('[data-t="rnext"]') : $("t-weiter"); if (b && !b.disabled) b.click(); } }
+  else return;
+  ev.preventDefault();
 });
 
 /* ---------- Paket: gemeinsame Helfer ---------- */

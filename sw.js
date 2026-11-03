@@ -1,5 +1,5 @@
 // Offline-Betrieb des Gebärden-Wörterbuchs. Erzeugt von baue_woerterbuch_github.py – nicht von Hand ändern.
-const CACHE = "woerterbuch-4236ccb75e";
+const CACHE = "woerterbuch-66d5962932";
 const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
