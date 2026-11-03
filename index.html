@@ -802,7 +802,7 @@ function renderList(){
   const items = st.eintraege.filter(e => e.sammlung === st.sammlung)
     .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
-  $("btn-test").hidden = st.sammlung !== "schueler" || !items.length;
+  $("btn-test").hidden = st.sammlung !== "schueler"; // 03.11.2026: auch bei leerer Sammlung (Mathe braucht keine Gebärden)
   $("btn-ueben").hidden = !items.length;
   const L = $("list");
   L.hidden = st.xp.open;
@@ -1346,7 +1346,7 @@ function uebenStart(woerter){
   T.i = 0; T.gerendert = null; T.phase = "uwort"; renderTest(); $("testov").scrollTop = 0;
 }
 $("btn-ueben").addEventListener("click", () => { T.modus = "ueben"; T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
-$("btn-test").addEventListener("click", () => { T.modus = "test"; T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+$("btn-test").addEventListener("click", () => { T.modus = "test"; if (!artPool(T.art).length) T.art = Object.keys(ARTEN).find(k => artPool(k).length) || T.art; /* 03.11.2026: leere Art → erste mit Inhalt (z. B. Mathe) */ T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
 $("testin").addEventListener("change", ev => {
   const t = ev.target;
   if (t.name === "tart"){ T.art = t.value; T.einzeln = new Set(); renderTest(); }
