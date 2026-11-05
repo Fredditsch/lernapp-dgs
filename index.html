@@ -370,8 +370,80 @@ button.kachel{cursor:pointer}
 .testwahl.spiel .btn.primary{background:var(--c);border-color:var(--c);color:var(--on-color);border-radius:14px;font-size:18px;padding:12px 26px}
 .los{display:flex;justify-content:flex-end}
 [data-t=wnext]{margin-left:auto}
-mark.sigwort{background:#ffd43b;color:#23161b;border-radius:8px;padding:0 6px;box-shadow:0 0 0 3px #ffd43b} /* Signalwort (05.11.2026) */
+:root{--signal:#e8590c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--signal:#ff922b}}
+:root[data-theme="dark"]{--signal:#ff922b}
+mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* Signalwort: Schrift verfärbt sich, kein Kasten (Freddy 05.11.2026) */
 
+
+/* ---------- PC-Darstellung (Full HD, Maus) – Entwurf 05.11.2026 von Freddy freigegeben ---------- */
+.sp{display:contents}
+@media (min-width:1200px) and (pointer:fine){
+  /* Startbildschirme */
+  .home{max-width:1760px;min-height:100vh;display:flex;flex-direction:column;padding-block:40px 56px;gap:36px}
+  .hkopf h1{font-size:44px}
+  .hnav{font-size:22px;padding:12px 22px;border-radius:16px;min-width:150px}
+  .hfrage{font-size:34px}
+  .kacheln{flex:1;grid-template-columns:repeat(auto-fit,minmax(300px,400px));justify-content:center;align-content:center;gap:40px}
+  .kachel{border-radius:40px;padding:48px 24px 40px;gap:14px}
+  .kicon{width:170px;height:170px;padding:38px;box-shadow:0 0 0 10px var(--surface)}
+  .ktitel{font-size:40px;margin-top:10px}
+  .ksub{font-size:22px}
+  .bald{font-size:18px;padding:3px 12px}
+  .akt{gap:16px;margin-top:10px}
+  .akt button{font-size:24px;padding:12px 30px;border-radius:16px;border-width:3px}
+  /* Test/Üben: breiter, größer */
+  .testov{padding:20px 96px 24px}
+  .testin{max-width:1728px;gap:24px;font-size:22px}
+  .testkopf h2{font-size:44px}
+  .testnr{font-size:24px}
+  .testkopf .btn{font-size:20px;padding:12px 22px;border:2px solid var(--line);border-radius:16px}
+  .testin .hint{font-size:20px}
+  /* Einstellungen zweispaltig */
+  .testwahl.spiel{grid-template-columns:1fr 1fr;padding:40px;gap:28px 32px;border-radius:40px}
+  .testwahl.spiel > *{grid-column:1 / -1}
+  .testwahl.spiel > .sp{display:grid;gap:28px;align-content:start;grid-column:auto}
+  .einst{border-radius:26px;padding:26px 30px;gap:16px}
+  .elab{font-size:28px}
+  .testwahl.spiel select{font-size:26px;padding:16px 64px 16px 20px;border-width:3px;border-radius:18px;background-size:22px;background-position:right 22px center}
+  .testwahl.spiel input[type=number]{font-size:28px;max-width:160px;border-width:3px;border-radius:18px;padding:12px 20px}
+  .testwahl.spiel label.opt{font-size:24px;padding:12px 22px}
+  .testwahl.spiel label.opt input{width:24px;height:24px}
+  .testwahl.spiel .btn.primary{font-size:28px;padding:20px 44px;border-radius:20px}
+  .testliste{max-height:420px;font-size:22px}
+  /* Aufgaben */
+  .leerflaeche{min-height:420px;border-radius:32px;padding:40px}
+  .blitzwort{font-size:96px}
+  .blitzwort.mathesatz{font-size:64px;max-width:1300px;line-height:1.3}
+  .flaeche .player video,.flaeche .player img{max-height:62vh}
+  .hilfen{gap:16px}
+  .hilfen .btn{font-size:22px;padding:14px 22px;border-radius:16px}
+  .hilfen .btn.artwahl{font-size:36px;min-width:200px;padding:22px 30px;border-radius:24px;border-width:3px}
+  .hilfen .btn.rechen{flex:1;font-size:40px;padding:26px 0}
+  .rechen .rz{font-size:56px}
+  .abc{font-size:64px}
+  .rueck{font-size:32px}
+  .los .btn.primary{font-size:30px;padding:20px 48px;border-radius:20px}
+  [data-t=wnext]{font-size:30px!important;padding:20px 48px!important;border-radius:20px!important}
+  .stern{width:120px;height:120px}
+  .minusflug{font-size:48px}
+  /* Kopfrechnen: Aufgabe links, Zahlenfeld und Stern rechts */
+  .testin[data-art=rechnen]{grid-template-columns:1.25fr 1fr;align-items:center;column-gap:48px}
+  .testin[data-art=rechnen] > *{grid-column:1 / -1}
+  .testin[data-art=rechnen] > .flaeche{grid-column:1}
+  .testin[data-art=rechnen] > .hilfzeile{grid-column:2;flex-direction:column-reverse;gap:14px}
+  .testin[data-art=rechnen] .stern{width:84px;height:84px}
+  .testin[data-art=rechnen] .leerflaeche{min-height:480px}
+  .testin[data-art=rechnen] .blitzwort{font-size:150px;line-height:1}
+  .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:80px}
+  .schriftlich{font-size:120px}
+  .zanzeige{font-size:72px;min-width:300px;min-height:108px;border-width:4px;border-radius:24px}
+  .ztasten{grid-template-columns:repeat(3,130px);gap:12px}
+  .ztasten .btn{min-height:84px;font-size:44px;border-radius:22px}
+  /* Ergebnis */
+  .lobtext{font-size:64px}.lob.perfekt .lobtext{font-size:76px}
+  .erg td,.erg th{padding:10px 12px}
+}
 </style>
 
 <div class="home" id="home" hidden></div>
@@ -1185,11 +1257,11 @@ function rWahlHtml(ueben){
   const B = RBEREICH[T.rb], passend = Object.entries(RBEREICH).filter(([, x]) => T.rop in x.ops);
   const haken = (B.ops === PM ? `<label class="opt"><input type="checkbox" id="r-unter" ${T.unter ? "checked" : ""}> untereinander schreiben</label>` : "")
     + (B.eins ? `<label class="opt"><input type="checkbox" id="r-eins" ${T.eins ? "checked" : ""}> nur einstellig dazuzählen und abziehen (0–9)</label>` : "");
-  return `<div class="einst"><label class="elab" for="t-rop">1. Rechenart</label><select id="t-rop">${ROPS.map(([g, l]) => `<optgroup label="${g}">${l.map(([k, t]) => `<option value="${esc(k)}" ${T.rop === k ? "selected" : ""}>${t}</option>`).join("")}</optgroup>`).join("")}</select></div>
+  return `<div class="sp"><div class="einst"><label class="elab" for="t-rop">1. Rechenart</label><select id="t-rop">${ROPS.map(([g, l]) => `<optgroup label="${g}">${l.map(([k, t]) => `<option value="${esc(k)}" ${T.rop === k ? "selected" : ""}>${t}</option>`).join("")}</optgroup>`).join("")}</select></div>
     <div class="einst"><label class="elab" for="t-rb">2. Bereich</label><select id="t-rb">${passend.map(([k, x]) => `<option value="${k}" ${T.rb === k ? "selected" : ""}>${x.name}</option>`).join("")}</select>
-    ${T.rb === "e1x1" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}</div>`
+    ${T.rb === "e1x1" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}</div></div><div class="sp">`
     + (haken ? `<div class="einst"><span class="elab">3. Darstellung</span>${haken}</div>` : "")
-    + (ueben ? "" : `<div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben (10–50), jedes Mal neu ausgedacht</p></div>`);
+    + (ueben ? "" : `<div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben (10–50), jedes Mal neu ausgedacht</p></div>`) + `</div>`;
 }
 /* Üben in der Schüler-Sammlung (03.11.2026): Gebärden, Kopfrechnen oder Rechenart erkennen – Rechnen ohne Ende, ohne Bilanz */
 function uArtWahlHtml(){
@@ -1390,7 +1462,7 @@ function mInst(e){ // Satz mit frisch gezogenen Zahlen
   return Object.assign({}, e, {wort:e.wort.replace(/\{([abgt])\}/g, (_, k) => z[k])});
 }
 function mStufeHtml(){
-  return `<div class="einst"><label class="elab" for="t-mstufe">Stufe</label><select id="t-mstufe">${Object.entries(MSTUFEN).map(([k, x]) => `<option value="${k}" ${T.mstufe === k ? "selected" : ""}>${x.name} – ${x.info} (${(x.s ? MATHE_E.filter(e => e.stufe === x.s) : MATHE_E).length})</option>`).join("")}</select></div>`;
+  return `<div class="sp"><div class="einst"><label class="elab" for="t-mstufe">Stufe</label><select id="t-mstufe">${Object.entries(MSTUFEN).map(([k, x]) => `<option value="${k}" ${T.mstufe === k ? "selected" : ""}>${x.name} – ${x.info} (${(x.s ? MATHE_E.filter(e => e.stufe === x.s) : MATHE_E).length})</option>`).join("")}</select></div></div>`;
 }
 /* Übungsmodus (22.10.2026 abends, beide Sammlungen): deutsches Wort (+ Erklärung) sehen → Gebärde selbst machen →
    „Gebärde anzeigen“ → selbst angeben „gewusst“/„nicht gewusst“. Nichts wird gespeichert. */
@@ -1467,6 +1539,7 @@ function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTi
 
 function renderTest(){
   const el = $("testin");
+  el.dataset.art = ["wort","rueben","wueben"].includes(T.phase) ? aktArt() : ""; // PC: Kopfrechnen zweispaltig (05.11.2026)
   if (T.phase !== "wort"){ flFrei(); T.flKey = ""; }
   if (T.phase === "start"){
     const alle = artPool(pArt());
@@ -1490,8 +1563,8 @@ function renderTest(){
       <div class="arten">${Object.entries(ARTEN).map(([k, a]) => { const m = artPool(k).length;
         return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${k === "rechnen" ? "" : m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>`}
       ${rWahl ? rWahlHtml(ueben) : ueben && !ug ? mStufeHtml() : !ueben && T.art === "mathe" ? mStufeHtml() + `
-      <div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
-      <p class="hint" id="t-info">${n} Aufgaben (10–50)</p></div>` : `<div class="einst"><label class="elab" for="t-quelle">Wörter</label>
+      <div class="sp"><div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
+      <p class="hint" id="t-info">${n} Aufgaben (10–50)</p></div></div>` : `<div class="einst"><label class="elab" for="t-quelle">Wörter</label>
       <select id="t-quelle">${opt("gesamt", "Gesamtwortschatz" + (!ueben && T.art !== "artikel" ? " (doppelte Punkte)" : ""))}${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") : ""}${themen.length ? opt("thema", "Thema (ganzes Thema)") : ""}${opt("fach", "Fach")}${opt("einzeln", "Einzelne Wörter")}</select>
       ${bloecke.length ? (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
       ${themen.length ? (T.quelle === "thema" ? `<select id="t-thema">${themen.map(e => `<option value="${esc(themaKey(e))}" ${themaKey(e) === T.thema ? "selected" : ""}>${esc(e.kategorie)} · ${esc(e.thema)}</option>`).join("")}</select>` : "") : ""}
