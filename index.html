@@ -430,19 +430,8 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
   .stern{width:120px;height:120px}
   .minusflug{font-size:48px}
   /* Kopfrechnen: Aufgabe links, Zahlenfeld und Stern rechts */
-  /* Antwortfeld unter der Aufgabe (Freddy 13:22: übersichtlicher), Zahlenfeld rechts daneben */
-  .testin[data-art=rechnen]{grid-template-columns:1.25fr 1fr;column-gap:48px;row-gap:14px;
-    grid-template-areas:"kopf kopf" "aufg stern" "aufg tasten" "feld tasten" "unter unter" "los los";grid-template-rows:auto auto 1fr auto auto auto}
-  .testin[data-art=rechnen] .hilfzeile,.testin[data-art=rechnen] #t-hilfen,.testin[data-art=rechnen] .zfeld{display:contents}
-  .testin[data-art=rechnen] > #t-kopf,.testin[data-art=rechnen] > .testkopf{grid-area:kopf}
-  .testin[data-art=rechnen] > .flaeche{grid-area:aufg}
-  .testin[data-art=rechnen] .zanzeige{grid-area:feld;justify-self:center}
-  .testin[data-art=rechnen] .ztasten{grid-area:tasten;justify-self:center;align-self:start}
-  .testin[data-art=rechnen] .sternplatz{grid-area:stern;justify-self:center}
-  .testin[data-art=rechnen] > #t-unter{grid-area:unter}
-  .testin[data-art=rechnen] > .los{grid-area:los}
-  .testin[data-art=rechnen] .stern{width:84px;height:84px}
-  .testin[data-art=rechnen] .leerflaeche{min-height:360px}
+  /* Kopfrechnen: alles in einer Spalte wie vorher – Rechnung, darunter Antwortfeld und Zahlenfeld (Freddy 13:33) */
+  .testin[data-art=rechnen] .leerflaeche{min-height:240px}
   .testin[data-art=rechnen] .blitzwort{font-size:150px;line-height:1}
   .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:80px}
   .schriftlich{font-size:120px}
@@ -2256,13 +2245,36 @@ $("home").addEventListener("click", ev => {
 $("nav-zurueck").addEventListener("click", () => geheZu("themen"));
 $("nav-start").addEventListener("click", () => geheZu("rolle"));
 
-/* PC-Darstellung an die Fenstergröße anpassen (05.11.2026): gestaltet für Full HD (1920×940 im Browser), am Laptop kleiner */
-function pcZoom(){
-  let z = 1;
-  try { if (matchMedia("(min-width:1200px) and (pointer:fine)").matches) z = Math.max(.55, Math.min(1, innerWidth / 1920, innerHeight / 940)); } catch(e){}
-  document.documentElement.style.setProperty("--pcz", z.toFixed(3));
+/* PC-Darstellung ins Fenster einpassen (05.11.2026): gestaltet für Full HD; misst den Inhalt und verkleinert, bis er ohne Scrollen passt */
+function pcHoehe(){ // Höhe des sichtbaren Inhalts in Bildschirmpixeln (inkl. Ränder)
+  const tov = $("testov");
+  if (!tov.hidden){ const r = $("testin").getBoundingClientRect(), cs = getComputedStyle(tov); return r.height + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom); }
+  const h = $("home"); if (h.hidden) return 0;
+  const teile = [...h.querySelectorAll(".hkopf,.hfrage,.kachel")]; if (!teile.length) return 0;
+  const oben = Math.min(...teile.map(x => x.getBoundingClientRect().top)), unten = Math.max(...teile.map(x => x.getBoundingClientRect().bottom)), cs = getComputedStyle(h);
+  return unten - oben + (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * (parseFloat(cs.zoom) || 1);
 }
-pcZoom(); window.addEventListener("resize", pcZoom);
+function pcZoom(){
+  const root = document.documentElement;
+  let pc = false; try { pc = matchMedia("(min-width:1200px) and (pointer:fine)").matches; } catch(e){}
+  if (!pc){ root.style.setProperty("--pcz", "1"); return; }
+  let z = Math.min(1, innerWidth / 1920);
+  for (let n = 0; n < 4; n++){ // zwei, drei Durchgänge, weil sich Zeilenumbrüche mit der Größe ändern
+    root.style.setProperty("--pcz", z.toFixed(3));
+    const h = pcHoehe(); if (!h) break;
+    const neu = Math.max(.5, Math.min(Math.min(1, innerWidth / 1920), z * innerHeight * .985 / h));
+    if (Math.abs(neu - z) < .005) break;
+    z = neu;
+  }
+  root.style.setProperty("--pcz", z.toFixed(3));
+}
+let pcPlan = 0;
+function pcBald(){ if (!pcPlan) pcPlan = requestAnimationFrame(() => { pcPlan = 0; pcZoom(); }); }
+window.addEventListener("resize", pcBald);
+try { const mo = new MutationObserver(pcBald);
+  mo.observe($("testin"), {childList:true, subtree:true}); mo.observe($("home"), {childList:true, subtree:true});
+  mo.observe($("testov"), {attributes:true, attributeFilter:["hidden"]}); mo.observe($("home"), {attributes:true, attributeFilter:["hidden"]}); } catch(e){}
+pcZoom();
 
 /* ---------- Start ---------- */
 (async function start(){
