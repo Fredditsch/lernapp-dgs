@@ -380,7 +380,9 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
 .sp{display:contents}
 @media (min-width:1200px) and (pointer:fine){
   /* Startbildschirme */
-  .home{max-width:1760px;min-height:100vh;display:flex;flex-direction:column;padding-block:40px 56px;gap:36px}
+  /* mitwachsen/schrumpfen: alles ist für ein Full-HD-Fenster (1920×940) gestaltet und wird auf kleineren Bildschirmen (Laptop) verkleinert */
+  .home,.testin{zoom:var(--pcz,1)}
+  .home{max-width:1760px;min-height:calc(100vh / var(--pcz,1));display:flex;flex-direction:column;padding-block:40px 56px;gap:36px}
   .hkopf h1{font-size:44px}
   .hnav{font-size:22px;padding:12px 22px;border-radius:16px;min-width:150px}
   .hfrage{font-size:34px}
@@ -428,12 +430,19 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
   .stern{width:120px;height:120px}
   .minusflug{font-size:48px}
   /* Kopfrechnen: Aufgabe links, Zahlenfeld und Stern rechts */
-  .testin[data-art=rechnen]{grid-template-columns:1.25fr 1fr;align-items:center;column-gap:48px}
-  .testin[data-art=rechnen] > *{grid-column:1 / -1}
-  .testin[data-art=rechnen] > .flaeche{grid-column:1}
-  .testin[data-art=rechnen] > .hilfzeile{grid-column:2;flex-direction:column-reverse;gap:14px}
+  /* Antwortfeld unter der Aufgabe (Freddy 13:22: übersichtlicher), Zahlenfeld rechts daneben */
+  .testin[data-art=rechnen]{grid-template-columns:1.25fr 1fr;column-gap:48px;row-gap:14px;
+    grid-template-areas:"kopf kopf" "aufg stern" "aufg tasten" "feld tasten" "unter unter" "los los";grid-template-rows:auto auto 1fr auto auto auto}
+  .testin[data-art=rechnen] .hilfzeile,.testin[data-art=rechnen] #t-hilfen,.testin[data-art=rechnen] .zfeld{display:contents}
+  .testin[data-art=rechnen] > #t-kopf,.testin[data-art=rechnen] > .testkopf{grid-area:kopf}
+  .testin[data-art=rechnen] > .flaeche{grid-area:aufg}
+  .testin[data-art=rechnen] .zanzeige{grid-area:feld;justify-self:center}
+  .testin[data-art=rechnen] .ztasten{grid-area:tasten;justify-self:center;align-self:start}
+  .testin[data-art=rechnen] .sternplatz{grid-area:stern;justify-self:center}
+  .testin[data-art=rechnen] > #t-unter{grid-area:unter}
+  .testin[data-art=rechnen] > .los{grid-area:los}
   .testin[data-art=rechnen] .stern{width:84px;height:84px}
-  .testin[data-art=rechnen] .leerflaeche{min-height:480px}
+  .testin[data-art=rechnen] .leerflaeche{min-height:360px}
   .testin[data-art=rechnen] .blitzwort{font-size:150px;line-height:1}
   .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:80px}
   .schriftlich{font-size:120px}
@@ -2246,6 +2255,14 @@ $("home").addEventListener("click", ev => {
 });
 $("nav-zurueck").addEventListener("click", () => geheZu("themen"));
 $("nav-start").addEventListener("click", () => geheZu("rolle"));
+
+/* PC-Darstellung an die Fenstergröße anpassen (05.11.2026): gestaltet für Full HD (1920×940 im Browser), am Laptop kleiner */
+function pcZoom(){
+  let z = 1;
+  try { if (matchMedia("(min-width:1200px) and (pointer:fine)").matches) z = Math.max(.55, Math.min(1, innerWidth / 1920, innerHeight / 940)); } catch(e){}
+  document.documentElement.style.setProperty("--pcz", z.toFixed(3));
+}
+pcZoom(); window.addEventListener("resize", pcZoom);
 
 /* ---------- Start ---------- */
 (async function start(){
