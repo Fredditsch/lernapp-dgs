@@ -314,16 +314,76 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 .report .row{justify-content:space-between}
 .toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom, 0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;z-index:20;max-width:calc(100% - 32px)}
 @media (prefers-reduced-motion: no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,6px)}}}
+
+/* ---------- Startbildschirme (05.11.2026, Entwurf Variante C von Freddy gewählt) ---------- */
+:root{--wortf:#8e1f3d;--wortf-soft:#f6e3e8;--mathe:#1d5fa8;--mathe-soft:#e2edf9;--deutsch:#b45309;--deutsch-soft:#fbeedc;--fachw:#0f766e;--fachw-soft:#dcf3ef;--grau:#9a8f93;--grau-soft:#efebec;--on-color:#ffffff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--wortf:#c2416a;--wortf-soft:#452030;--mathe:#3b82d6;--mathe-soft:#16283f;--deutsch:#d97706;--deutsch-soft:#3a2716;--fachw:#14a093;--fachw-soft:#12312d;--grau:#7d7276;--grau-soft:#2f2428}}
+:root[data-theme="dark"]{--wortf:#c2416a;--wortf-soft:#452030;--mathe:#3b82d6;--mathe-soft:#16283f;--deutsch:#d97706;--deutsch-soft:#3a2716;--fachw:#14a093;--fachw-soft:#12312d;--grau:#7d7276;--grau-soft:#2f2428}
+.home{max-width:820px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:grid;gap:22px}
+.hkopf{display:flex;align-items:center;gap:8px}
+.hkopf h1{flex:1;min-width:0;margin:0;text-align:center;font-size:26px;text-wrap:balance}
+.hnav{min-width:96px;justify-content:center}
+.hnav[hidden]{display:inline-flex!important;visibility:hidden}
+.hfrage{margin:0;text-align:center;font-family:var(--font-display);font-size:22px;font-weight:700}
+.kacheln{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.kachel{--c:var(--wortf);--s:var(--wortf-soft);font:inherit;color:var(--ink);border:0;background:var(--s);border-radius:26px;padding:22px 14px 18px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+button.kachel{cursor:pointer}
+.kachel[data-farbe="mathe"]{--c:var(--mathe);--s:var(--mathe-soft)}
+.kachel[data-farbe="deutsch"]{--c:var(--deutsch);--s:var(--deutsch-soft)}
+.kachel[data-farbe="fachw"]{--c:var(--fachw);--s:var(--fachw-soft)}
+.kachel.aus{--c:var(--grau);--s:var(--grau-soft);opacity:.8;cursor:not-allowed}
+.kachel:nth-child(odd){transform:rotate(-1.5deg)}
+.kachel:nth-child(even){transform:rotate(1.5deg)}
+.kicon{width:92px;height:92px;border-radius:50%;background:var(--c);color:var(--on-color);padding:20px;box-shadow:0 0 0 6px var(--surface);display:grid;place-items:center;flex:none}
+.kicon svg{width:100%;height:100%}
+.ktitel{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.15;margin-top:6px}
+.ksub{color:var(--muted);font-size:14px;line-height:1.3}
+.bald{display:inline-block;font-size:12px;font-weight:700;background:var(--grau);color:var(--on-color);border-radius:6px;padding:2px 8px}
+.akt{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.akt button{font:inherit;font-weight:700;border-radius:10px;padding:8px 18px;cursor:pointer;border:2px solid var(--c);background:var(--surface);color:var(--ink)}
+.akt button.test{background:var(--c);color:var(--on-color)}
+.akt button[disabled]{border-color:var(--grau);background:var(--grau-soft);color:var(--grau);cursor:not-allowed}
+.navbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:14px}
+@media (max-width:520px){.kacheln{grid-template-columns:minmax(0,1fr)}.hkopf{flex-wrap:wrap;justify-content:space-between}.hkopf h1{order:3;flex-basis:100%;font-size:22px}}
+/* Hover-Animation bei allen Auswahlen (Freddy 05.11.2026) */
+@media (hover:hover) and (prefers-reduced-motion:no-preference){
+  .kachel,.akt button,.arten .art,.testwahl label.opt,.hilfen .btn.artwahl{transition:transform .15s}
+  button.kachel:hover,.kachel:not(.aus):hover{transform:rotate(0) scale(1.03)}
+  .akt button:not([disabled]):hover{transform:scale(1.08)}
+  .arten .art:hover,.testwahl label.opt:hover{transform:scale(1.02)}
+  .hilfen .btn.artwahl:not([disabled]):hover{transform:scale(1.06)}
+}
+@media (prefers-reduced-motion:reduce){.kachel:nth-child(odd),.kachel:nth-child(even){transform:none}}
+/* ---------- Einstellungen Test/Üben im verspielten Design (05.11.2026) ---------- */
+.testwahl.spiel{--c:var(--wortf);--s:var(--wortf-soft);background:var(--s);border:0;border-radius:26px;padding:22px 18px;gap:16px}
+.testwahl.spiel[data-farbe="mathe"]{--c:var(--mathe);--s:var(--mathe-soft)}
+.testwahl.spiel[data-farbe="deutsch"]{--c:var(--deutsch);--s:var(--deutsch-soft)}
+.testwahl.spiel[data-farbe="fachw"]{--c:var(--fachw);--s:var(--fachw-soft)}
+.einst{display:grid;gap:10px;background:var(--surface);border-radius:18px;padding:14px 16px}
+.elab{font-family:var(--font-display);font-weight:800;font-size:18px}
+.testwahl.spiel select{-webkit-appearance:none;appearance:none;width:100%;font-size:18px;font-weight:700;color:var(--ink);border:2px solid var(--c);border-radius:14px;padding:12px 44px 12px 14px;cursor:pointer;
+  background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 6l5 5 5-5' fill='none' stroke='%239a8f93' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center/16px}
+.testwahl.spiel input[type=number]{font-size:18px;font-weight:700;border:2px solid var(--c);border-radius:14px;max-width:140px;background:var(--surface)}
+.testwahl.spiel label.opt{background:var(--s);border-radius:999px;padding:8px 14px;width:fit-content;cursor:pointer}
+.testwahl.spiel .reihen{display:flex;flex-wrap:wrap;gap:8px}
+.testwahl.spiel .testliste{border:2px solid var(--s)}
+.testwahl.spiel .btn.primary{background:var(--c);border-color:var(--c);color:var(--on-color);border-radius:14px;font-size:18px;padding:12px 26px}
+.los{display:flex;justify-content:flex-end}
+[data-t=wnext]{margin-left:auto}
+mark.sigwort{background:#ffd43b;color:#23161b;border-radius:8px;padding:0 6px;box-shadow:0 0 0 3px #ffd43b} /* Signalwort (05.11.2026) */
+
 </style>
 
-<div class="wrap">
+<div class="home" id="home" hidden></div>
+<div class="wrap" hidden>
+  <div class="navbar"><button type="button" class="btn" id="nav-zurueck">‹ Zurück</button><button type="button" class="btn" id="nav-start">⌂ Start</button></div>
   <header class="top">
     <div>
       <h1 id="apptitle">Lernapp DGS/Deutsch</h1>
     </div>
     <div class="topright">
     <div class="segwrap">
-    <div class="seg" role="group" aria-label="Sammlung wählen">
+    <div class="seg" role="group" aria-label="Sammlung wählen" hidden>
       <button type="button" id="seg-schueler" data-s="schueler">Schüler<span class="n" id="n-schueler"></span></button>
       <button type="button" id="seg-fachkraft" data-s="fachkraft">Dolmetscher &amp; Lehrer<span class="n" id="n-fachkraft"></span></button>
     </div>
@@ -436,12 +496,12 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
       </div>
       <div class="backuphinweis" id="backup-hinweis" hidden></div>
       <div id="report"></div>
-      <div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
       <section class="panel xp" id="exportpanel" hidden aria-labelledby="xptitle"></section>
       <div class="list" id="list"></div>
     </section>
   </div>
 </div>
+<div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
 
 <script src="jszip.min.js"></script>
@@ -817,8 +877,8 @@ function renderList(){
   const items = st.eintraege.filter(e => e.sammlung === st.sammlung)
     .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
   $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
-  $("btn-test").hidden = st.sammlung !== "schueler"; // 03.11.2026: auch bei leerer Sammlung (Mathe braucht keine Gebärden)
-  $("btn-ueben").hidden = !items.length && st.sammlung !== "schueler"; // 03.11.2026: Schüler können ohne Gebärden rechnen üben
+  $("btn-test").hidden = st.sammlung !== "schueler" || !items.length; // 05.11.2026: nur Gebärde → Wort, braucht Gebärden
+  $("btn-ueben").hidden = !items.length; // 05.11.2026: Rechnen üben liegt jetzt unter Mathe
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
@@ -1047,11 +1107,11 @@ $("ges-csv").addEventListener("change", async e => {
    Nichts wird gespeichert, das Foto wird verworfen. Gesamtwortschatz: doppelte Punkte (erst im Ergebnis). */
 const ARTEN = {
   gebaerde: {name:"Gebärde → Wort", info:"Gebärde ansehen, Wort aufschreiben."},
-  fach:     {name:"Fachbegriffe", info:"Erklärungsbild/-video ansehen, Fachbegriff aufschreiben. Ohne Gebärde."},
+  fach:     {name:"Fachbegriffe", info:"Erklärungsbild/-video ansehen, Fachbegriff aufschreiben. Ohne Gebärde."}, // nur Wörter außerhalb von Deutsch (05.11.2026)
   blitz:    {name:"Blitzlesen", info:"Das Wort erscheint eine halbe Sekunde, dann aufschreiben."},
   falesen:  {name:"Fingeralphabet lesen", info:"Fingeralphabet ansehen, Wort aufschreiben."},
   artikel:  {name:"Artikel", info:"Den richtigen Artikel auswählen."},
-  mathe:    {name:"Mathe: Rechenart erkennen", info:"Wort oder Satz lesen, Rechenart wählen (plus, minus, mal, geteilt)."},
+  mathe:    {name:"Rechenart erkennen", info:"Wort oder Satz lesen, Rechenart wählen (plus, minus, mal, geteilt)."},
   rechnen:  {name:"Kopfrechnen", info:"Aufgabe rechnen, Ergebnis eintippen (bis 20, bis 100, Einmaleins)."}
 };
 /* Kopfrechnen (03.11.2026, Freddy): Aufgaben werden jedes Mal zufällig erzeugt. Nur positive Zahlen, die Null kommt ab und zu vor,
@@ -1117,14 +1177,19 @@ function rAufgaben(n){ // möglichst keine Aufgabe doppelt; reicht die Auswahl n
     do { x = rAufgabe(T.rb, T.rop, T.reihen, T.eins); v++; } while ((schon.has(x.wort) && v < 300) || (r.length && x.wort === r[r.length - 1].wort && v < 1000));
     schon.add(x.wort); r.push(x); }
   return r; }
+/* Kopfrechnen-Einstellungen (05.11.2026, Freddy): erst Rechenart, dann Bereich (nur die passenden), dann Darstellung */
+const ROPS = [["Plus und Minus", [["+","Plus"],["-","Minus"],["pm","Plus und Minus gemischt"]]],
+  ["Mal und Geteilt", [["*","Mal"],["/","Geteilt"],["md","Mal und Geteilt gemischt"]]],
+  ["Verdoppeln und Halbieren", [["d","Verdoppeln"],["h","Halbieren"],["dh","Verdoppeln und Halbieren gemischt"]]]];
 function rWahlHtml(ueben){
-  const B = RBEREICH[T.rb];
-  return `<h3>Bereich</h3><div class="arten">${Object.entries(RBEREICH).map(([k, x]) => `<label class="art${T.rb === k ? " an" : ""}"><input type="radio" name="rb" value="${k}" ${T.rb === k ? "checked" : ""}><span><strong>${x.name}</strong></span></label>`).join("")}</div>
-    ${T.rb === "e1x1" ? `<h3>Reihen</h3><div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}
-    <h3>Rechenart</h3><div class="arten">${Object.entries(B.ops).map(([k, t]) => `<label class="art${T.rop === k ? " an" : ""}"><input type="radio" name="rop" value="${k}" ${T.rop === k ? "checked" : ""}><span><strong>${t}</strong></span></label>`).join("")}</div>`
-    + (B.ops === PM ? `<label class="opt"><input type="checkbox" id="r-unter" ${T.unter ? "checked" : ""}> untereinander schreiben</label>` : "")
-    + (B.eins ? `<label class="opt"><input type="checkbox" id="r-eins" ${T.eins ? "checked" : ""}> nur einstellig dazuzählen und abziehen (0–9)</label>` : "")
-    + (ueben ? "" : `<label class="lab" for="t-anzahl">Anzahl Aufgaben (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben, jedes Mal neu ausgedacht</p>`);
+  const B = RBEREICH[T.rb], passend = Object.entries(RBEREICH).filter(([, x]) => T.rop in x.ops);
+  const haken = (B.ops === PM ? `<label class="opt"><input type="checkbox" id="r-unter" ${T.unter ? "checked" : ""}> untereinander schreiben</label>` : "")
+    + (B.eins ? `<label class="opt"><input type="checkbox" id="r-eins" ${T.eins ? "checked" : ""}> nur einstellig dazuzählen und abziehen (0–9)</label>` : "");
+  return `<div class="einst"><label class="elab" for="t-rop">1. Rechenart</label><select id="t-rop">${ROPS.map(([g, l]) => `<optgroup label="${g}">${l.map(([k, t]) => `<option value="${esc(k)}" ${T.rop === k ? "selected" : ""}>${t}</option>`).join("")}</optgroup>`).join("")}</select></div>
+    <div class="einst"><label class="elab" for="t-rb">2. Bereich</label><select id="t-rb">${passend.map(([k, x]) => `<option value="${k}" ${T.rb === k ? "selected" : ""}>${x.name}</option>`).join("")}</select>
+    ${T.rb === "e1x1" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}</div>`
+    + (haken ? `<div class="einst"><span class="elab">3. Darstellung</span>${haken}</div>` : "")
+    + (ueben ? "" : `<div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben (10–50), jedes Mal neu ausgedacht</p></div>`);
 }
 /* Üben in der Schüler-Sammlung (03.11.2026): Gebärden, Kopfrechnen oder Rechenart erkennen – Rechnen ohne Ende, ohne Bilanz */
 function uArtWahlHtml(){
@@ -1134,7 +1199,10 @@ function uArtWahlHtml(){
     mathe:{name:ARTEN.mathe.name, info:"Immer neue Aufgaben, bis du aufhörst.", an:true}};
   return `<h3>Was möchtest du üben?</h3><div class="arten">${Object.entries(arten).map(([k, a]) => `<label class="art${T.uart === k ? " an" : ""}"><input type="radio" name="uart" value="${k}" ${T.uart === k ? "checked" : ""} ${a.an ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info}</span></span></label>`).join("")}</div>`;
 }
-function aktArt(){ return T.phase === "rueben" ? T.uart : T.art; }
+function bereichFarbe(){ const a = T.modus === "ueben" ? T.uart : T.art;
+  return a === "rechnen" || a === "mathe" ? "mathe" : a === "blitz" || a === "falesen" || a === "artikel" ? "deutsch" : a === "fach" ? "fachw" : "wort"; }
+function uTitel(){ return T.uart && ARTEN[T.uart] && T.uart !== "gebaerden" ? ARTEN[T.uart].name + " üben" : "Gebärden üben"; }
+function aktArt(){ return T.phase === "rueben" || T.phase === "wueben" ? T.uart : T.art; }
 function rMax(){ return T.phase === "rueben" ? 0 : 3; } // Versuche: Test 3, Üben beliebig viele (03.11.2026)
 function rSterne(w){ return w.ok ? 3 - (w.versuche || 0) : 0; }
 function rRueck(w){
@@ -1142,10 +1210,12 @@ function rRueck(w){
   if (!w.wahl) return v ? `<p class="rueck nein">Leider falsch – ${max ? "noch " + (max - v) + (max - v === 1 ? " Versuch" : " Versuche") : "versuch es nochmal"}.</p>`
     + (T.phase === "rueben" ? `<div class="hilfen"><button type="button" class="btn" data-t="rloesung">Lösung zeigen</button></div>` : "") : "";
   if (w.gezeigt) return `<p class="rueck nein">Die Lösung: ${esc(w.e.wort)} = <strong>${w.e.loesung}</strong></p>`;
-  return `<p class="rueck ${w.ok ? "ja" : "nein"}">${w.ok ? "Richtig!" + (v ? ` (${v + 1}. Versuch)` : "") : "Leider falsch."} ${esc(w.e.wort)} ${/^D/.test(w.e.wort) ? "ist" : "="} <strong>${w.e.loesung}</strong></p>`;
+  if (w.ok) return ""; // richtig: kein Text, nur „Weiter“ (Freddy 05.11.2026)
+  return `<p class="rueck nein">Leider falsch. ${esc(w.e.wort)} ${/^D/.test(w.e.wort) ? "ist" : "="} <strong>${w.e.loesung}</strong></p>`;
 }
 function matheRueck(w){ const e = w.e, ok = w.wahl === e.mathe;
-  return `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} „${esc(e.wort)}“ heißt: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
+  if (ok) return "";
+  return `<p class="rueck nein">Leider falsch. Richtig ist: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
     + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : ""); }
 function rUnter(w){ return T.unter && (w.e.rop === "+" || w.e.rop === "-"); } // schriftliche Darstellung aktiv?
 function zFeld(w){
@@ -1168,39 +1238,175 @@ function zTaste(k){ // Zahlenfeld: Ziffern, Löschen, OK
 function rNeu(){ // Üben ohne Ende: immer eine neue Aufgabe
   let e;
   if (T.uart === "rechnen"){ const alt = T.woerter[0] && T.woerter[0].e.wort; do e = rAufgabe(T.rb, T.rop, T.reihen, T.eins); while (e.wort === alt); }
-  else { if (!T.deck || !T.deck.length) T.deck = mischen(MATHE_E); e = T.deck.pop(); }
+  else { if (!T.deck || !T.deck.length) T.deck = mischen(mPool()); e = mInst(T.deck.pop()); }
   T.woerter = [{e, wahl:null, eingabe:"", ansicht:T.uart}]; T.i = 0; T.rn = (T.rn || 0) + 1; T.flKey = ""; T.phase = "rueben"; renderTest(); $("testov").scrollTop = 0;
 }
 /* Mathemodus (22.10.2026, Liste von Freddy übernommen, Klasse 7–8 Werkrealschule): fest eingebaut, unabhängig vom Wortschatz.
    [Text, Rechenart, Erklärung (deutsche Entsprechung des Fachworts)] – Quelle: werkstatt/vokabelheft/mathe_signalwoerter.md */
+function wNeu(){ // Üben ohne Ende: nächstes Wort aus der Auswahl (gemischt, nicht zweimal hintereinander)
+  const alt = T.woerter[0] && T.woerter[0].e.id;
+  if (!T.wDeck || !T.wDeck.length) T.wDeck = mischen(T.wPool);
+  if (T.wDeck.length > 1 && T.wDeck[T.wDeck.length - 1].id === alt) T.wDeck.unshift(T.wDeck.pop());
+  const e = T.wDeck.pop();
+  T.woerter = [{e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, falsch:[], loesung:false, ansicht:startAnsicht(T.uart)}];
+  T.i = 0; T.rn = (T.rn || 0) + 1; T.gerendert = null; T.flKey = ""; T.phase = "wueben"; stoppeBlitz(); renderTest(); $("testov").scrollTop = 0;
+}
+/* Mathemodus – neue Liste (Entwurf 03.11.2026, von Freddy am 05.11. freigegeben; Klasse 7–8 Werkrealschule).
+   Stufe 1 = Signalwörter und kurze Wendungen, Stufe 2 = Sätze (Textaufgaben). Raus: plus, minus, geteilt durch, gleichmäßig.
+   Zahlen in den Sätzen werden jedes Mal neu gezogen: {a} {b} bei Plus/Minus (bis 20, Minus nie negativ) und Mal (2–10),
+   {g} {t} bei Geteilt (g = t · Ergebnis, ohne Rest). Feste Zahlen stehen direkt im Text (Auto 4 Räder, Woche 7 Tage …).
+   Quelle: werkstatt/vokabelheft/mathe_saetze_entwurf_2026-11-03.md */
 const RECHEN = {"+":{z:"+", n:"plus"}, "-":{z:"−", n:"minus"}, "*":{z:"×", n:"mal"}, "/":{z:"÷", n:"geteilt"}};
-const MATHE_LISTE = [
-  ["Addition","+","hinzufügen, dazuzählen"],["addieren","+","hinzufügen, dazuzählen"],["Summe","+","das Ergebnis beim Plusrechnen"],["Summand","+","die Zahl, die dazugezählt wird"],
-  ["plus","+"],["dazu","+"],["dazukommen","+"],["hinzufügen","+"],["zusammen","+"],["insgesamt","+"],["vermehren","+"],["erhöhen um","+"],["vergrößern um","+"],["zunehmen","+"],
-  ["5 und noch 3 dazu","+"],
-  ["Subtraktion","-","abziehen"],["subtrahieren","-","abziehen"],["Differenz","-","der Unterschied"],["Minuend","-","die Zahl, von der abgezogen wird"],["Subtrahend","-","die Zahl, die abgezogen wird"],
-  ["minus","-"],["abziehen","-"],["wegnehmen","-"],["weniger","-"],["verringern um","-"],["vermindern um","-"],["verkleinern um","-"],["übrig bleiben","-"],["Rest","-"],["ausgeben","-"],["verlieren","-"],
-  ["8 und 3 wegnehmen","-"],["Wie groß ist der Unterschied zwischen 8 und 3?","-"],
-  ["Multiplikation","*","vervielfachen, malnehmen"],["multiplizieren","*","vervielfachen, malnehmen"],["Produkt","*","das Ergebnis beim Malrechnen"],["Faktor","*","die Zahl, die malgenommen wird"],
-  ["mal","*"],["das Doppelte","*"],["das Dreifache","*"],["verdoppeln","*"],["verdreifachen","*"],["vervielfachen","*"],
-  ["3 Hefte kosten je 2 €. Was kosten alle zusammen?","*"],
-  ["Division","/","teilen"],["dividieren","/","teilen"],["Quotient","/","das Ergebnis beim Teilen"],["Dividend","/","die Zahl, die geteilt wird"],["Divisor","/","die Zahl, durch die geteilt wird"],
-  ["geteilt durch","/"],["teilen","/"],["aufteilen","/"],["verteilen","/"],["gleichmäßig","/"],["halbieren","/"],["die Hälfte","/"],["ein Drittel","/"],["ein Viertel","/"],
-  ["12 € werden gleichmäßig auf 4 Kinder verteilt. Wie viel bekommt jedes Kind?","/"]
+const MATHE_LISTE = [ // [Stufe, Rechenart, Text, Erklärung, feste Zahl]
+  [1,"+","Addition","hinzufügen, dazuzählen"],[1,"+","addieren","hinzufügen, dazuzählen"],[1,"+","Summe","das Ergebnis beim Plusrechnen"],[1,"+","Summand","die Zahl, die dazugezählt wird"],
+  [1,"+","dazu"],[1,"+","dazukommen"],[1,"+","hinzufügen"],[1,"+","zusammen"],[1,"+","insgesamt"],[1,"+","vermehren"],[1,"+","erhöhen um"],[1,"+","vergrößern um"],[1,"+","zunehmen"],
+  [1,"+","{a} und noch {b} dazu"],
+  [1,"-","Subtraktion","abziehen"],[1,"-","subtrahieren","abziehen"],[1,"-","Differenz","der Unterschied"],[1,"-","Minuend","die Zahl, von der abgezogen wird"],[1,"-","Subtrahend","die Zahl, die abgezogen wird"],
+  [1,"-","abziehen"],[1,"-","wegnehmen"],[1,"-","weniger"],[1,"-","verringern um"],[1,"-","vermindern um"],[1,"-","verkleinern um"],[1,"-","übrig bleiben"],[1,"-","Rest"],[1,"-","ausgeben"],[1,"-","verlieren"],
+  [1,"-","{a} und {b} wegnehmen"],[1,"-","Wie groß ist der Unterschied zwischen {a} und {b}?"],
+  [1,"*","Multiplikation","vervielfachen, malnehmen"],[1,"*","multiplizieren","vervielfachen, malnehmen"],[1,"*","Produkt","das Ergebnis beim Malrechnen"],[1,"*","Faktor","die Zahl, die malgenommen wird"],
+  [1,"*","mal"],[1,"*","das Doppelte"],[1,"*","das Dreifache"],[1,"*","verdoppeln"],[1,"*","verdreifachen"],[1,"*","vervielfachen"],
+  [1,"/","Division","teilen"],[1,"/","dividieren","teilen"],[1,"/","Quotient","das Ergebnis beim Teilen"],[1,"/","Dividend","die Zahl, die geteilt wird"],[1,"/","Divisor","die Zahl, durch die geteilt wird"],
+  [1,"/","teilen"],[1,"/","aufteilen"],[1,"/","verteilen"],[1,"/","halbieren"],[1,"/","die Hälfte"],[1,"/","ein Drittel"],[1,"/","ein Viertel"],
+  // Stufe 2 – Plus
+  [2,"+","Lea hat {a} Äpfel. Sie bekommt {b} Äpfel dazu. Wie viele Äpfel hat sie jetzt?"],
+  [2,"+","In der Klasse sind {a} Mädchen und {b} Jungen. Wie viele Kinder sind es insgesamt?"],
+  [2,"+","Tom hat {a} €. Oma schenkt ihm {b} €. Wie viel Geld hat Tom jetzt?"],
+  [2,"+","Auf dem Tisch liegen {a} Stifte. Ben legt {b} Stifte dazu. Wie viele Stifte liegen jetzt auf dem Tisch?"],
+  [2,"+","Im Bus sitzen {a} Leute. An der Haltestelle steigen {b} Leute ein. Wie viele Leute sitzen jetzt im Bus?"],
+  [2,"+","Sara liest am Montag {a} Seiten und am Dienstag {b} Seiten. Wie viele Seiten liest sie zusammen?"],
+  [2,"+","Im Garten sind {a} Katzen. Es kommen {b} Katzen dazu. Wie viele Katzen sind jetzt im Garten?"],
+  [2,"+","Ein Heft kostet {a} €. Ein Stift kostet {b} €. Wie viel kosten beide zusammen?"],
+  [2,"+","Max ist {a} Jahre alt. Wie alt ist er in {b} Jahren?"],
+  [2,"+","Im Regal stehen {a} Bücher. Die Lehrerin stellt {b} Bücher dazu. Wie viele Bücher stehen jetzt im Regal?"],
+  [2,"+","Paul hat {a} Bilder gemalt. Heute malt er noch {b} Bilder. Wie viele Bilder hat er insgesamt gemalt?"],
+  [2,"+","Im Korb sind {a} rote und {b} grüne Äpfel. Wie viele Äpfel sind im Korb?"],
+  [2,"+","Lina hat {a} Sticker. Ihre Freundin schenkt ihr {b} Sticker. Wie viele Sticker hat Lina jetzt?"],
+  [2,"+","Am Morgen sind {a} Kinder auf dem Spielplatz. Am Mittag kommen {b} Kinder dazu. Wie viele Kinder sind jetzt dort?"],
+  [2,"+","Ein Zug hat {a} Wagen. Es werden {b} Wagen angehängt. Wie viele Wagen hat der Zug jetzt?"],
+  [2,"+","Es ist {a} Grad warm. Am Mittag wird es {b} Grad wärmer. Wie warm ist es am Mittag?"],
+  [2,"+","Ali hat {a} €. Er bekommt {b} € Taschengeld. Wie viel Geld hat er jetzt?"],
+  [2,"+","In der ersten Pause trinkt Mia {a} Becher Wasser, in der zweiten Pause {b} Becher. Wie viele Becher trinkt sie insgesamt?"],
+  [2,"+","Die Klasse sammelt {a} Flaschen. Am nächsten Tag sammelt sie {b} Flaschen. Wie viele Flaschen sind es zusammen?"],
+  [2,"+","Tim hat {a} Murmeln. Er gewinnt {b} Murmeln dazu. Wie viele Murmeln hat er jetzt?"],
+  [2,"+","Ein Baum hat {a} Äste. Im Frühling wachsen {b} neue Äste. Wie viele Äste hat der Baum jetzt?"],
+  [2,"+","Die Schule hat {a} Fußbälle. Sie kauft {b} neue Fußbälle. Wie viele Fußbälle hat die Schule jetzt?"],
+  [2,"+","Jana läuft {a} Runden. Danach läuft sie noch {b} Runden. Wie viele Runden ist sie gelaufen?"],
+  [2,"+","Im Aquarium schwimmen {a} Fische. Es kommen {b} Fische dazu. Wie viele Fische schwimmen jetzt im Aquarium?"],
+  // Stufe 2 – Minus ({a} > {b})
+  [2,"-","Im Bus sitzen {a} Leute. An der Haltestelle steigen {b} Leute aus. Wie viele Leute sitzen noch im Bus?"],
+  [2,"-","Ali hat {a} Murmeln. Er verliert {b} Murmeln. Wie viele Murmeln hat er noch?"],
+  [2,"-","Du bezahlst mit {a} €. Das Heft kostet {b} €. Wie viel Geld bekommst du zurück?","",{a:[5,10,20]}],
+  [2,"-","Lea hat {a} Äpfel. Sie isst {b} Äpfel. Wie viele Äpfel hat sie noch?"],
+  [2,"-","Auf dem Teller liegen {a} Kekse. Die Kinder essen {b} Kekse. Wie viele Kekse bleiben übrig?"],
+  [2,"-","Tom hat {a} €. Er kauft ein Buch für {b} €. Wie viel Geld hat er noch?"],
+  [2,"-","In der Klasse sind {a} Kinder. {b} Kinder sind krank. Wie viele Kinder sind da?"],
+  [2,"-","Ein Buch hat {a} Seiten. Sara hat schon {b} Seiten gelesen. Wie viele Seiten muss sie noch lesen?"],
+  [2,"-","Ben ist {a} Jahre alt. Seine Schwester ist {b} Jahre alt. Wie viel älter ist Ben?"],
+  [2,"-","Im Garten sind {a} Vögel. {b} Vögel fliegen weg. Wie viele Vögel sind noch im Garten?"],
+  [2,"-","Es ist {a} Grad warm. In der Nacht wird es {b} Grad kälter. Wie warm ist es in der Nacht?"],
+  [2,"-","Mia hat {a} Sticker. Sie schenkt ihrer Freundin {b} Sticker. Wie viele Sticker hat Mia noch?"],
+  [2,"-","Im Karton sind {a} Eier. {b} Eier gehen kaputt. Wie viele Eier sind noch ganz?"],
+  [2,"-","Paul hat {a} € gespart. Er gibt {b} € aus. Wie viel Geld bleibt übrig?"],
+  [2,"-","Die Klasse hat {a} Stifte. {b} Stifte sind leer. Wie viele Stifte schreiben noch?"],
+  [2,"-","Ein Zug hat {a} Wagen. {b} Wagen werden abgehängt. Wie viele Wagen hat der Zug jetzt?"],
+  [2,"-","Lina hat {a} Bonbons. Sie gibt ihrem Bruder {b} Bonbons. Wie viele Bonbons hat Lina noch?"],
+  [2,"-","Max hat {a} Karten. Tim hat {b} Karten. Wie viele Karten hat Max mehr als Tim?"],
+  [2,"-","Auf dem Parkplatz stehen {a} Autos. {b} Autos fahren weg. Wie viele Autos stehen noch auf dem Parkplatz?"],
+  [2,"-","Jana will {a} Runden laufen. Sie ist schon {b} Runden gelaufen. Wie viele Runden fehlen noch?"],
+  [2,"-","Im Regal stehen {a} Bücher. Die Kinder leihen {b} Bücher aus. Wie viele Bücher stehen noch im Regal?"],
+  [2,"-","In einem Glas sind {a} Murmeln. Ali nimmt {b} Murmeln heraus. Wie viele Murmeln sind noch im Glas?"],
+  [2,"-","Die Pause dauert {a} Minuten. {b} Minuten sind schon vorbei. Wie lange dauert die Pause noch?"],
+  // Stufe 2 – Mal
+  [2,"*","Ein Heft kostet {a} €. Wie viel kosten {b} Hefte?"],
+  [2,"*","Ein Auto hat 4 Räder. Wie viele Räder haben {b} Autos?"],
+  [2,"*","In einer Packung sind {a} Stifte. Wie viele Stifte sind in {b} Packungen?"],
+  [2,"*","Eine Woche hat 7 Tage. Wie viele Tage haben {b} Wochen?"],
+  [2,"*","Lea hat {a} Sticker. Tom hat {b}-mal so viele. Wie viele Sticker hat Tom?"],
+  [2,"*","Ein Eis kostet {a} €. Mia kauft {b} Eis. Wie viel muss sie bezahlen?"],
+  [2,"*","In einem Karton sind {a} Eier. Wie viele Eier sind in {b} Kartons?"],
+  [2,"*","Ben läuft jeden Tag {a} Runden. Wie viele Runden läuft er in {b} Tagen?"],
+  [2,"*","Ein Tisch hat 4 Beine. Wie viele Beine haben {b} Tische?"],
+  [2,"*","In jeder Reihe stehen {a} Stühle. Es gibt {b} Reihen. Wie viele Stühle sind es?"],
+  [2,"*","Ali hat {a} €. Seine Schwester hat das Doppelte. Wie viel Geld hat sie?"],
+  [2,"*","Eine Hand hat 5 Finger. Wie viele Finger haben {b} Hände?"],
+  [2,"*","Ein Buch kostet {a} €. Die Lehrerin kauft {b} Bücher. Wie viel muss sie bezahlen?"],
+  [2,"*","Sara liest jeden Tag {a} Seiten. Wie viele Seiten liest sie in {b} Tagen?"],
+  [2,"*","In einer Packung sind {a} Kekse. Wie viele Kekse sind in {b} Packungen?"],
+  [2,"*","Eine Spinne hat 8 Beine. Wie viele Beine haben {b} Spinnen?"],
+  [2,"*","Max spart jede Woche {a} €. Wie viel Geld hat er nach {b} Wochen gespart?"],
+  [2,"*","Auf jedem Teller liegen {a} Kekse. Es gibt {b} Teller. Wie viele Kekse sind es?"],
+  [2,"*","Ein Kino-Ticket kostet {a} €. {b} Freunde gehen ins Kino. Wie viel kosten die Tickets?"],
+  [2,"*","In jeder Gruppe sind {a} Kinder. Es gibt {b} Gruppen. Wie viele Kinder sind es?"],
+  [2,"*","Paul hat {a} Murmeln. Tim hat {b}-mal so viele. Wie viele Murmeln hat Tim?"],
+  [2,"*","Der Eintritt ins Schwimmbad kostet {a} €. Lina war {b}-mal dort. Wie viel Geld hat sie ausgegeben?"], // „ausgegeben“ ist sonst Minus – bewusste Stolperfalle (Freddy 03.11.)
+  [2,"*","Ein Kuchen hat {a} Stücke. Die Klasse kauft {b} Kuchen. Wie viele Stücke sind es?"],
+  [2,"*","In jedem Topf sind {a} Blumen. Am Fenster stehen {b} Töpfe. Wie viele Blumen sind es?"],
+  [2,"*","Jana hat {a} Punkte. Im nächsten Spiel verdoppelt sie ihre Punkte. Wie viele Punkte hat sie jetzt?"],
+  // Stufe 2 – Geteilt ({g} = {t} · Ergebnis)
+  [2,"/","{g} € werden auf {t} Kinder verteilt. Jedes Kind bekommt gleich viel. Wie viel bekommt jedes Kind?"],
+  [2,"/","{g} Kinder bilden Gruppen. In jeder Gruppe sind {t} Kinder. Wie viele Gruppen gibt es?"],
+  [2,"/","Ein Kuchen hat {g} Stücke. {t} Kinder bekommen gleich viele Stücke. Wie viele Stücke bekommt jedes Kind?"],
+  [2,"/","Mia hat {g} €. Ein Eis kostet {t} €. Wie viele Eis kann Mia kaufen?"],
+  [2,"/","{g} Äpfel werden in {t} Körbe gelegt. In jedem Korb sind gleich viele. Wie viele Äpfel sind in einem Korb?"],
+  [2,"/","Tom hat {g} Sticker. Er teilt sie mit seinem Freund. Beide bekommen gleich viele. Wie viele Sticker bekommt jeder?","",{t:2}],
+  [2,"/","{g} Stühle stehen in Reihen. In jeder Reihe stehen {t} Stühle. Wie viele Reihen sind es?"],
+  [2,"/","{g} Kekse werden an {t} Kinder verteilt. Jedes Kind bekommt gleich viele. Wie viele Kekse bekommt jedes Kind?"],
+  [2,"/","Ben hat {g} €. Ein Heft kostet {t} €. Wie viele Hefte kann er kaufen?"],
+  [2,"/","Eine Woche hat 7 Tage. Wie viele Wochen sind {g} Tage?","",{t:7}],
+  [2,"/","Die Lehrerin hat {g} Blätter. Jedes Kind bekommt {t} Blätter. Für wie viele Kinder reichen die Blätter?"],
+  [2,"/","In der Klasse sind {g} Kinder. An jedem Tisch sitzen {t} Kinder. Wie viele Tische braucht die Klasse?"],
+  [2,"/","Ali hat {g} Murmeln. Er legt sie in {t} Säckchen, in jedes gleich viele. Wie viele Murmeln sind in einem Säckchen?"],
+  [2,"/","Eine Pizza hat {g} Stücke. {t} Freunde essen sie. Jeder isst gleich viele Stücke. Wie viele Stücke isst jeder?"],
+  [2,"/","Sara muss {g} Seiten lesen. Sie liest jeden Tag {t} Seiten. Wie viele Tage braucht sie?"],
+  [2,"/","Die Hälfte von {g} Kindern geht in die Turnhalle. Wie viele Kinder sind das?","",{t:2}],
+  [2,"/","{g} Eier werden in Kartons gepackt. In einen Karton passen {t} Eier. Wie viele Kartons braucht man?"],
+  [2,"/","Paul hat {g} € gespart. Er spart jede Woche {t} €. Wie viele Wochen hat er gespart?"],
+  [2,"/","Ein Band ist {g} m lang. Es wird in {t} gleich lange Stücke geschnitten. Wie lang ist ein Stück?"],
+  [2,"/","{g} Kinder fahren mit Autos zum Ausflug. In jedes Auto passen {t} Kinder. Wie viele Autos braucht man?"],
+  [2,"/","{g} Bonbons werden an {t} Kinder verteilt. Jedes Kind bekommt gleich viele. Wie viele Bonbons bekommt jedes Kind?"],
+  [2,"/","Ein Kino-Ticket kostet {t} €. Die Gruppe bezahlt {g} €. Wie viele Tickets hat die Gruppe gekauft?"],
+  [2,"/","Im Regal stehen {g} Bücher in {t} Reihen. In jeder Reihe stehen gleich viele. Wie viele Bücher stehen in einer Reihe?"],
+  [2,"/","Max hat {g} Murmeln. Er gibt die Hälfte seinem Bruder. Wie viele Murmeln bekommt der Bruder?","",{t:2}],
+  [2,"/","Eine Tafel Schokolade hat {g} Stücke. {t} Kinder bekommen gleich viele. Wie viele Stücke bekommt jedes Kind?"]
 ];
-const MATHE_E = MATHE_LISTE.map(([t, op, erkl], i) => ({id:"mathe" + i, wort:t, artikel:"", mathe:op, matheErkl:erkl || ""}));
+const MATHE_E = MATHE_LISTE.map(([stufe, op, t, erkl, fix], i) => ({id:"mathe" + i, stufe, wort:t, artikel:"", mathe:op, matheErkl:erkl || "", fix:fix || null}));
+const MSTUFEN = {woerter:{name:"Signalwörter", info:"Wörter und kurze Wendungen", s:1}, saetze:{name:"Sätze", info:"kleine Textaufgaben", s:2}, gemischt:{name:"Gemischt", info:"Wörter und Sätze", s:0}};
+function mPool(){ const s = (MSTUFEN[T.mstufe] || MSTUFEN.woerter).s; return s ? MATHE_E.filter(e => e.stufe === s) : MATHE_E; }
+function mZahlen(op, fix){ // Zufallszahlen ab 2 (sonst „1 Äpfel“)
+  fix = fix || {}; const w = v => Array.isArray(v) ? v[zufall(0, v.length - 1)] : v;
+  if (op === "+"){ const a = zufall(2, 18); return {a, b:zufall(2, 20 - a)}; }
+  if (op === "-"){ const a = fix.a != null ? w(fix.a) : zufall(4, 20); return {a, b:zufall(2, a - 2)}; }
+  if (op === "*") return {a:zufall(2, 10), b:zufall(2, 10)};
+  const t = fix.t != null ? w(fix.t) : zufall(2, 10); return {t, g:t * zufall(2, 10)};
+}
+/* Signalwörter (Stufe 1, ohne Zahlen-Wendungen) – nach der Antwort im Text markieren (05.11.2026) */
+const SIGNAL = MATHE_E.filter(e => e.stufe === 1 && !/\{/.test(e.wort)).map(e => e.wort).sort((a, b) => b.length - a.length);
+const SIGNAL_RX = new RegExp("(^|[^A-Za-zÄÖÜäöüß])(" + SIGNAL.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?=[^A-Za-zÄÖÜäöüß]|$)", "gi");
+function markiere(text){ return esc(text).replace(SIGNAL_RX, (_, vor, w) => vor + `<mark class="sigwort">${w}</mark>`); }
+function mInst(e){ // Satz mit frisch gezogenen Zahlen
+  if (!/\{[abgt]\}/.test(e.wort)) return e;
+  const z = mZahlen(e.mathe, e.fix);
+  return Object.assign({}, e, {wort:e.wort.replace(/\{([abgt])\}/g, (_, k) => z[k])});
+}
+function mStufeHtml(){
+  return `<div class="einst"><label class="elab" for="t-mstufe">Stufe</label><select id="t-mstufe">${Object.entries(MSTUFEN).map(([k, x]) => `<option value="${k}" ${T.mstufe === k ? "selected" : ""}>${x.name} – ${x.info} (${(x.s ? MATHE_E.filter(e => e.stufe === x.s) : MATHE_E).length})</option>`).join("")}</select></div>`;
+}
 /* Übungsmodus (22.10.2026 abends, beide Sammlungen): deutsches Wort (+ Erklärung) sehen → Gebärde selbst machen →
    „Gebärde anzeigen“ → selbst angeben „gewusst“/„nicht gewusst“. Nichts wird gespeichert. */
-const T = {modus:"test", phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(), rb:"z20", rop:"pm", reihen:[2,3,4,5,6,7,8,9,10], unter:false, eins:false, uart:"", rn:0, deck:[],
+const T = {modus:"test", fest:true, mstufe:"woerter", phase:null, art:"gebaerde", quelle:"gesamt", anzahl:25, block:"", fach:"", thema:"", einzeln:new Set(), rb:"z20", rop:"pm", reihen:[2,3,4,5,6,7,8,9,10], unter:false, eins:false, uart:"", rn:0, deck:[],
   woerter:[], i:0, fotoUrl:"", flUrls:[], flKey:"", blitzTimer:null};
 function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
+/* Üben für Blitzlesen, Fingeralphabet, Artikel, Fachbegriffe (05.11.2026): gleiche Wortauswahl wie im Test, Wörter laufen ohne Ende durch */
+const WUEBEN = new Set(["blitz","falesen","artikel","fach"]);
+function pArt(){ return T.modus === "ueben" && WUEBEN.has(T.uart) ? T.uart : T.art; }
 function artPool(art){
   if (art === "rechnen") return [{id:"rechnen"}]; // Aufgaben werden erzeugt (03.11.2026)
-  if (art === "mathe" && T.modus !== "ueben") return MATHE_E;
-  if (T.modus === "ueben") return st.eintraege.filter(e => e.sammlung === st.sammlung);
+  if (art === "mathe" && T.modus !== "ueben") return mPool();
+  if (T.modus === "ueben" && !WUEBEN.has(art)) return st.eintraege.filter(e => e.sammlung === st.sammlung);
   const alle = schuelerEintraege();
-  if (art === "fach") return alle.filter(e => erklMedium(e));
+  if (art === "fach") return alle.filter(e => erklMedium(e) && e.kategorie !== "Deutsch"); // Fachwörter (05.11.2026)
   if (art === "falesen") return alle.filter(e => e.fingeralphabet);
   if (art === "artikel") return alle.filter(e => e.artikel);
   return alle;
@@ -1208,14 +1414,14 @@ function artPool(art){
 function themaKey(e){ return e.kategorie + "\u0001" + e.thema; }
 function mischen(a){ a = a.slice(); for (let i = a.length - 1; i > 0; i--){ const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function tAuswahl(){
-  const alle = artPool(T.art);
-  if (T.art === "mathe" && T.modus !== "ueben") return mischen(alle).slice(0, T.anzahl);
+  const alle = artPool(pArt());
+  if (T.art === "mathe" && T.modus !== "ueben") return mischen(alle).slice(0, T.anzahl).map(mInst);
   if (T.art === "rechnen" && T.modus !== "ueben") return rAufgaben(T.anzahl);
   if (T.quelle === "block") return alle.filter(e => e.lernwort && String(e.lernblock) === T.block);            // ganzer Block
   if (T.quelle === "thema") return alle.filter(e => e.thema && themaKey(e) === T.thema);                          // ganzes Thema
   if (T.quelle === "einzeln") return alle.filter(e => T.einzeln.has(e.id)).slice(0, 50);
   const pool = T.quelle === "fach" ? alle.filter(e => e.kategorie === T.fach) : alle;
-  return mischen(pool).slice(0, T.anzahl);
+  return T.modus === "ueben" && WUEBEN.has(T.uart) ? pool : mischen(pool).slice(0, T.anzahl); // Üben: alle Wörter der Auswahl
 }
 /* Punkte eines Wortes vor dem Verdoppeln, als ob es richtig gelöst würde */
 function tMoeglich(w){
@@ -1233,8 +1439,9 @@ function tPunkte(w){
   if (!w.richtig) return 0;
   return tMoeglich(w) * (T.quelle === "gesamt" ? 2 : 1);
 }
-function kosten(w, aenderung){ const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` <span class="kost">−${d}</span>` : ` <span class="kost null">±0</span>`; }
-const KOST1 = ` <span class="kost">−1</span>`;
+function kosten(w, aenderung){ if (T.phase === "wueben") return ""; const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` <span class="kost">−${d}</span>` : ` <span class="kost null">±0</span>`; }
+const KOST1v = ` <span class="kost">−1</span>`;
+function kost1(){ return T.phase === "wueben" ? "" : KOST1v; } // Üben: Hilfen kosten nichts
 /* Bewertung am Ende (Freddy 22.10.): Schnitt 0–5 ohne Verdopplung; 5 = „Perfekt!!“, ≥ 3 = „Super“, < 3 = „Übe noch ein bisschen“ */
 function tSchnitt(){
   if (T.art === "rechnen") return 5 * T.woerter.reduce((a, w) => a + rSterne(w), 0) / (3 * T.woerter.length);
@@ -1253,7 +1460,7 @@ function tNeuStart(woerter){
   T.woerter = mischen(woerter.map(w => ({e:w.e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()})));
   T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0;
 }
-function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" || T.phase === "rueben" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
+function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" || T.phase === "rueben" || T.phase === "wueben" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
 function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
 function flUrl(blob){ const u = URL.createObjectURL(blob); T.flUrls.push(u); return u; }
 function stoppeBlitz(){ if (T.blitzTimer){ clearTimeout(T.blitzTimer); T.blitzTimer = null; } }
@@ -1262,7 +1469,7 @@ function renderTest(){
   const el = $("testin");
   if (T.phase !== "wort"){ flFrei(); T.flKey = ""; }
   if (T.phase === "start"){
-    const alle = artPool(T.art);
+    const alle = artPool(pArt());
     const bloecke = [...new Set(alle.filter(e => e.lernwort && e.lernblock).map(e => e.lernblock))].sort((a, b) => a - b);
     const faecher = [...new Set(alle.map(e => e.kategorie))].sort((a, b) => a.localeCompare(b, "de"));
     if (!bloecke.map(String).includes(T.block)) T.block = bloecke.length ? String(bloecke[bloecke.length - 1]) : "";
@@ -1274,32 +1481,32 @@ function renderTest(){
     if (T.quelle === "thema" && !themen.length) T.quelle = "gesamt";
     const sortiert = alle.slice().sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
     const n = tAuswahl().length;
-    const opt = (q, txt) => `<label class="opt"><input type="radio" name="tq" value="${q}" ${T.quelle === q ? "checked" : ""}> ${txt}</label>`;
-    const ueben = T.modus === "ueben", uWahl = ueben && st.sammlung === "schueler", ug = !ueben || T.uart === "gebaerden";
+    const opt = (q, txt) => `<option value="${q}" ${T.quelle === q ? "selected" : ""}>${txt}</option>`; // Dropdown (05.11.2026)
+    const ueben = T.modus === "ueben", uWahl = ueben && st.sammlung === "schueler" && !T.fest, ug = !ueben || T.uart === "gebaerden" || WUEBEN.has(T.uart), wu = ueben && WUEBEN.has(T.uart);
     const rWahl = (!ueben && T.art === "rechnen") || (ueben && T.uart === "rechnen"), nn = rWahl ? (T.rb === "e1x1" && !T.reihen.length ? 0 : 1) : (ueben && T.uart === "mathe") ? 1 : n;
-    el.innerHTML = tKopf(ueben ? (uWahl ? "Üben" : "Gebärden üben") : "Test") + `<section class="panel testwahl">
+    el.innerHTML = tKopf(ueben ? (uWahl ? "Üben" : uTitel()) : T.fest ? ARTEN[T.art].name : "Test") + `<section class="panel testwahl spiel" data-farbe="${bereichFarbe()}">
       ${uWahl ? uArtWahlHtml() : ""}
-      ${ueben ? (ug ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : "") : `<h3>Übungsart</h3>
+      ${ueben ? (T.uart === "gebaerden" ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : "") : T.fest ? "" : `<h3>Übungsart</h3>
       <div class="arten">${Object.entries(ARTEN).map(([k, a]) => { const m = artPool(k).length;
         return `<label class="art${T.art === k ? " an" : ""}"><input type="radio" name="tart" value="${k}" ${T.art === k ? "checked" : ""} ${m ? "" : "disabled"}><span><strong>${a.name}</strong><br><span class="hint">${a.info} ${k === "rechnen" ? "" : m ? "(" + m + " Wörter)" : "– keine passenden Wörter"}</span></span></label>`; }).join("")}</div>`}
-      ${rWahl ? rWahlHtml(ueben) : ueben && !ug ? "" : !ueben && T.art === "mathe" ? `<h3>Aufgaben</h3><p class="hint">Fachwörter, Alltagswörter und Sätze aus der Mathe-Liste (${MATHE_E.length}), gemischt.</p>
-      <label class="lab" for="t-anzahl">Anzahl Aufgaben (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
-      <p class="hint" id="t-info">${n} Aufgaben</p>` : `<h3>Wörter</h3>
-      ${opt("gesamt", "Gesamtwortschatz" + (!ueben && T.art !== "artikel" ? " <span class='chip lern'>doppelte Punkte</span>" : ""))}
-      ${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") + (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
-      ${themen.length ? opt("thema", "Thema (ganzes Thema)") + (T.quelle === "thema" ? `<select id="t-thema">${themen.map(e => `<option value="${esc(themaKey(e))}" ${themaKey(e) === T.thema ? "selected" : ""}>${esc(e.kategorie)} · ${esc(e.thema)}</option>`).join("")}</select>` : "") : ""}
-      ${opt("fach", "Fach")}${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
-      ${opt("einzeln", "Einzelne Wörter")}${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
-      ${T.quelle === "gesamt" || T.quelle === "fach" ? `<label class="lab" for="t-anzahl">Anzahl Wörter (10–50)</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
-      <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."}</p>`}
-      <div><button type="button" class="btn primary" data-t="los" ${nn ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
+      ${rWahl ? rWahlHtml(ueben) : ueben && !ug ? mStufeHtml() : !ueben && T.art === "mathe" ? mStufeHtml() + `
+      <div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">
+      <p class="hint" id="t-info">${n} Aufgaben (10–50)</p></div>` : `<div class="einst"><label class="elab" for="t-quelle">Wörter</label>
+      <select id="t-quelle">${opt("gesamt", "Gesamtwortschatz" + (!ueben && T.art !== "artikel" ? " (doppelte Punkte)" : ""))}${bloecke.length ? opt("block", "Lernwort-Block (ganzer Block)") : ""}${themen.length ? opt("thema", "Thema (ganzes Thema)") : ""}${opt("fach", "Fach")}${opt("einzeln", "Einzelne Wörter")}</select>
+      ${bloecke.length ? (T.quelle === "block" ? `<select id="t-block">${bloecke.map(b => `<option value="${b}" ${String(b) === T.block ? "selected" : ""}>Block ${b}</option>`).join("")}</select>` : "") : ""}
+      ${themen.length ? (T.quelle === "thema" ? `<select id="t-thema">${themen.map(e => `<option value="${esc(themaKey(e))}" ${themaKey(e) === T.thema ? "selected" : ""}>${esc(e.kategorie)} · ${esc(e.thema)}</option>`).join("")}</select>` : "") : ""}
+      ${T.quelle === "fach" ? `<select id="t-fach">${faecher.map(f => `<option ${f === T.fach ? "selected" : ""}>${esc(f)}</option>`).join("")}</select>` : ""}
+      ${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
+      ${!wu && (T.quelle === "gesamt" || T.quelle === "fach") ? `<label class="elab" for="t-anzahl">Anzahl Wörter</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
+      <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + (ueben ? "" : " im Test") : "Keine Wörter ausgewählt."}</p></div>`}
+      <div class="los"><button type="button" class="btn primary" data-t="los" ${nn ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
     return;
   }
   if (T.phase === "wort"){
     const w = T.woerter[T.i], letzte = T.i === T.woerter.length - 1;
     if (!$("t-flaeche") || T.gerendert !== T.i){
       el.innerHTML = `<div id="t-kopf"></div><div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div><div class="sternplatz" id="t-stern"></div></div><div id="t-unter"></div>
-        <div><button type="button" class="btn primary" data-t="weiter" id="t-weiter"></button></div>`;
+        <div class="los"><button type="button" class="btn primary" data-t="weiter" id="t-weiter"></button></div>`;
       T.gerendert = T.i; T.flKey = "";
     }
     // Stern (Variante C, Freddy 22.10.): leuchtet/pulsiert; bei einer Hilfe wackelt er und „−n“ schwebt hoch
@@ -1320,12 +1527,11 @@ function renderTest(){
     if (T.art === "gebaerde" && w.erkl && w.ansicht === "erkl" && e.erklaerung_text) unter += `<div class="expl">${esc(e.erklaerung_text)}</div>`;
     if (T.art === "artikel" && w.wahl){
       const ok = w.wahl === e.artikel;
-      unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} Es heißt: <strong>${esc(artikelWort(e))}</strong></p>`;
+      if (!ok) unter += `<p class="rueck nein">Leider falsch. Es heißt: <strong>${esc(artikelWort(e))}</strong></p>`;
     }
     if (T.art === "mathe" && w.wahl){
       const ok = w.wahl === e.mathe;
-      unter += `<p class="rueck ${ok ? "ja" : "nein"}">${ok ? "Richtig!" : "Leider falsch."} „${esc(e.wort)}“ heißt: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
-        + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : "");
+      if (!ok) unter += matheRueck(w);
     }
     if (T.art === "rechnen") unter += rRueck(w);
     $("t-unter").innerHTML = unter;
@@ -1334,10 +1540,30 @@ function renderTest(){
     weiter.disabled = ((T.art === "artikel" || T.art === "mathe" || T.art === "rechnen") && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
     return;
   }
+  if (T.phase === "wueben"){ // Üben Blitzlesen/Fingeralphabet/Artikel/Fachbegriffe (05.11.2026)
+    const w = T.woerter[0], e = w.e, art = T.uart, schreib = art !== "artikel";
+    if (!$("t-flaeche") || T.gerendert !== "w" + T.rn){
+      el.innerHTML = tKopf(uTitel(), `<span class="testnr">Wort ${T.rn}</span>`) + `<div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div></div><div id="t-unter"></div><div class="hilfen" id="t-wk"></div>`;
+      T.gerendert = "w" + T.rn; T.flKey = "";
+    }
+    renderFlaeche(w); renderHilfen(w);
+    let unter = "";
+    if (w.abc) unter += `<div class="abc">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort.charAt(0))} …</div>`;
+    // richtig: kein Text (05.11.2026)
+    if (!schreib && !w.wahl && w.falsch.length && !w.loesung) unter += `<p class="rueck nein">Leider falsch – versuch es nochmal.</p>`;
+    if (w.loesung) unter += schreib ? `<p class="rueck ja" style="font-size:20px">Lösung: <strong>${esc(artikelWort(e))}</strong></p><p class="hint">Vergleiche mit deinem Zettel.</p>`
+      : `<p class="rueck nein">Die Lösung: <strong>${esc(artikelWort(e))}</strong></p>`;
+    $("t-unter").innerHTML = unter;
+    const fertig = schreib ? w.loesung : (w.wahl || w.loesung);
+    const loesungKnopf = !fertig && (schreib ? (art !== "blitz" || w.gezeigt) : w.falsch.length);
+    $("t-wk").innerHTML = (loesungKnopf ? `<button type="button" class="btn" data-t="wloesung">Lösung zeigen</button>` : "")
+      + `<button type="button" class="btn primary" data-t="wnext" ${fertig ? "" : "disabled"}>Nächstes Wort</button>`;
+    return;
+  }
   if (T.phase === "rueben"){ // Üben ohne Ende (03.11.2026)
     const w = T.woerter[0];
     el.innerHTML = tKopf(T.uart === "rechnen" ? ARTEN.rechnen.name + " üben" : ARTEN.mathe.name, `<span class="testnr">Aufgabe ${T.rn}</span>`) + `<div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div></div><div id="t-unter"></div>
-      <div><button type="button" class="btn primary" data-t="rnext" ${w.wahl ? "" : "disabled"}>Nächste Aufgabe</button></div>`;
+      <div class="los"><button type="button" class="btn primary" data-t="rnext" ${w.wahl ? "" : "disabled"}>Nächste Aufgabe</button></div>`;
     T.flKey = ""; renderFlaeche(w); renderHilfen(w);
     $("t-unter").innerHTML = T.uart === "rechnen" ? rRueck(w) : w.wahl ? matheRueck(w) : "";
     return;
@@ -1444,7 +1670,7 @@ function renderTest(){
 }
 /* Anzeigefläche: wird nur neu aufgebaut, wenn sich die Ansicht ändert (oder Fingeralphabet erneut abgespielt wird) */
 function renderFlaeche(w){
-  const e = w.e, key = w.ansicht + "|" + (w.ansicht === "fa" ? w.fa + w.wdh : w.ansicht === "rechnen" && rUnter(w) ? "u" + (w.eingabe || "") + "|" + (w.wahl || "") : "");
+  const e = w.e, key = w.ansicht + "|" + (w.ansicht === "mathe" ? (w.wahl ? "x" : "") : w.ansicht === "fa" ? w.fa + w.wdh : w.ansicht === "rechnen" && rUnter(w) ? "u" + (w.eingabe || "") + "|" + (w.wahl || "") : "");
   if (key === T.flKey) return;
   T.flKey = key; flFrei();
   const fl = $("t-flaeche");
@@ -1458,7 +1684,7 @@ function renderFlaeche(w){
   }
   else if (w.ansicht === "bereit") fl.innerHTML = `<div class="leerflaeche"><button type="button" class="btn primary" data-t="zeigen">Wort zeigen</button><p class="hint">Das Wort erscheint nur eine halbe Sekunde.</p></div>`;
   else if (w.ansicht === "wort") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(artikelWort(e))}</div></div>`;
-  else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${esc(e.wort)}</div></div>`;
+  else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${w.wahl ? markiere(e.wort) : esc(e.wort)}</div></div>`;
   else if (w.ansicht === "rechnen" && rUnter(w)){ const [a, z, b] = e.wort.split(" ");
     fl.innerHTML = `<div class="leerflaeche"><div class="schriftlich" aria-label="${esc(e.wort)}"><span></span><span class="z">${a}</span><span>${z}</span><span class="z">${b}</span><span class="strich"></span><span class="erg${w.wahl ? (w.ok ? " ja" : " nein") : ""}" aria-live="polite">${esc(w.eingabe || "")}</span></div></div>`; }
   else if (w.ansicht === "rechnen") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 14 ? " mathesatz" : ""}">${esc(e.wort)} ${/^D/.test(e.wort) ? "ist ?" : "= ?"}</div></div>`;
@@ -1470,17 +1696,17 @@ function renderHilfen(w){
   const e = w.e, h = [], art = aktArt();
   if (art === "gebaerde"){
     h.push(knopf("geb", "Gebärde", w.ansicht === "gebaerde"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
+    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc));
     // Fingeralphabet erst nach dem Anfangsbuchstaben: Kosten so anzeigen, wie sie dann gelten
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
-    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + KOST1, w.ansicht === "erkl"));
+    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + kost1(), w.ansicht === "erkl"));
   } else if (art === "fach"){
     h.push(knopf("erklsehen", "Erklärung", w.ansicht === "erkl"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc));
+    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc));
     h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
   } else if (art === "blitz"){
-    h.push(knopf("blitzgeb", "Gebärde" + KOST1, w.ansicht === "gebaerde", !w.gezeigt));
-    h.push(knopf("abc", "Anfangsbuchstabe" + KOST1, false, w.abc || !w.gezeigt));
+    h.push(knopf("blitzgeb", "Gebärde" + kost1(), w.ansicht === "gebaerde", !w.gezeigt));
+    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc || !w.gezeigt));
   } else if (art === "falesen"){
     h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
   } else if (art === "mathe"){
@@ -1488,7 +1714,7 @@ function renderHilfen(w){
   } else if (art === "rechnen"){
     h.push(zFeld(w));
   } else if (art === "artikel"){
-    ["der","die","das"].forEach(a => h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : ""}" data-wahl="${a}" ${w.wahl ? "disabled" : ""}>${a}</button>`));
+    ["der","die","das"].forEach(a => { const f = (w.falsch || []).includes(a); h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : f ? " nein" : ""}" data-wahl="${a}" ${w.wahl || f || w.loesung ? "disabled" : ""}>${a}</button>`); });
   }
   $("t-hilfen").innerHTML = h.join("");
 }
@@ -1497,8 +1723,14 @@ function ergKnoepfe(){
   return `<div class="hilfen">${knapp ? `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button><button type="button" class="btn" data-t="ueben">Wörter üben</button>` : ""}
     <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">Fertig</button></div>`;
 }
-function startAnsicht(){
-  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe", rechnen:"rechnen"}[T.art];
+function startAnsicht(art){
+  return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe", rechnen:"rechnen"}[art || T.art];
+}
+/* Übung öffnen – von einer Kachel oder aus dem Wortschatz (05.11.2026): Art steht fest, keine Auswahl mehr */
+function oeffneTest(art, modus){
+  T.modus = modus; T.fest = true;
+  if (modus === "ueben") T.uart = art; else T.art = art;
+  T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; $("testov").scrollTop = 0; document.body.style.overflow = "hidden";
 }
 function testZu(){
   stoppeBlitz(); flFrei(); T.flKey = ""; if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
@@ -1509,11 +1741,15 @@ function uebenStart(woerter){
   T.woerter = mischen(woerter.map(e => ({e, zeige:null, gesehen:false, gewusst:null})));
   T.i = 0; T.gerendert = null; T.phase = "uwort"; renderTest(); $("testov").scrollTop = 0;
 }
-$("btn-ueben").addEventListener("click", () => { T.modus = "ueben"; { const g = st.eintraege.some(e => e.sammlung === st.sammlung); if (st.sammlung !== "schueler") T.uart = "gebaerden"; else if (!T.uart || (T.uart === "gebaerden" && !g)) T.uart = g ? "gebaerden" : "rechnen"; } T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
-$("btn-test").addEventListener("click", () => { T.modus = "test"; if (!artPool(T.art).length) T.art = Object.keys(ARTEN).find(k => artPool(k).length) || T.art; /* 03.11.2026: leere Art → erste mit Inhalt (z. B. Mathe) */ T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; document.body.style.overflow = "hidden"; });
+$("btn-ueben").addEventListener("click", () => oeffneTest("gebaerden", "ueben"));
+$("btn-test").addEventListener("click", () => oeffneTest("gebaerde", "test")); // Wortschatz: Gebärde → Wort (05.11.2026)
 $("testin").addEventListener("change", ev => {
   const t = ev.target;
   if (t.name === "uart"){ T.uart = t.value; renderTest(); return; }
+  if (t.name === "mstufe" || t.id === "t-mstufe"){ T.mstufe = t.value; T.deck = []; renderTest(); return; }
+  if (t.id === "t-quelle"){ T.quelle = t.value; renderTest(); return; }
+  if (t.id === "t-rop"){ T.rop = t.value; if (!(T.rop in RBEREICH[T.rb].ops)) T.rb = Object.keys(RBEREICH).find(k => T.rop in RBEREICH[k].ops); renderTest(); return; }
+  if (t.id === "t-rb"){ T.rb = t.value; if (!(T.rop in RBEREICH[T.rb].ops)) T.rop = Object.keys(RBEREICH[T.rb].ops).pop(); renderTest(); return; }
   if (t.name === "rb"){ T.rb = t.value; if (!(T.rop in RBEREICH[T.rb].ops)) T.rop = Object.keys(RBEREICH[T.rb].ops).pop(); renderTest(); return; }
   if (t.name === "rop"){ T.rop = t.value; renderTest(); return; }
   if (t.dataset.reihe){ const z = +t.dataset.reihe; T.reihen = t.checked ? [...new Set([...T.reihen, z])].sort((a, b) => a - b) : T.reihen.filter(x => x !== z); renderTest(); return; }
@@ -1534,15 +1770,19 @@ $("testin").addEventListener("click", ev => {
   const w = T.woerter[T.i];
   if (b.dataset.ja !== undefined){ T.woerter[+b.dataset.ja].richtig = true; renderTest(); return; }
   if (b.dataset.nein !== undefined){ T.woerter[+b.dataset.nein].richtig = false; renderTest(); return; }
-  if (b.dataset.wahl){ if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
+  if (b.dataset.wahl){
+    if (T.phase === "wueben"){ if (!w.wahl && !w.loesung){ if (b.dataset.wahl === w.e.artikel) w.wahl = b.dataset.wahl; else if (!w.falsch.includes(b.dataset.wahl)) w.falsch.push(b.dataset.wahl); renderTest(); } return; }
+    if (!w.wahl){ w.wahl = b.dataset.wahl; renderTest(); } return; }
   if (b.dataset.mwahl){ if (!w.wahl){ w.wahl = b.dataset.mwahl; renderTest(); } return; }
   if (b.dataset.z !== undefined){ zTaste(b.dataset.z); return; }
   const a = b.dataset.t;
   if (a === "abbrechen"){
-    if (!["ergebnis","start","ueben","uergebnis","rueben"].includes(T.phase) && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = T.phase === "uwort" ? "Wirklich beenden?" : "Wirklich abbrechen?"; return; }
+    if (!["ergebnis","start","ueben","uergebnis","rueben","wueben"].includes(T.phase) && !b.dataset.sicher){ b.dataset.sicher = "1"; b.textContent = T.phase === "uwort" ? "Wirklich beenden?" : "Wirklich abbrechen?"; return; }
     testZu();
-  } else if (a === "los" && T.modus === "ueben"){ if (T.uart === "rechnen" || T.uart === "mathe"){ T.rn = 0; T.deck = []; T.woerter = []; rNeu(); } else { T.uAlle = tAuswahl(); uebenStart(T.uAlle); } }
+  } else if (a === "los" && T.modus === "ueben"){ if (T.uart === "rechnen" || T.uart === "mathe"){ T.rn = 0; T.deck = []; T.woerter = []; rNeu(); } else if (WUEBEN.has(T.uart)){ T.wPool = tAuswahl(); T.wDeck = []; T.rn = 0; T.woerter = []; wNeu(); } else { T.uAlle = tAuswahl(); uebenStart(T.uAlle); } }
   else if (a === "rnext"){ rNeu(); }
+  else if (a === "wnext"){ wNeu(); }
+  else if (a === "wloesung"){ stoppeBlitz(); w.loesung = true; if (T.uart === "blitz") w.gezeigt = true; renderTest(); }
   else if (a === "rloesung"){ w.wahl = "–"; w.ok = false; w.gezeigt = true; renderTest(); }
   else if (a === "rnochmal"){ T.woerter = mischen(T.woerter.filter(x => !(x.ok && !x.versuche)).map(x => ({e:x.e, wahl:null, eingabe:"", versuche:0, ansicht:"rechnen"}))); T.sternWort = null; T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0; }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
   else if (a === "ugeb"){ w.zeige = "geb"; w.gesehen = true; renderTest(); }
@@ -1569,7 +1809,7 @@ $("testin").addEventListener("click", ev => {
   else if (a === "blitzgeb"){ w.geb = true; w.ansicht = w.ansicht === "gebaerde" ? "leer" : "gebaerde"; renderTest(); }
   else if (a === "zeigen"){
     w.ansicht = "wort"; renderTest();
-    stoppeBlitz(); T.blitzTimer = setTimeout(() => { T.blitzTimer = null; w.gezeigt = true; w.ansicht = "leer"; if (T.phase === "wort") renderTest(); }, 500);
+    stoppeBlitz(); T.blitzTimer = setTimeout(() => { T.blitzTimer = null; w.gezeigt = true; w.ansicht = "leer"; if (T.phase === "wort" || T.phase === "wueben") renderTest(); }, 500);
   }
   else if (a === "weiter"){
     stoppeBlitz();
@@ -1832,6 +2072,7 @@ $("import-file").addEventListener("change", async e => {
   try { await store.setKat(st.eigeneKat); } catch(err){}
   renderKat($("kategorie").value);
   if (ziel !== st.sammlung){
+    NAV.rolle = ziel === "schueler" ? "schueler" : "lehrer"; navSpeichern(); $("nav-zurueck").hidden = NAV.rolle !== "schueler"; // 05.11.2026
     st.sammlung = ziel;
     try { localStorage.setItem("gw-sammlung", ziel); } catch(err){}
     if (st.editId) resetForm();
@@ -1846,6 +2087,92 @@ $("import-file").addEventListener("change", async e => {
     ${fehler.length ? `<p class="hint">Nicht lesbar oder ohne Gebärdenvideo: ${liste(fehler)}</p>` : ""}
     ${gesN ? `<p class="hint">${gesN} ${gesN === 1 ? "Wort" : "Wörter"} in „noch zu bearbeiten“ übernommen.</p>` : ""}`, fehler.length > 0 && !neu.length && !ersetzt.length);
 });
+
+/* ---------- Startbildschirme + Navigation (05.11.2026, Freddy) ----------
+   Rolle (Schüler/Lehrer) → Schüler: Themen → Wortschatz (Liste) · Mathe · Deutsch · Fachwörter. Lehrer: direkt die Sammlung.
+   „Zurück“ = eine Ebene hoch, „Start“ = Rollenwahl. Die letzte Seite wird gemerkt (gw-nav). */
+const NAV = {rolle:null, seite:"rolle"};
+try { const n = JSON.parse(localStorage.getItem("gw-nav") || "null"); if (n && n.seite) Object.assign(NAV, n); } catch(e){}
+function navSpeichern(){ try { localStorage.setItem("gw-nav", JSON.stringify({rolle:NAV.rolle, seite:NAV.seite})); } catch(e){} }
+function setSammlung(s){
+  if (s === st.sammlung) return;
+  st.sammlung = s;
+  try { localStorage.setItem("gw-sammlung", s); } catch(e){}
+  if (st.editId) resetForm();
+  clearAllErr();
+  st.open = null; st.confirmDel = null; st.auf = null;
+  renderSammlung(); renderSlots(); renderList();
+}
+const HIC = {
+  schueler:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 24 9l20 9-20 9z"/><path d="M12 22v10c0 3 6 6 12 6s12-3 12-6V22"/><path d="M44 18v12"/></svg>',
+  lehrer:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="28" height="20" rx="2"/><circle cx="11" cy="20" r="5"/><path d="M3 42c0-7 4-12 8-12s6 2 8 5l7-9"/></svg>',
+  wort:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"><path d="M24 12c-5-4-12-5-19-4v29c7-1 14 0 19 4 5-4 12-5 19-4V8c-7-1-14 0-19 4z"/><path d="M24 12v29"/></svg>',
+  mathe:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M14 6v14M7 13h14M28 13h14M8 30l12 12M20 30 8 42M28 33h14M28 41h14"/></svg>',
+  deutsch:'<svg viewBox="0 0 48 48"><text x="24" y="35" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="28" fill="currentColor">Aa</text></svg>',
+  fach:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5h12M20 5v14L8 40a3 3 0 0 0 3 4h26a3 3 0 0 0 3-4L28 19V5"/><path d="M13 31h22"/></svg>',
+  rechnen:'<svg viewBox="0 0 48 48"><text x="24" y="32" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="19" fill="currentColor">7+5</text></svg>',
+  rechenart:'<svg viewBox="0 0 48 48"><text x="24" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="17" fill="currentColor">+ −</text><text x="24" y="41" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="17" fill="currentColor">· :</text></svg>',
+  blitz:'<svg viewBox="0 0 48 48" fill="currentColor"><path d="M27 3 9 27h12l-3 18 21-26H26z"/></svg>',
+  hand:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M16 24V9a3 3 0 0 1 6 0v13M22 21V6a3 3 0 0 1 6 0v15M28 21V9a3 3 0 0 1 6 0v14M34 22v-6a3 3 0 0 1 6 0v12c0 9-6 16-15 16-6 0-9-3-12-7l-6-8a3 3 0 0 1 5-4l4 4"/></svg>',
+  artikel:'<svg viewBox="0 0 48 48"><text x="24" y="20" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="13" fill="currentColor">der die</text><text x="24" y="38" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="13" fill="currentColor">das</text></svg>',
+  fachbegriff:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="38" height="28" rx="3"/><path d="M5 30l10-9 8 7 7-5 13 10"/><circle cx="33" cy="17" r="3"/></svg>'
+};
+const HSEITEN = {rolle:{titel:"Lernapp DGS"}, themen:{titel:"Was möchtest du lernen?", zurueck:"rolle"}, mathe:{titel:"Mathe", zurueck:"themen"},
+  deutsch:{titel:"Deutsch", zurueck:"themen"}, fachwoerter:{titel:"Fachwörter", zurueck:"themen"}};
+const UEBEN_DA = new Set(["rechnen","mathe","blitz","falesen","artikel","fach"]); // Bau 2 (05.11.2026): Üben für alle
+function kachel(k){
+  const akt = !!(k.test || k.ueben);
+  const inhalt = `<span class="kicon">${HIC[k.icon]}</span><span class="ktitel">${k.t}</span><span class="ksub">${k.sub}</span>`
+    + (k.aus ? `<span class="bald">${k.bald || "kommt bald"}</span>` : "")
+    + (akt && !k.aus ? `<span class="akt"><button type="button" data-hueben="${k.ueben}" ${UEBEN_DA.has(k.ueben) ? "" : "disabled"}>Üben</button><button type="button" class="test" data-htest="${k.test}">Test</button></span>` : "");
+  if (akt || k.aus) return `<div class="kachel${k.aus ? " aus" : ""}" data-farbe="${k.farbe}"${k.aus ? ' aria-disabled="true"' : ""}>${inhalt}</div>`;
+  return `<button type="button" class="kachel" data-farbe="${k.farbe}" data-zu="${k.zu}">${inhalt}</button>`;
+}
+function renderHome(){
+  const s = NAV.seite, S = HSEITEN[s] || HSEITEN.rolle, se = schuelerEintraege();
+  const kein = "noch keine passenden Wörter";
+  let k = [];
+  if (s === "rolle") k = [{t:"Schüler", sub:"Üben und Tests", icon:"schueler", farbe:"mathe", zu:"r:schueler"},
+    {t:"Lehrer", sub:"Sammlung und Gebärden üben", icon:"lehrer", farbe:"fachw", zu:"r:lehrer"}];
+  if (s === "themen") k = [{t:"Wortschatz", sub:"Alle Wörter mit Gebärde", icon:"wort", farbe:"wort", zu:"liste"},
+    {t:"Mathe", sub:"Kopfrechnen · Rechenart erkennen", icon:"mathe", farbe:"mathe", zu:"mathe"},
+    {t:"Deutsch", sub:"Blitzlesen · Fingeralphabet · Artikel", icon:"deutsch", farbe:"deutsch", zu:"deutsch"},
+    {t:"Fachwörter", sub:"Fachbegriffe aus den Fächern", icon:"fach", farbe:"fachw", zu:"fachwoerter", aus:!se.some(e => e.kategorie !== "Deutsch"), bald:"noch keine Fachwörter"}];
+  if (s === "mathe") k = [{t:"Kopfrechnen", sub:"Plus, Minus, Einmaleins", icon:"rechnen", farbe:"mathe", test:"rechnen", ueben:"rechnen"},
+    {t:"Rechenart erkennen", sub:"Signalwörter und Sätze", icon:"rechenart", farbe:"mathe", test:"mathe", ueben:"mathe"}];
+  if (s === "deutsch") k = [{t:"Blitzlesen", sub:"Wort kurz sehen, dann schreiben", icon:"blitz", farbe:"deutsch", test:"blitz", ueben:"blitz", aus:!se.length, bald:kein},
+    {t:"Fingeralphabet", sub:"Fingeralphabet lesen, Wort schreiben", icon:"hand", farbe:"deutsch", test:"falesen", ueben:"falesen", aus:!se.some(e => e.fingeralphabet), bald:kein},
+    {t:"Artikel", sub:"der, die oder das?", icon:"artikel", farbe:"deutsch", test:"artikel", ueben:"artikel", aus:!se.some(e => e.artikel), bald:kein}];
+  if (s === "fachwoerter") k = [{t:"Fachbegriffe", sub:"Bild ansehen, Fachbegriff schreiben", icon:"fachbegriff", farbe:"fachw", test:"fach", ueben:"fach",
+    aus:!se.some(e => erklMedium(e) && e.kategorie !== "Deutsch"), bald:"noch keine Fachwörter mit Erklärungsbild"}];
+  $("home").innerHTML = `<div class="hkopf"><button type="button" class="btn hnav" data-hnav="zurueck" ${S.zurueck ? "" : "hidden"}>‹ Zurück</button><h1>${S.titel}</h1><button type="button" class="btn hnav" data-hnav="start" ${s === "rolle" ? "hidden" : ""}>⌂ Start</button></div>`
+    + (s === "rolle" ? `<p class="hfrage">Wer bist du?</p>` : "")
+    + `<div class="kacheln">${k.map(kachel).join("")}</div>`;
+}
+function renderNav(){
+  if (!HSEITEN[NAV.seite] && NAV.seite !== "liste") NAV.seite = "rolle";
+  if (NAV.seite !== "rolle" && !NAV.rolle) NAV.seite = "rolle";
+  const liste = NAV.seite === "liste";
+  $("home").hidden = liste; document.querySelector(".wrap").hidden = !liste;
+  if (NAV.rolle) setSammlung(NAV.rolle === "lehrer" ? "fachkraft" : "schueler");
+  if (liste){ $("nav-zurueck").hidden = NAV.rolle !== "schueler"; }
+  else renderHome();
+  window.scrollTo(0, 0);
+}
+function geheZu(seite){ NAV.seite = seite; navSpeichern(); renderNav(); }
+$("home").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b || b.disabled) return;
+  if (b.dataset.hnav === "zurueck") return geheZu((HSEITEN[NAV.seite] || {}).zurueck || "rolle");
+  if (b.dataset.hnav === "start") return geheZu("rolle");
+  if (b.dataset.htest) return oeffneTest(b.dataset.htest, "test");
+  if (b.dataset.hueben) return oeffneTest(b.dataset.hueben, "ueben");
+  const z = b.dataset.zu; if (!z) return;
+  if (z === "r:schueler"){ NAV.rolle = "schueler"; return geheZu("themen"); }
+  if (z === "r:lehrer"){ NAV.rolle = "lehrer"; return geheZu("liste"); }
+  geheZu(z);
+});
+$("nav-zurueck").addEventListener("click", () => geheZu("themen"));
+$("nav-start").addEventListener("click", () => geheZu("rolle"));
 
 /* ---------- Start ---------- */
 (async function start(){
@@ -1869,6 +2196,7 @@ $("import-file").addEventListener("change", async e => {
   try { if (imViewer) downloads = await window.claude.use("downloads"); } catch(e){ downloads = null; }
   renderTools();
   renderBackupHinweis();   // in claude.ai erst jetzt bekannt, ob gespeichert werden kann
+  renderNav();             // Startbildschirm bzw. zuletzt geöffnete Seite (05.11.2026)
 })();
 })();
 </script>
