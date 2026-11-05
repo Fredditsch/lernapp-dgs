@@ -378,69 +378,77 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
 
 /* ---------- PC-Darstellung (Full HD, Maus) – Entwurf 05.11.2026 von Freddy freigegeben ---------- */
 .sp{display:contents}
-@media (min-width:1200px) and (pointer:fine){
+/* Einheit --u: 1px bei Full HD (1920×940 Fensterinhalt), auf kleineren Fenstern entsprechend kleiner – reine CSS-Rechnung, in allen Browsern gleich */
+:root{--vh:1vh}
+@supports (height:1svh){:root{--vh:1svh}} /* iPad: sichtbare Höhe ohne Safari-Leisten */
+@media (min-width:1200px) and (pointer:fine){:root{--u:max(.5px,min(1px,100vw / 1920,100 * var(--vh) / 940))}}
+@media (min-width:1024px) and (orientation:landscape) and (pointer:coarse){:root{--u:max(.5px,min(1px,100vw / 1366,100 * var(--vh) / 940))}}
+@media (min-width:1024px) and (orientation:landscape) and (pointer:coarse){
+  /* iPad quer: Tippflächen mind. 48 px, auch wenn alles verkleinert ist */
+  .hnav,.akt button,.testkopf .btn,.hilfen .btn,.testwahl.spiel select,.testwahl.spiel input[type=number],.testwahl.spiel label.opt,.testwahl.spiel .btn.primary,.los .btn.primary,[data-t=wnext],.ztasten .btn{min-height:48px}
+}
+@media (min-width:1200px) and (pointer:fine), (min-width:1024px) and (orientation:landscape) and (pointer:coarse){
+  .home{font-size:calc(16 * var(--u))}
   /* Startbildschirme */
-  /* mitwachsen/schrumpfen: alles ist für ein Full-HD-Fenster (1920×940) gestaltet und wird auf kleineren Bildschirmen (Laptop) verkleinert */
-  .home,.testin{zoom:var(--pcz,1)}
-  .home{max-width:1760px;min-height:calc(100vh / var(--pcz,1));display:flex;flex-direction:column;padding-block:40px 56px;gap:36px}
-  .hkopf h1{font-size:44px}
-  .hnav{font-size:22px;padding:12px 22px;border-radius:16px;min-width:150px}
-  .hfrage{font-size:34px}
-  .kacheln{flex:1;grid-template-columns:repeat(auto-fit,minmax(300px,400px));justify-content:center;align-content:center;gap:40px}
-  .kachel{border-radius:40px;padding:48px 24px 40px;gap:14px}
-  .kicon{width:170px;height:170px;padding:38px;box-shadow:0 0 0 10px var(--surface)}
-  .ktitel{font-size:40px;margin-top:10px}
-  .ksub{font-size:22px}
-  .bald{font-size:18px;padding:3px 12px}
-  .akt{gap:16px;margin-top:10px}
-  .akt button{font-size:24px;padding:12px 30px;border-radius:16px;border-width:3px}
+  .home{max-width:calc(1760 * var(--u));display:flex;flex-direction:column;padding-block:calc(32 * var(--u)) calc(40 * var(--u));gap:calc(36 * var(--u))}
+  .hkopf h1{font-size:calc(44 * var(--u))}
+  .hnav{font-size:calc(22 * var(--u));padding:calc(12 * var(--u)) calc(22 * var(--u));border-radius:calc(16 * var(--u));min-width:calc(150 * var(--u))}
+  .hfrage{font-size:calc(34 * var(--u))}
+  .kacheln{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,calc(380 * var(--u)));justify-content:center;gap:calc(40 * var(--u));margin-top:calc(24 * var(--u))} /* alle Kacheln in einer Reihe, werden bei Platzmangel schmaler */
+  .kachel{border-radius:calc(40 * var(--u));padding:calc(48 * var(--u)) calc(24 * var(--u)) calc(40 * var(--u));gap:calc(14 * var(--u))}
+  .kicon{width:calc(170 * var(--u));height:calc(170 * var(--u));padding:calc(38 * var(--u));box-shadow:0 0 0 calc(10 * var(--u)) var(--surface)}
+  .ktitel{font-size:calc(40 * var(--u));margin-top:calc(10 * var(--u))}
+  .ksub{font-size:calc(22 * var(--u))}
+  .bald{font-size:calc(18 * var(--u));padding:calc(3 * var(--u)) calc(12 * var(--u))}
+  .akt{gap:calc(16 * var(--u));margin-top:calc(10 * var(--u))}
+  .akt button{font-size:calc(24 * var(--u));padding:calc(12 * var(--u)) calc(30 * var(--u));border-radius:calc(16 * var(--u));border-width:calc(3 * var(--u))}
   /* Test/Üben: breiter, größer */
-  .testov{padding:20px 96px 24px}
-  .testin{max-width:1728px;gap:24px;font-size:22px}
-  .testkopf h2{font-size:44px}
-  .testnr{font-size:24px}
-  .testkopf .btn{font-size:20px;padding:12px 22px;border:2px solid var(--line);border-radius:16px}
-  .testin .hint{font-size:20px}
+  .testov{padding:calc(20 * var(--u)) calc(96 * var(--u)) calc(24 * var(--u))}
+  .testin{max-width:calc(1728 * var(--u));gap:calc(24 * var(--u));font-size:calc(22 * var(--u))}
+  .testkopf h2{font-size:calc(44 * var(--u))}
+  .testnr{font-size:calc(24 * var(--u))}
+  .testkopf .btn{font-size:calc(20 * var(--u));padding:calc(12 * var(--u)) calc(22 * var(--u));border:calc(2 * var(--u)) solid var(--line);border-radius:calc(16 * var(--u))}
+  .testin .hint{font-size:calc(20 * var(--u))}
   /* Einstellungen zweispaltig */
-  .testwahl.spiel{grid-template-columns:1fr 1fr;padding:40px;gap:28px 32px;border-radius:40px}
+  .testwahl.spiel{grid-template-columns:1fr 1fr;padding:calc(40 * var(--u));gap:calc(28 * var(--u)) calc(32 * var(--u));border-radius:calc(40 * var(--u))}
   .testwahl.spiel > *{grid-column:1 / -1}
-  .testwahl.spiel > .sp{display:grid;gap:28px;align-content:start;grid-column:auto}
-  .einst{border-radius:26px;padding:26px 30px;gap:16px}
-  .elab{font-size:28px}
-  .testwahl.spiel select{font-size:26px;padding:16px 64px 16px 20px;border-width:3px;border-radius:18px;background-size:22px;background-position:right 22px center}
-  .testwahl.spiel input[type=number]{font-size:28px;max-width:160px;border-width:3px;border-radius:18px;padding:12px 20px}
-  .testwahl.spiel label.opt{font-size:24px;padding:12px 22px}
-  .testwahl.spiel label.opt input{width:24px;height:24px}
-  .testwahl.spiel .btn.primary{font-size:28px;padding:20px 44px;border-radius:20px}
-  .testliste{max-height:420px;font-size:22px}
+  .testwahl.spiel > .sp{display:grid;gap:calc(28 * var(--u));align-content:start;grid-column:auto}
+  .einst{border-radius:calc(26 * var(--u));padding:calc(26 * var(--u)) calc(30 * var(--u));gap:calc(16 * var(--u))}
+  .elab{font-size:calc(28 * var(--u))}
+  .testwahl.spiel select{font-size:calc(26 * var(--u));padding:calc(16 * var(--u)) calc(64 * var(--u)) calc(16 * var(--u)) calc(20 * var(--u));border-width:calc(3 * var(--u));border-radius:calc(18 * var(--u));background-size:calc(22 * var(--u));background-position:right calc(22 * var(--u)) center}
+  .testwahl.spiel input[type=number]{font-size:calc(28 * var(--u));max-width:calc(160 * var(--u));border-width:calc(3 * var(--u));border-radius:calc(18 * var(--u));padding:calc(12 * var(--u)) calc(20 * var(--u))}
+  .testwahl.spiel label.opt{font-size:calc(24 * var(--u));padding:calc(12 * var(--u)) calc(22 * var(--u))}
+  .testwahl.spiel label.opt input{width:calc(24 * var(--u));height:calc(24 * var(--u))}
+  .testwahl.spiel .btn.primary{font-size:calc(28 * var(--u));padding:calc(20 * var(--u)) calc(44 * var(--u));border-radius:calc(20 * var(--u))}
+  .testliste{max-height:calc(420 * var(--u));font-size:calc(22 * var(--u))}
   /* Aufgaben */
-  .leerflaeche{min-height:420px;border-radius:32px;padding:40px}
-  .blitzwort{font-size:96px}
-  .blitzwort.mathesatz{font-size:64px;max-width:1300px;line-height:1.3}
+  .leerflaeche{min-height:calc(360 * var(--u));border-radius:calc(32 * var(--u));padding:calc(40 * var(--u))}
+  .blitzwort{font-size:calc(96 * var(--u))}
+  .blitzwort.mathesatz{font-size:calc(64 * var(--u));max-width:calc(1300 * var(--u));line-height:1.3}
   .flaeche .player video,.flaeche .player img{max-height:62vh}
-  .hilfen{gap:16px}
-  .hilfen .btn{font-size:22px;padding:14px 22px;border-radius:16px}
-  .hilfen .btn.artwahl{font-size:36px;min-width:200px;padding:22px 30px;border-radius:24px;border-width:3px}
-  .hilfen .btn.rechen{flex:1;font-size:40px;padding:26px 0}
-  .rechen .rz{font-size:56px}
-  .abc{font-size:64px}
-  .rueck{font-size:32px}
-  .los .btn.primary{font-size:30px;padding:20px 48px;border-radius:20px}
-  [data-t=wnext]{font-size:30px!important;padding:20px 48px!important;border-radius:20px!important}
-  .stern{width:120px;height:120px}
-  .minusflug{font-size:48px}
+  .hilfen{gap:calc(16 * var(--u))}
+  .hilfen .btn{font-size:calc(22 * var(--u));padding:calc(14 * var(--u)) calc(22 * var(--u));border-radius:calc(16 * var(--u))}
+  .hilfen .btn.artwahl{font-size:calc(36 * var(--u));min-width:calc(200 * var(--u));padding:calc(22 * var(--u)) calc(30 * var(--u));border-radius:calc(24 * var(--u));border-width:calc(3 * var(--u))}
+  .hilfen .btn.rechen{flex:1;font-size:calc(40 * var(--u));padding:calc(26 * var(--u)) 0}
+  .rechen .rz{font-size:calc(56 * var(--u))}
+  .abc{font-size:calc(64 * var(--u))}
+  .rueck{font-size:calc(32 * var(--u))}
+  .los .btn.primary{font-size:calc(30 * var(--u));padding:calc(20 * var(--u)) calc(48 * var(--u));border-radius:calc(20 * var(--u))}
+  [data-t=wnext]{font-size:calc(30 * var(--u))!important;padding:calc(20 * var(--u)) calc(48 * var(--u))!important;border-radius:calc(20 * var(--u))!important}
+  .stern{width:calc(120 * var(--u));height:calc(120 * var(--u))}
+  .minusflug{font-size:calc(48 * var(--u))}
   /* Kopfrechnen: Aufgabe links, Zahlenfeld und Stern rechts */
   /* Kopfrechnen: alles in einer Spalte wie vorher – Rechnung, darunter Antwortfeld und Zahlenfeld (Freddy 13:33) */
-  .testin[data-art=rechnen] .leerflaeche{min-height:240px}
-  .testin[data-art=rechnen] .blitzwort{font-size:150px;line-height:1}
-  .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:80px}
-  .schriftlich{font-size:120px}
-  .zanzeige{font-size:72px;min-width:300px;min-height:108px;border-width:4px;border-radius:24px}
-  .ztasten{grid-template-columns:repeat(3,130px);gap:12px}
-  .ztasten .btn{min-height:84px;font-size:44px;border-radius:22px}
+  .testin[data-art=rechnen] .leerflaeche{min-height:calc(190 * var(--u));padding-block:calc(24 * var(--u))}
+  .testin[data-art=rechnen] .blitzwort{font-size:calc(130 * var(--u));line-height:1}
+  .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:calc(80 * var(--u))}
+  .schriftlich{font-size:calc(120 * var(--u))}
+  .zanzeige{font-size:calc(60 * var(--u));min-width:calc(300 * var(--u));min-height:calc(90 * var(--u));border-width:calc(4 * var(--u));border-radius:calc(24 * var(--u))}
+  .ztasten{grid-template-columns:repeat(3,calc(120 * var(--u)));gap:calc(10 * var(--u))}
+  .ztasten .btn{min-height:calc(66 * var(--u));padding:0;line-height:1;font-size:calc(40 * var(--u));border-radius:calc(22 * var(--u))}
   /* Ergebnis */
-  .lobtext{font-size:64px}.lob.perfekt .lobtext{font-size:76px}
-  .erg td,.erg th{padding:10px 12px}
+  .lobtext{font-size:calc(64 * var(--u))}.lob.perfekt .lobtext{font-size:calc(76 * var(--u))}
+  .erg td,.erg th{padding:calc(10 * var(--u)) calc(12 * var(--u))}
 }
 </style>
 
@@ -2244,37 +2252,6 @@ $("home").addEventListener("click", ev => {
 });
 $("nav-zurueck").addEventListener("click", () => geheZu("themen"));
 $("nav-start").addEventListener("click", () => geheZu("rolle"));
-
-/* PC-Darstellung ins Fenster einpassen (05.11.2026): gestaltet für Full HD; misst den Inhalt und verkleinert, bis er ohne Scrollen passt */
-function pcHoehe(){ // Höhe des sichtbaren Inhalts in Bildschirmpixeln (inkl. Ränder)
-  const tov = $("testov");
-  if (!tov.hidden){ const r = $("testin").getBoundingClientRect(), cs = getComputedStyle(tov); return r.height + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom); }
-  const h = $("home"); if (h.hidden) return 0;
-  const teile = [...h.querySelectorAll(".hkopf,.hfrage,.kachel")]; if (!teile.length) return 0;
-  const oben = Math.min(...teile.map(x => x.getBoundingClientRect().top)), unten = Math.max(...teile.map(x => x.getBoundingClientRect().bottom)), cs = getComputedStyle(h);
-  return unten - oben + (parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom)) * (parseFloat(cs.zoom) || 1);
-}
-function pcZoom(){
-  const root = document.documentElement;
-  let pc = false; try { pc = matchMedia("(min-width:1200px) and (pointer:fine)").matches; } catch(e){}
-  if (!pc){ root.style.setProperty("--pcz", "1"); return; }
-  let z = Math.min(1, innerWidth / 1920);
-  for (let n = 0; n < 4; n++){ // zwei, drei Durchgänge, weil sich Zeilenumbrüche mit der Größe ändern
-    root.style.setProperty("--pcz", z.toFixed(3));
-    const h = pcHoehe(); if (!h) break;
-    const neu = Math.max(.5, Math.min(Math.min(1, innerWidth / 1920), z * innerHeight * .985 / h));
-    if (Math.abs(neu - z) < .005) break;
-    z = neu;
-  }
-  root.style.setProperty("--pcz", z.toFixed(3));
-}
-let pcPlan = 0;
-function pcBald(){ if (!pcPlan) pcPlan = requestAnimationFrame(() => { pcPlan = 0; pcZoom(); }); }
-window.addEventListener("resize", pcBald);
-try { const mo = new MutationObserver(pcBald);
-  mo.observe($("testin"), {childList:true, subtree:true}); mo.observe($("home"), {childList:true, subtree:true});
-  mo.observe($("testov"), {attributes:true, attributeFilter:["hidden"]}); mo.observe($("home"), {attributes:true, attributeFilter:["hidden"]}); } catch(e){}
-pcZoom();
 
 /* ---------- Start ---------- */
 (async function start(){
