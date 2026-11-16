@@ -21,39 +21,20 @@ img{max-width:100%}
 </head>
 <body>
 <style>
+/* Schriften liegen neben der App (schriften/, OFL), die App lädt nichts von Google oder anderen Servern (Freddy 16.11.) */
+@font-face{font-family:"Bricolage Grotesque";font-style:normal;font-weight:200 800;font-display:swap;src:url("schriften/bricolage-grotesque-latin-opsz-normal.woff2") format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-weight:200 800;font-display:swap;src:url("schriften/atkinson-hyperlegible-next-latin-wght-normal.woff2") format("woff2")}
 /* Layout: Kopf mit Sammlungs-Umschalter · darunter zwei Spalten (Formular links, Einträge rechts), am Handy untereinander */
-:root{
-  --bg:#f6f3f4;
-  --surface:#ffffff;
-  --ink:#23161b;
-  --muted:#6b5b61;
-  --line:#e3d8dc;
-  --accent:#8e1f3d;
-  --accent-soft:#f6e3e8;
-  --accent-ink:#ffffff;
-  --warn:#9a3412;
-  --warn-soft:#fdeee6;
-  --ok:#1f6b45;
-  --ok-soft:#e3f2ea;
-  --focus:#c2416a;
-  --font-display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-  --font-body:"Atkinson Hyperlegible", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --r:10px;
+/* Farben: Design System „Freddys App-Stil“ (Stil „C sanfter“), hell + dunkel, Textfarben ≥ 4,5:1 (Sammel-Bau 1) */
+:root{--c-papier:#F4EFE6;--c-tief:#ECE6DB;--c-karte:#FFFDF8;--c-tinte:#22303A;--c-leise:#4E5A63;--c-aus:#5E6870;--c-rand:#3A4650;--c-randaus:#8C949A;--deutsch:#A44C1A;--mathe:#2F6690;--c-wortschatz:#8E2F5E;--c-richtig:#2A6F47;--c-rot:#B3392F;--c-auf:#FFFFFF;--t-neutral:#D7D0C4;--t-rose:#D9B9C8;--t-blau:#B9CCDC;--t-sand:#E5C2A8;--t-gruen:#BBD3C4;--t-rot:#EBC3BE;--warn-soft:#F7E7E4;--ok-soft:#E4EFE8;
+  --bg:var(--c-papier);--surface:var(--c-karte);--ink:var(--c-tinte);--muted:var(--c-leise);--line:var(--c-rand);
+  --accent:var(--c-wortschatz);--accent-soft:var(--c-tief);--accent-ink:var(--c-auf);--warn:var(--c-rot);--ok:var(--c-richtig);--focus:var(--mathe);
+  --font-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body:"Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, sans-serif;
+  --r:12px;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --bg:#1a1013; --surface:#26171c; --ink:#f2e8eb; --muted:#b9a3aa; --line:#3d2730;
-    --accent:#f2a7b9; --accent-soft:#452030; --accent-ink:#2a0b14;
-    --warn:#f4a27a; --warn-soft:#3a2219; --ok:#7fd0a3; --ok-soft:#173327; --focus:#f7c2cf;
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --bg:#1a1013; --surface:#26171c; --ink:#f2e8eb; --muted:#b9a3aa; --line:#3d2730;
-  --accent:#f2a7b9; --accent-soft:#452030; --accent-ink:#2a0b14;
-  --warn:#f4a27a; --warn-soft:#3a2219; --ok:#7fd0a3; --ok-soft:#173327; --focus:#f7c2cf;
-  color-scheme:dark;
-}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--c-papier:#1D2126;--c-tief:#171A1E;--c-karte:#272C32;--c-tinte:#F1EBE0;--c-leise:#C3BBAE;--c-aus:#A8A196;--c-rand:#C9C1B3;--c-randaus:#8A8479;--deutsch:#E8A070;--mathe:#8DB8DE;--c-wortschatz:#E393BC;--c-richtig:#7CC79C;--c-rot:#F2948A;--c-auf:#1D2126;--t-neutral:#0E1013;--t-rose:#4A2E3C;--t-blau:#233849;--t-sand:#4A3626;--t-gruen:#21402E;--t-rot:#4C2724;--warn-soft:#3A2420;--ok-soft:#1F3328;color-scheme:dark;}}
+:root[data-theme="dark"]{--c-papier:#1D2126;--c-tief:#171A1E;--c-karte:#272C32;--c-tinte:#F1EBE0;--c-leise:#C3BBAE;--c-aus:#A8A196;--c-rand:#C9C1B3;--c-randaus:#8A8479;--deutsch:#E8A070;--mathe:#8DB8DE;--c-wortschatz:#E393BC;--c-richtig:#7CC79C;--c-rot:#F2948A;--c-auf:#1D2126;--t-neutral:#0E1013;--t-rose:#4A2E3C;--t-blau:#233849;--t-sand:#4A3626;--t-gruen:#21402E;--t-rot:#4C2724;--warn-soft:#3A2420;--ok-soft:#1F3328;color-scheme:dark;}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.5}
@@ -316,9 +297,8 @@ label.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:
 @media (prefers-reduced-motion: no-preference){.toast{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translate(-50%,6px)}}}
 
 /* ---------- Startbildschirme (05.11.2026, Entwurf Variante C von Freddy gewählt) ---------- */
-:root{--wortf:#8e1f3d;--wortf-soft:#f6e3e8;--mathe:#1d5fa8;--mathe-soft:#e2edf9;--deutsch:#b45309;--deutsch-soft:#fbeedc;--fachw:#0f766e;--fachw-soft:#dcf3ef;--grau:#9a8f93;--grau-soft:#efebec;--on-color:#ffffff}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--wortf:#c2416a;--wortf-soft:#452030;--mathe:#3b82d6;--mathe-soft:#16283f;--deutsch:#d97706;--deutsch-soft:#3a2716;--fachw:#14a093;--fachw-soft:#12312d;--grau:#7d7276;--grau-soft:#2f2428}}
-:root[data-theme="dark"]{--wortf:#c2416a;--wortf-soft:#452030;--mathe:#3b82d6;--mathe-soft:#16283f;--deutsch:#d97706;--deutsch-soft:#3a2716;--fachw:#14a093;--fachw-soft:#12312d;--grau:#7d7276;--grau-soft:#2f2428}
+/* Bereichsfarben = Fachfarben des Design Systems; *-soft = helle Schattentönung. Fachwörter hat im Design System keine eigene Farbe → Randfarbe */
+:root{--wortf:var(--c-wortschatz);--wortf-soft:var(--t-rose);--mathe-soft:var(--t-blau);--deutsch-soft:var(--t-sand);--fachw:var(--c-rand);--fachw-soft:var(--t-neutral);--grau:var(--c-aus);--grau-soft:var(--c-tief);--on-color:var(--c-auf)}
 .home{max-width:820px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px;display:grid;gap:22px}
 .hkopf{display:flex;align-items:center;gap:8px}
 .hkopf h1{flex:1;min-width:0;margin:0;text-align:center;font-size:26px;text-wrap:balance}
@@ -332,8 +312,11 @@ button.kachel{cursor:pointer}
 .kachel[data-farbe="deutsch"]{--c:var(--deutsch);--s:var(--deutsch-soft)}
 .kachel[data-farbe="fachw"]{--c:var(--fachw);--s:var(--fachw-soft)}
 .kachel.aus{--c:var(--grau);--s:var(--grau-soft);opacity:.8;cursor:not-allowed}
-.kachel:nth-child(odd){transform:rotate(-1.5deg)}
-.kachel:nth-child(even){transform:rotate(1.5deg)}
+/* Drehung höchstens ±0,8°, Nachbarn abwechselnd (Design System) */
+.kachel:nth-child(4n+1){transform:rotate(-0.8deg)}
+.kachel:nth-child(4n+2){transform:rotate(0.6deg)}
+.kachel:nth-child(4n+3){transform:rotate(-0.4deg)}
+.kachel:nth-child(4n){transform:rotate(0.5deg)}
 .kicon{width:92px;height:92px;border-radius:50%;background:var(--c);color:var(--on-color);padding:20px;box-shadow:0 0 0 6px var(--surface);display:grid;place-items:center;flex:none}
 .kicon svg{width:100%;height:100%}
 .ktitel{font-family:var(--font-display);font-weight:800;font-size:22px;line-height:1.15;margin-top:6px}
@@ -345,15 +328,8 @@ button.kachel{cursor:pointer}
 .akt button[disabled]{border-color:var(--grau);background:var(--grau-soft);color:var(--grau);cursor:not-allowed}
 .navbar{display:flex;justify-content:space-between;gap:8px;margin-bottom:14px}
 @media (max-width:520px){.kacheln{grid-template-columns:minmax(0,1fr)}.hkopf{flex-wrap:wrap;justify-content:space-between}.hkopf h1{order:3;flex-basis:100%;font-size:22px}}
-/* Hover-Animation bei allen Auswahlen (Freddy 05.11.2026) */
-@media (hover:hover) and (prefers-reduced-motion:no-preference){
-  .kachel,.akt button,.arten .art,.testwahl label.opt,.hilfen .btn.artwahl{transition:transform .15s}
-  button.kachel:hover,.kachel:not(.aus):hover{transform:rotate(0) scale(1.03)}
-  .akt button:not([disabled]):hover{transform:scale(1.08)}
-  .arten .art:hover,.testwahl label.opt:hover{transform:scale(1.02)}
-  .hilfen .btn.artwahl:not([disabled]):hover{transform:scale(1.06)}
-}
-@media (prefers-reduced-motion:reduce){.kachel:nth-child(odd),.kachel:nth-child(even){transform:none}}
+/* Hover-Animation (05.11.2026) entfällt: Design System „keine Übergänge, Zustände wechseln sofort“ (Sammel-Bau 1) */
+
 /* ---------- Einstellungen Test/Üben im verspielten Design (05.11.2026) ---------- */
 .testwahl.spiel{--c:var(--wortf);--s:var(--wortf-soft);background:var(--s);border:0;border-radius:26px;padding:22px 18px;gap:16px}
 .testwahl.spiel[data-farbe="mathe"]{--c:var(--mathe);--s:var(--mathe-soft)}
@@ -370,9 +346,7 @@ button.kachel{cursor:pointer}
 .testwahl.spiel .btn.primary{background:var(--c);border-color:var(--c);color:var(--on-color);border-radius:14px;font-size:18px;padding:12px 26px}
 .los{display:flex;justify-content:flex-end}
 [data-t=wnext]{margin-left:auto}
-:root{--signal:#e8590c}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--signal:#ff922b}}
-:root[data-theme="dark"]{--signal:#ff922b}
+:root{--signal:var(--deutsch)} /* Deutsch-Orange #A44C1A statt #e8590c (Kontrast) */
 mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* Signalwort: Schrift verfärbt sich, kein Kasten (Freddy 05.11.2026) */
 
 
@@ -450,11 +424,211 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
   .lobtext{font-size:calc(64 * var(--u))}.lob.perfekt .lobtext{font-size:calc(76 * var(--u))}
   .erg td,.erg th{padding:calc(10 * var(--u)) calc(12 * var(--u))}
 }
+
+/* ---------- Stil „C sanfter“ (Design System „Freddys App-Stil“) – Sammel-Bau 1, 15.11.2026 ----------
+   Papier, 2-px-Rand, harter heller Schatten (4 px), Drehung höchstens ±0,8°, Ecken nie ganz gleich, keine Übergänge.
+   Größen hängen weiter an --u (PC/iPad quer), sonst 1px. Steht am Ende, damit es die älteren Farben überdeckt. */
+body{background:var(--c-papier);color:var(--c-tinte)}
+:focus-visible{outline:3px solid var(--mathe);outline-offset:3px}
+h1,h2,h3,.ktitel,.elab,.word,.blitzwort,.abc,.lobtext,.zanzeige,.schriftlich{font-weight:700}
+.btn{border:2px solid var(--c-rand);background:var(--c-karte);color:var(--c-tinte);border-radius:12px 14px 12px 14px;box-shadow:4px 4px 0 var(--t-neutral);justify-content:center;gap:.45em;line-height:1.2}
+.btn:hover{border-color:var(--c-rand)}
+.btn:active{box-shadow:none}
+.btn.primary{background:var(--mathe);border-color:var(--c-rand);color:var(--c-auf);box-shadow:4px 4px 0 var(--t-blau)}
+.btn.ghost{border-color:transparent;background:transparent;box-shadow:none;color:var(--c-leise)}
+.btn.danger{color:var(--c-rot)}
+.btn.danger.solid{background:var(--c-rot);border-color:var(--c-rand);color:var(--c-auf)}
+.btn[disabled]:not(.ja):not(.nein):not(.richtig){background:var(--c-tief);color:var(--c-aus);border-style:dashed;box-shadow:none;cursor:default}
+.hilfen .btn[disabled],.media .btn[disabled],.btn[disabled] .kost{opacity:1}
+.hilfen .btn{box-shadow:4px 4px 0 var(--t-rose)}
+.hilfen .btn[aria-pressed="true"]{background:var(--c-tief);border-color:var(--c-rand);color:var(--c-tinte);box-shadow:none}
+.media .btn[aria-pressed="true"]{background:var(--c-tief);border-color:var(--c-rand);color:var(--c-tinte)}
+.sym{display:block;flex:none;width:1.3em;height:1.3em}
+.sym.ph{border:2px dashed currentColor;opacity:.75;border-radius:5px;box-sizing:border-box}
+.kost{background:var(--c-rot);color:var(--c-auf)}
+.kost.null{background:var(--c-leise);color:var(--c-auf)}
+input[type=text],input[type=number],select,textarea{background:var(--c-karte);border:2px solid var(--c-rand);border-radius:12px 14px 12px 14px}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--mathe)}
+.drop{border:2px dashed var(--c-rand);background:var(--c-karte);color:var(--c-leise)}
+.drop strong{color:var(--c-tinte)}
+.panel,.card{background:var(--c-karte);border:2px solid var(--c-rand);border-radius:18px 22px 16px 20px;box-shadow:4px 4px 0 var(--t-neutral)}
+.card.editing{border-color:var(--c-rand);box-shadow:4px 4px 0 var(--t-rose)}
+.note,.formfoot,.cfoot,.xrow{border-top-color:var(--t-neutral)}
+.erg td,.erg th{border-bottom:1px solid var(--t-neutral)}
+.erg{background:var(--c-karte)}
+.chip{background:var(--c-karte);border:2px solid var(--c-rand);color:var(--c-tinte)}
+.chip.lern,.chip.thema{background:var(--c-tief);border-color:var(--c-rand);color:var(--c-tinte)}
+.more{border:2px solid var(--c-rand);background:var(--c-karte)}
+.more summary::before{color:var(--c-tinte)}
+.lernbox{background:var(--c-tief)}
+.mehr{border:2px solid var(--c-rand);background:var(--c-karte);color:var(--c-tinte);box-shadow:4px 4px 0 var(--t-neutral)}
+.menu{border:2px solid var(--c-rand);background:var(--c-karte);box-shadow:4px 4px 0 var(--t-neutral);min-width:280px}
+.menu .btn{justify-content:flex-start;text-align:left;white-space:nowrap}
+.zubearb{background:var(--c-tief);color:var(--c-tinte)}
+.report{border:2px solid var(--c-rand);border-left:6px solid var(--c-richtig);background:var(--c-karte)}
+.report.bad{border-left-color:var(--c-rot)}
+.backuphinweis{background:var(--c-tief)}
+.toast{background:var(--c-tinte);color:var(--c-papier);pointer-events:none} /* Hinweis verdeckt keine Knöpfe (z. B. „Gebärde speichern“) */
+.gw{border:2px solid var(--c-rand);background:var(--c-karte)}
+.urteil{border:2px solid var(--c-rand);background:var(--c-karte)}
+.urteil .btn[aria-pressed="true"].ja{background:var(--c-richtig);border-color:var(--c-rand);color:var(--c-auf)}
+.urteil .btn[aria-pressed="true"].nein{background:var(--c-rot);border-color:var(--c-rand);color:var(--c-auf)}
+.st.neu{background:var(--c-tief);color:var(--c-tinte)}
+/* Titel mit einer Unterstreichung (Startseiten rot, Unterseiten in Fachfarbe) */
+.hkopf h1{display:flex;flex-direction:column;align-items:center}
+.strich{display:block;width:min(calc(300 * var(--u,1px)),100%);height:calc(14 * var(--u,1px));margin-top:calc(4 * var(--u,1px));color:var(--c-rot)}
+.strich.f-mathe{color:var(--mathe)} .strich.f-deutsch{color:var(--deutsch)} .strich.f-fachw{color:var(--c-rand)}
+.hnav{display:inline-flex;align-items:center;justify-content:center}
+/* Titel genau in der Mitte, auch wenn „Zurück“ und „Start“ verschieden breit sind */
+@media (min-width:521px){.hkopf{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}.hkopf .hnav[data-hnav=zurueck]{justify-self:start}.hkopf .hnav[data-hnav=start]{justify-self:end}}
+/* Kacheln: Karte mit Rand, Schatten in Fachtönung, Bild im gezeichneten Kreis */
+.kachel{background:var(--c-karte);color:var(--c-tinte);border:2px solid var(--c-rand);box-shadow:4px 4px 0 var(--s);border-radius:18px 22px 16px 20px}
+.kachel:nth-child(4n+2){border-radius:20px 16px 22px 18px}
+.kachel:nth-child(4n+3){border-radius:16px 20px 18px 22px}
+.kachel:nth-child(4n){border-radius:22px 18px 20px 16px}
+.kachel.aus{background:var(--c-tief);color:var(--c-aus);border-style:dashed;border-color:var(--c-randaus);box-shadow:none;opacity:1}
+.kachel.aus .ksub{color:var(--c-aus)}
+.kicon{position:relative;background:none;color:var(--c);box-shadow:none}
+.kachel.aus .kicon{color:var(--c-aus)}
+.kicon svg.kreis{position:absolute;inset:0;width:100%;height:100%}
+.kicon .ktext{font-family:var(--font-display);font-weight:700;line-height:1;font-size:calc(40 * var(--u,1px));letter-spacing:-.02em}
+.ktitel{font-weight:700}
+.bald{background:var(--c-rand);color:var(--c-karte)}
+.akt button{border:2px solid var(--c-rand);background:var(--c-karte);color:var(--c-tinte);box-shadow:4px 4px 0 var(--t-neutral);display:inline-flex;align-items:center;justify-content:center;gap:.45em;line-height:1.2}
+.akt button.test{background:var(--c);color:var(--c-auf)}
+.akt button[disabled]{border-style:dashed;border-color:var(--c-rand);background:var(--c-tief);color:var(--c-aus);box-shadow:none}
+/* Einstellungen */
+.testwahl.spiel{background:transparent;box-shadow:none}
+.einst{background:var(--c-karte);border:2px solid var(--c-rand);box-shadow:4px 4px 0 var(--s);border-radius:18px 22px 16px 20px}
+.testwahl.spiel select,.testwahl.spiel input[type=number]{border-color:var(--c-rand);background-color:var(--c-karte)}
+.testwahl.spiel label.opt{background:var(--c-tief);color:var(--c-tinte)}
+.testwahl.spiel .btn.primary,.los .btn.primary{background:var(--mathe);border-color:var(--c-rand);color:var(--c-auf);display:inline-flex;align-items:center;justify-content:center;gap:.45em}
+.testwahl.spiel .testliste,.testliste{border:2px solid var(--c-rand);background:var(--c-karte)}
+.arten .art{border:2px solid var(--c-rand)}
+/* Aufgabe, Video, Antwort */
+.leerflaeche{background:var(--c-karte);border:2px solid var(--c-rand);box-shadow:4px 4px 0 var(--t-blau);border-radius:20px 18px 22px 16px;transform:rotate(-0.5deg)}
+.testin .player video{background:var(--c-tief);border:2px solid var(--c-rand);box-shadow:4px 4px 0 var(--t-rose);border-radius:18px 22px 16px 20px}
+.testin .player img{border:2px solid var(--c-rand);background:var(--c-karte)}
+.flaeche .player video{aspect-ratio:16/9;width:100%}
+/* PC/iPad quer: Video etwas kleiner, damit „Weiter“ auch mit Joker-Zeile und Anfangsbuchstabe ohne Scrollen im Bild bleibt */
+@media (min-width:1200px) and (pointer:fine), (min-width:1024px) and (orientation:landscape) and (pointer:coarse){.flaeche .player video,.flaeche .player img{max-height:46vh}}
+.zanzeige{border-color:var(--c-rand);border-style:solid;background:var(--c-karte);box-shadow:4px 4px 0 var(--t-blau)}
+.zanzeige.ja{border-color:var(--c-richtig);color:var(--c-richtig)}
+.zanzeige.nein{border-color:var(--c-rot);color:var(--c-rot)}
+.ztasten .btn{font-family:var(--font-display);display:inline-flex;align-items:center;justify-content:center;gap:.3em}
+.ztasten .btn.ok{background:var(--c-richtig);border-color:var(--c-rand);color:var(--c-auf);box-shadow:4px 4px 0 var(--t-gruen);font-family:var(--font-body);font-size:calc(22 * var(--u,1px))}
+.ztasten .btn[data-z=del]{background:var(--c-tief)}
+.ztasten .btn .sym{width:1em;height:1em}
+.schriftlich .erg.ja{color:var(--c-richtig)} .schriftlich .erg.nein{color:var(--c-rot)}
+.artwahl.ja{background:var(--c-richtig);border-color:var(--c-rand);color:var(--c-auf);box-shadow:4px 4px 0 var(--t-gruen)}
+.artwahl.nein{background:var(--c-rot);border-color:var(--c-rand);color:var(--c-auf);box-shadow:4px 4px 0 var(--t-rot)}
+.rechen.richtig{border-color:var(--c-richtig)}
+.rueck.ja{color:var(--c-richtig)}
+/* Rückmeldung „falsch“: Kreuz-Symbol + Wort + Farbe (nie Farbe allein) */
+.rueck.nein{color:var(--c-tinte);background:var(--c-karte);border:2px solid var(--c-rot);box-shadow:4px 4px 0 var(--t-rot);border-radius:18px 16px 18px 16px;padding:.2em .7em .25em;margin:0;width:fit-content;max-width:100%;box-sizing:border-box;transform:rotate(-0.8deg)}
+.rueck.nein::before{content:"";display:inline-block;width:1.4em;height:1.4em;vertical-align:-.38em;margin-right:.45em;background:var(--c-rot);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke-width='1.8' d='M17 3c8 0 14 6 14 14s-6 14-14 14S3 29 3 21 9 3 17 3z'/%3E%3Cpath stroke-width='2.6' d='M11 11l12 13M23 11L11 24'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 34' fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath stroke-width='1.8' d='M17 3c8 0 14 6 14 14s-6 14-14 14S3 29 3 21 9 3 17 3z'/%3E%3Cpath stroke-width='2.6' d='M11 11l12 13M23 11L11 24'/%3E%3C/svg%3E") center/contain no-repeat}
+/* Bewertung ohne Konfetti, ohne Hüpfen (Design System: keine Schmuck-Animation) */
+.konfetti{display:none!important}
+.lob{display:flex;align-items:center;justify-content:center;gap:.5em}
+.lob .lobtext,.lob.perfekt .lobtext,.lob.super .lobtext,.lob.ueben .lobtext{animation:none!important;text-shadow:none!important;font-weight:700}
+.lob.perfekt .lobtext{color:var(--deutsch)} .lob.super .lobtext{color:var(--c-richtig)} .lob.ueben .lobtext{color:var(--c-wortschatz)}
+.lob .sym{width:calc(56 * var(--u,1px));height:calc(56 * var(--u,1px))}
+/* Sterne (neu): Umriss-Sterne, Hilfe macht einen blass (gestrichelt), richtige Lösung füllt sie – ohne Bewegung */
+.sterne{display:inline-flex;align-items:center;gap:calc(8 * var(--u,1px));color:var(--c-rand);vertical-align:middle}
+.sterne svg{display:block;flex:none;width:calc(34 * var(--u,1px));height:calc(34 * var(--u,1px))}
+.sternplatz .sterne svg{width:calc(44 * var(--u,1px));height:calc(44 * var(--u,1px))}
+.erg .sterne svg{width:1.15em;height:1.15em}
+.erg .sterne{gap:.15em;margin-right:.3em}
+.sterne .voll path{fill:currentColor}
+@media (max-width:600px){.hilfzeile{flex-wrap:wrap}.sternplatz .sterne svg{width:30px;height:30px}} /* schmale Fenster: Sterne unter die Hilfen statt seitlich scrollen */
+.sterne .blass{color:var(--c-randaus)}
+/* Joker: bewusst aktivieren, dann ist die nächste Hilfe kostenlos */
+.hilfen .btn.joker{box-shadow:4px 4px 0 var(--t-blau)}
+.hilfen .btn.joker[aria-pressed="true"]{background:var(--mathe);color:var(--c-auf);border-color:var(--c-rand);box-shadow:none}
+.jokerrest{display:flex;align-items:center;gap:.4em;margin:0}
+/* Blanko-Übungszettel: nur beim Drucken sichtbar (Linien, Name und Datum von Hand) */
+#zettel{display:none}
+/* ---------- Wortschatz-Liste nach Kestner (Sammel-Bau 1b, Freddy 05./16.11.) ----------
+   rechts Suche, Filter Fach/Thema und Liste; links groß das Gebärdenvideo, darunter die Karte des Wortes. Maße über --u. */
+.wz{display:grid;grid-template-columns:minmax(0,1fr);gap:calc(24 * var(--u,1px));align-items:start}
+.wz-haupt{display:grid;gap:calc(20 * var(--u,1px));min-width:0}
+.wz-seite{display:flex;flex-direction:column;gap:calc(12 * var(--u,1px));min-width:0;background:var(--c-karte);border:2px solid var(--c-rand);border-radius:20px 16px 22px 18px;box-shadow:4px 4px 0 var(--t-neutral);padding:calc(16 * var(--u,1px))}
+.wz-such{position:relative}
+.wz-such .sym{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:1.2em;height:1.2em;color:var(--c-leise);pointer-events:none}
+.wz-seite input[type=search]{-webkit-appearance:none;appearance:none;width:100%;margin:0;background:var(--c-karte);color:var(--c-tinte);border:2px solid var(--c-rand);border-radius:12px 14px 12px 14px;padding:calc(10 * var(--u,1px)) 12px calc(10 * var(--u,1px)) 2.6em;font-size:max(17px,calc(20 * var(--u,1px)))}
+.wz-seite input[type=search]:focus{border-color:var(--mathe)}
+.wz-seite input[type=search]::placeholder{color:var(--c-leise);opacity:1}
+.wz-filter{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px}
+.wz-filter select{font-size:max(17px,calc(18 * var(--u,1px)));padding:calc(8 * var(--u,1px)) 10px;min-width:0}
+.wz-filter select:disabled{color:var(--c-aus);border-style:dashed;background:var(--c-tief)}
+.wz-liste{position:relative;overflow-y:auto;overflow-x:hidden;height:60vh;border-top:2px solid var(--t-neutral);min-height:0;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.wz-hoehe{position:relative}
+.wz-z{all:unset;box-sizing:border-box;position:absolute;left:0;right:0;height:calc(46 * var(--u,1px));min-height:40px;display:flex;align-items:center;padding:0 12px;border-left:4px solid transparent;border-radius:0 10px 10px 0;cursor:pointer;color:var(--c-tinte);font-size:max(17px,calc(20 * var(--u,1px)))}
+.wz-z[aria-selected="true"]{background:var(--c-tief);border-left-color:var(--c-wortschatz);font-weight:700}
+.wz-z:focus-visible{outline:3px solid var(--mathe);outline-offset:-3px}
+.wz-w{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wz-leer{margin:0;padding:16px 8px;text-align:center;color:var(--c-leise);font-size:max(17px,calc(20 * var(--u,1px)))}
+.wz-video .player video,.wz-platz{display:block;width:100%;aspect-ratio:16/9;max-height:min(calc(var(--wz-h,640px) * .56), var(--wz-v,9999px));background:var(--c-tief);border:2px solid var(--c-rand);border-radius:18px 22px 16px 20px;box-shadow:4px 4px 0 var(--t-rose);object-fit:contain;box-sizing:border-box}
+.wz-platz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-style:dashed;box-shadow:none;color:var(--c-leise);font-size:max(17px,calc(22 * var(--u,1px)));line-height:1.2}
+.wz-platz .sym{width:calc(56 * var(--u,1px));height:calc(56 * var(--u,1px));min-width:40px;min-height:40px}
+.wkarte{gap:calc(14 * var(--u,1px)) calc(24 * var(--u,1px));padding:calc(18 * var(--u,1px)) calc(24 * var(--u,1px))}
+.wk-links{display:grid;gap:calc(12 * var(--u,1px));align-content:start;min-width:0}
+.wkarte .cfoot{padding-top:calc(10 * var(--u,1px))}
+.wkarte .wk-kopf{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.wkarte .word{font-size:max(26px,calc(40 * var(--u,1px)));line-height:1.15;margin:0}
+.wkarte .variants{font-size:max(17px,calc(20 * var(--u,1px)));margin:0;color:var(--c-leise)}
+.wkarte .variants b{color:var(--c-tinte);font-weight:700}
+.wkarte .chip{font-size:max(15px,calc(16 * var(--u,1px)));max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.wkarte .expl{font-size:max(17px,calc(20 * var(--u,1px)))}
+.wkarte .media .btn{font-size:max(17px,calc(19 * var(--u,1px)))}
+.wkarte .media .btn .sym{width:1em;height:1em}
+.wkarte .media .btn[aria-expanded="true"]{background:var(--c-tief);box-shadow:none}
+.wkarte .wk-auf{display:grid;gap:10px}
+/* Erklärung/Fingeralphabet kleiner als die Gebärde: die Gebärde bleibt vorn */
+.wkarte .wk-auf .player video,.wkarte .wk-auf .player img{display:block;width:auto;max-width:100%;height:calc(var(--wz-h,640px) * .26);min-height:120px;aspect-ratio:16/9;object-fit:contain;background:var(--c-tief);border:2px solid var(--c-rand);border-radius:16px 20px 18px 22px;box-sizing:border-box}
+.wkarte .wk-auf .player img{aspect-ratio:auto}
+/* Echte Schrift (Atkinson Next): mit Zeilenhöhe 1,2 stand der Text der Kachel-Knöpfe am iPad 1,2 px zu hoch (gerundete Schriftmaße), mit 1,25 mittig */
+.akt button{line-height:1.25}
+.abgabe{margin:0;font-weight:700;font-size:max(17px,calc(22 * var(--u,1px)))}
+/* „Richtig“: grün + Haken (Freddy 16.11.) */
+.artwahl.ja .sym{width:1.1em;height:1.1em}
+.zanzeige{position:relative}
+.zanzeige .sym,.schriftlich .erg .sym{position:absolute;top:0;bottom:0;margin:auto 0;width:.8em;height:.8em}   /* senkrecht mittig ohne transform (Rundung) */
+.zanzeige .sym{right:.25em}
+.schriftlich .erg{position:relative}
+.schriftlich .erg .sym{left:100%;margin-left:.15em}
+@media (min-width:900px){
+  .wz{grid-template-columns:minmax(0,1fr) minmax(320px,calc(460 * var(--u,1px)))}
+  .wz-seite{height:var(--wz-h,640px);position:sticky;top:8px}
+  .wz-liste{height:auto;flex:1}
+  .wkarte.mit-auf{grid-template-columns:minmax(0,1fr) auto;align-items:start}   /* Aufgeklapptes rechts neben den Angaben, Gebärde bleibt oben im Bild */
+  .wkarte .wk-auf .expl{max-width:calc(420 * var(--u,1px))}
+  /* Kopf der Wortschatz-Seite etwas enger, damit Video und Karte ins Fenster passen */
+  .wrap.wz-breit{padding-block:calc(16 * var(--u,1px)) calc(24 * var(--u,1px))}
+  .wz-breit .navbar{margin-bottom:calc(6 * var(--u,1px))}
+  .wz-breit .top{margin-bottom:calc(10 * var(--u,1px))}
+  .wz-breit .listhead{margin-bottom:calc(12 * var(--u,1px))}
+}
+@media (max-width:899px){.wz-video.leer{display:none}.wz-z{min-height:48px}}
+@media (min-width:1200px) and (pointer:fine), (min-width:1024px) and (orientation:landscape) and (pointer:coarse){
+  .wrap.wz-breit{max-width:calc(1760 * var(--u))}
+}
+@media (pointer:coarse){.wz-z{min-height:48px}.wkarte .media .btn,.wkarte .cfoot .btn{min-height:48px}}
+@media print{
+  @page{size:A4;margin:16mm}
+  body.zettel-druck{background:#fff!important;margin:0}
+  body.zettel-druck > *:not(#zettel){display:none!important}
+  body.zettel-druck #zettel{display:block!important;color:#000;font-family:var(--font-body)}
+  #zettel .zkopf{display:flex;align-items:flex-end;gap:4mm;font-size:13pt;margin-bottom:6mm}
+  #zettel .zlinie{flex:1;border-bottom:.4mm solid #000;height:8mm}
+  #zettel .zlinie.kurz{flex:0 0 45mm}
+  #zettel .zlinien div{height:11mm;border-bottom:.3mm solid #555}
+}
 </style>
 
 <div class="home" id="home" hidden></div>
-<div class="wrap" hidden>
-  <div class="navbar"><button type="button" class="btn" id="nav-zurueck">‹ Zurück</button><button type="button" class="btn" id="nav-start">⌂ Start</button></div>
+<div class="wrap wz-breit" hidden>
+  <div class="navbar"><button type="button" class="btn" id="nav-zurueck"><svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 6l-6 6 6 6"/></svg>Zurück</button><button type="button" class="btn" id="nav-start"><svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4.5l8 7"/><path d="M6.5 10v9.5h11V10"/><path d="M10.5 19.5v-5h3v5"/></svg>Start</button></div>
   <header class="top">
     <div>
       <h1 id="apptitle">Lernapp DGS/Deutsch</h1>
@@ -473,6 +647,9 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
         <button type="button" class="btn" id="btn-export">Paket exportieren …</button>
         <label class="btn" for="import-file">Paket importieren …<input type="file" id="import-file" accept=".zip,application/zip"></label>
         <button type="button" class="btn" id="btn-backup">Backup erstellen …</button>
+        <button type="button" class="btn" id="btn-csv">Wörter exportieren (CSV) …</button>
+        <label class="btn" for="csv-rueck">Wörter ergänzen (CSV) …<input type="file" id="csv-rueck" accept=".csv,text/csv,text/plain"></label>
+        <button type="button" class="btn" id="btn-zettel">Übungszettel drucken</button>
         <span class="hint" id="tools-hint"></span>
         <span class="hint" id="speicher-info"></span>
       </div>
@@ -520,6 +697,11 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
           <p class="err" hidden></p>
         </div>
 
+        <div class="field" id="f-plural">
+          <label class="lab" for="plural">Plural <span class="tag">optional</span></label>
+          <input type="text" id="plural" autocomplete="off" placeholder="z. B. Hunde">
+        </div>
+
         <div class="field" id="f-gebaerde">
           <span class="lab">Gebärdenvideo <span class="tag req">Pflicht</span></span>
           <div class="slot" data-key="gebaerde"></div>
@@ -561,7 +743,7 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
     <section aria-labelledby="listtitle">
       <div class="listhead">
         <h2 id="listtitle">Einträge</h2>
-        <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn" id="btn-neu" style="padding:8px 14px;font-size:15px">+ Neue Gebärde</button><button type="button" class="btn" id="btn-ueben" style="padding:8px 14px;font-size:15px">Üben</button><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px">Test</button><span class="count" id="count"></span></span>
+        <span style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end"><button type="button" class="btn" id="btn-neu" style="padding:8px 14px;font-size:15px">+ Neue Gebärde</button><button type="button" class="btn" id="btn-ueben" style="padding:8px 14px;font-size:15px"><span class="sym ph" data-platzhalter="Üben" title="Symbol fehlt: Üben" aria-hidden="true"></span>Üben</button><button type="button" class="btn primary" id="btn-test" style="padding:8px 16px;font-size:15px"><span class="sym ph" data-platzhalter="Test" title="Symbol fehlt: Test" aria-hidden="true"></span>Test</button><span class="count" id="count"></span></span>
       </div>
       <div class="gesov" id="gesov" hidden>
       <section class="panel ges" id="gespanel" role="dialog" aria-modal="true" aria-labelledby="gestitle">
@@ -581,6 +763,7 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
 </div>
 <div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
+<section id="zettel" aria-hidden="true"><div class="zkopf"><span>Name</span><span class="zlinie"></span><span>Datum</span><span class="zlinie kurz"></span></div><div class="zlinien"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></section>
 
 <script src="jszip.min.js"></script>
 <script>
@@ -595,6 +778,17 @@ const VID_LABEL = {gebaerde:"Gebärde", fingeralphabet:"Fingeralphabet", erklaer
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+/* Symbole aus dem Design System „Freddys App-Stil“ (Sammel-Bau 1). Was noch nicht entworfen/freigegeben ist,
+   steht als Platzhalter PH("…") (gestrichelter Kasten, gleiche Größe) – siehe offen_fuer_freddy.md. */
+const SYM = {zurueck:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H6M12 6l-6 6 6 6"/></svg>', haus:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4.5l8 7"/><path d="M6.5 10v9.5h11V10"/><path d="M10.5 19.5v-5h3v5"/></svg>', weiter:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12 6l6 6-6 6"/></svg>', haken:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 13l5 5 11-12"/></svg>', loeschen:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6H9L3 12l6 6h11z"/><path d="M12 10l5 4M17 10l-5 4"/></svg>', joker:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l5-7-5-7h5l5 7-5 7z"/><path d="M15 5h4v14h-4"/></svg>', lampe:'<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0-3 11v3h6v-3a6 6 0 0 0-3-11z"/><path d="M10 20h4"/></svg>', richtig:'<svg class="sym" viewBox="0 0 34 34" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c8 0 14 6 14 14s-6 14-14 14S3 29 3 21 9 3 17 3z"/><path stroke-width="2.6" d="M10 18l5 5 10-12"/></svg>', falsch:'<svg class="sym" viewBox="0 0 34 34" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3c8 0 14 6 14 14s-6 14-14 14S3 29 3 21 9 3 17 3z"/><path stroke-width="2.6" d="M11 11l12 13M23 11L11 24"/></svg>'};
+const PH = name => `<span class="sym ph" data-platzhalter="${name}" title="Symbol fehlt: ${name}" aria-hidden="true"></span>`;
+const STERN = cls => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"${cls === "blass" ? ' stroke-dasharray="2.4 2.4"' : ""}><path d="M12 3.5l2.7 5.6 6.2.9-4.5 4.3 1.1 6.1-5.5-3-5.5 3 1.1-6.1-4.5-4.3 6.2-.9z"/></svg>`;
+/* Sternreihe: voll = verdient (gefüllt), blass = durch Hilfe verloren (gestrichelt), Rest = noch möglich (Umriss) */
+function sternReihe(n, blass, voll){
+  blass = Math.max(0, Math.min(n, blass)); voll = Math.max(0, Math.min(n - blass, voll || 0));
+  return `<span class="sterne" role="img" aria-label="${voll ? voll + " von " + n + " Sternen" : (n - blass) + " von " + n + " Sternen möglich"}">`
+    + STERN("voll").repeat(voll) + STERN("offen").repeat(n - blass - voll) + STERN("blass").repeat(blass) + "</span>";
+}
 
 /* ---------- Speicher (IndexedDB, sonst nur im Arbeitsspeicher) ---------- */
 let db = null;
@@ -801,7 +995,7 @@ document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click"
   try { localStorage.setItem("gw-sammlung", st.sammlung); } catch(e){}
   if (st.editId) resetForm();
   clearAllErr();
-  st.open = null; st.confirmDel = null; st.auf = null;
+  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; if ($("wz-suche")) $("wz-suche").value = "";
   renderSammlung(); renderSlots(); renderList();
 }));
 
@@ -864,6 +1058,7 @@ function startEdit(id){
   clearAllErr();
   $("wort").value = e.wort;
   $("artikel").value = e.artikel || "";
+  $("plural").value = e.plural || "";
   $("varianten").value = (e.varianten || []).join(", ");
   $("erklaerung").value = e.erklaerung_text || "";
   if (!alleKat().includes(e.kategorie)){ st.eigeneKat.push(e.kategorie); }
@@ -904,12 +1099,14 @@ $("form").addEventListener("submit", async ev => {
 
   const alt = st.editId ? st.eintraege.find(x => x.id === st.editId) : null;
   const jetzt = new Date().toISOString();
-  const eintrag = {
+  // Sammel-Bau 1: Felder, die das Formular nicht zeigt (z. B. aus dem Rückimport), bleiben beim Bearbeiten erhalten
+  const eintrag = Object.assign({}, alt || {}, {
     id: alt ? alt.id : (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)),
     sammlung: alt ? alt.sammlung : st.sammlung,
     artikel: $("artikel").value,
     wort,
     varianten: parseVarianten($("varianten").value, wort),
+    plural: $("plural").value.trim().replace(/\s+/g, " "),
     gebaerde: st.vids.gebaerde,
     fingeralphabet: st.vids.fingeralphabet,
     erklaerung_text: $("erklaerung").value.trim(),
@@ -921,7 +1118,8 @@ $("form").addEventListener("submit", async ev => {
     erstellt: alt ? alt.erstellt : jetzt,
     exportiert: alt ? (alt.exportiert || null) : null,
     geaendert: jetzt
-  };
+  });
+  delete eintrag.erklaerung_video;   // alter Feldname: steckt schon in erklaerung_medium, sonst ließe sich die Erklärung nicht entfernen
   $("save").disabled = true;
   try {
     await store.put(eintrag);
@@ -941,8 +1139,170 @@ $("form").addEventListener("submit", async ev => {
   $("wort").focus();
 });
 
-/* ---------- Liste ---------- */
-const listUrls = [];
+/* ---------- Wortschatz-Liste nach Kestner (Sammel-Bau 1b, Freddy 05./16.11.2026) ----------
+   Rechts: Suche, Filter Fach und Thema, Liste (alphabetisch, Artikel ignoriert, Umlaute nach deutscher Sortierung).
+   Nur die sichtbaren Zeilen stehen im DOM (5000+ Wörter). Wort antippen (st.auf) → Gebärdenvideo läuft sofort, stumm, in Schleife,
+   ohne Bedienleiste; darunter die Karte mit allen gefüllten Feldern. Erklärung und Fingeralphabet aufklappen (st.open).
+   Videos werden erst beim Auswählen bzw. Aufklappen geladen, ihre Object-URLs beim Wechsel freigegeben. */
+const listUrls = [], wzUrls = [];
+const WZ = {q:"", fach:"", thema:"", idx:null, idxArr:null, idxLen:-1, idxS:"", treffer:[], zeile:0, vId:null, vBlob:null, roh:null};
+const KOLL = new Intl.Collator("de", {sensitivity:"base", numeric:true}), KOLL2 = new Intl.Collator("de", {numeric:true});   // KOLL2: bei Gleichstand Apfel vor Äpfel
+const SYM_VIDEO = '<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h12v11h-12z"/><path d="M15.5 10.5l5-3v9l-5-3"/></svg>';
+const SYM_LUPE = '<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>';
+const PFEIL = auf => `<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${auf ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}"/></svg>`;
+function wzNorm(t){ return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss"); }
+function wzIndex(){   // sortiert und für die Suche vorbereitet; neu nur, wenn sich die Einträge ändern
+  if (WZ.idx && WZ.idxArr === st.eintraege && WZ.idxLen === st.eintraege.length && WZ.idxS === st.sammlung) return WZ.idx;
+  WZ.idx = st.eintraege.filter(e => e.sammlung === st.sammlung)
+    .map(e => { const g = ohneArtikel(e.wort); return {e, g, w:wzNorm(g), n:wzNorm([e.wort, e.plural || ""].concat(e.varianten || []).join("\u0001"))}; })
+    .sort((a, b) => KOLL.compare(a.g, b.g) || KOLL2.compare(a.g, b.g) || KOLL2.compare(a.e.wort, b.e.wort));
+  WZ.idxArr = st.eintraege; WZ.idxLen = st.eintraege.length; WZ.idxS = st.sammlung; WZ.roh = null;
+  return WZ.idx;
+}
+function wzFiltern(){   // Treffer: erst Wörter, die mit der Suche beginnen, dann die übrigen (Wort, Plural, Varianten) – jeweils alphabetisch
+  const idx = wzIndex(), q = wzNorm(ohneArtikel(WZ.q.trim()));   // „der Hund“ findet „Hund“
+  let a = idx;
+  if (WZ.fach) a = a.filter(x => x.e.kategorie === WZ.fach);
+  if (WZ.thema) a = a.filter(x => (x.e.thema || "") === WZ.thema);
+  if (q){ const vorn = [], sonst = []; for (const x of a){ if (x.w.startsWith(q)) vorn.push(x); else if (x.n.includes(q)) sonst.push(x); } a = vorn.concat(sonst); }
+  WZ.treffer = a;
+}
+function wzOptionen(){   // Filter nur mit Fächern/Themen, die es in der Sammlung gibt
+  const idx = wzIndex();
+  const faecher = [...new Set(idx.map(x => x.e.kategorie))].sort(KOLL.compare);
+  if (WZ.fach && !faecher.includes(WZ.fach)) WZ.fach = "";
+  const themen = [...new Set(idx.filter(x => x.e.thema && (!WZ.fach || x.e.kategorie === WZ.fach)).map(x => x.e.thema))].sort(KOLL.compare);
+  if (WZ.thema && !themen.includes(WZ.thema)) WZ.thema = "";
+  const F = $("wz-fach"), T2 = $("wz-thema");
+  F.innerHTML = `<option value="">Alle Fächer</option>` + faecher.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join(""); F.value = WZ.fach;
+  T2.innerHTML = `<option value="">Alle Themen</option>` + themen.map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join(""); T2.value = WZ.thema;
+  T2.disabled = !themen.length;
+}
+function wzGeruest(L){
+  if ($("wz-liste") && L.contains($("wz-liste"))) return;
+  L.innerHTML = `<div class="wz">
+    <div class="wz-haupt"><div class="wz-video leer" id="wz-video"></div><div id="wz-karte"></div></div>
+    <div class="wz-seite">
+      <div class="wz-such">${SYM_LUPE}<input type="search" id="wz-suche" placeholder="Suchen" aria-label="Wort suchen" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"></div>
+      <div class="wz-filter"><select id="wz-fach" aria-label="Fach"></select><select id="wz-thema" aria-label="Thema"></select></div>
+      <div class="wz-liste" id="wz-liste" role="listbox" aria-label="Wörter" tabindex="-1"><div class="wz-hoehe" id="wz-hoehe"></div></div>
+      <p class="wz-leer" id="wz-leer" role="status" hidden>Keine Treffer.</p>
+    </div></div>`;
+  WZ.vId = undefined; WZ.vBlob = undefined; WZ.zeile = 0;   // Videofeld beim ersten Zeichnen immer füllen
+  if (wzRoKarte) wzRoKarte.observe($("wz-karte"));
+  $("wz-suche").value = WZ.q;
+  $("wz-liste").addEventListener("scroll", () => { if (!wzZeilen.f) wzZeilen.f = requestAnimationFrame(() => { wzZeilen.f = 0; wzZeilen(); }); }, {passive:true});
+  $("wz-suche").addEventListener("input", () => { WZ.q = $("wz-suche").value; wzNeuFiltern(); });
+  $("wz-suche").addEventListener("keydown", ev => { if (ev.key === "Enter" && WZ.treffer.length){ ev.preventDefault(); wzWahl(WZ.treffer[0].e.id); } });
+  $("wz-fach").addEventListener("change", () => { WZ.fach = $("wz-fach").value; WZ.thema = ""; wzOptionen(); wzNeuFiltern(); });
+  $("wz-thema").addEventListener("change", () => { WZ.thema = $("wz-thema").value; wzNeuFiltern(); });
+  if (window.ResizeObserver) new ResizeObserver(() => { WZ.zeile = 0; wzZeilen(true); }).observe($("wz-liste"));
+}
+function wzNeuFiltern(){ wzFiltern(); $("wz-liste").scrollTop = 0; wzZeilen(true); wzZahl(); }
+function wzZahl(){
+  const n = wzIndex().length, t = WZ.treffer.length, gefiltert = WZ.q.trim() || WZ.fach || WZ.thema;
+  $("count").textContent = gefiltert ? `${t} von ${n} Gebärden` : n === 1 ? "1 Gebärde" : n + " Gebärden";
+  $("wz-leer").hidden = t > 0; $("wz-liste").hidden = !t;   // ohne Treffer steht der Hinweis direkt unter den Filtern
+}
+function wzZeileHoehe(){
+  if (WZ.zeile) return WZ.zeile;
+  const H = $("wz-hoehe"), z = document.createElement("button"); z.className = "wz-z"; z.style.visibility = "hidden"; z.textContent = "Ag";
+  H.appendChild(z); const h = z.getBoundingClientRect().height; z.remove();
+  if (h > 0) WZ.zeile = h;
+  return h > 0 ? h : 46;
+}
+function wzZeilen(neu){   // nur die sichtbaren Zeilen (+ Puffer) bauen
+  const box = $("wz-liste"); if (!box) return;
+  const R = wzZeileHoehe(), n = WZ.treffer.length, hoch = box.clientHeight || 900;
+  const von = Math.max(0, Math.floor(box.scrollTop / R) - 15), bis = Math.min(n, Math.ceil((box.scrollTop + hoch) / R) + 15);
+  if (!neu && WZ.von === von && WZ.bis === bis && WZ.rR === R) return;
+  WZ.von = von; WZ.bis = bis; WZ.rR = R;
+  $("wz-hoehe").style.height = Math.round(n * R) + "px";
+  let h = "";
+  for (let i = von; i < bis; i++){
+    const e = WZ.treffer[i].e;
+    h += `<button type="button" class="wz-z" role="option" data-auf="${esc(e.id)}" aria-selected="${st.auf === e.id}" style="top:${(i * R).toFixed(2)}px"><span class="wz-w">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span></button>`;
+  }
+  $("wz-hoehe").innerHTML = h;
+}
+function wzHoehe(){   // PC/iPad: Liste und Video passen ins Fenster (Höhe ab der Oberkante der Liste)
+  const w = document.querySelector(".wz"); if (!w || !w.offsetParent) return;
+  if (!matchMedia("(min-width:900px)").matches){ w.style.removeProperty("--wz-h"); return; }
+  const r = w.getBoundingClientRect(), oben = r.top + window.scrollY;
+  // was unter der Liste steht (Rand der Seite, Fußzeile „Datenschutz“) – unabhängig von der Fensterhöhe gemessen
+  const wrap = w.closest(".wrap"); let unten = (wrap ? Math.max(0, wrap.getBoundingClientRect().bottom - r.bottom) : 20) + (parseFloat(getComputedStyle(document.body).marginBottom) || 0);
+  for (let x = wrap && wrap.nextElementSibling; x; x = x.nextElementSibling){ const cs = getComputedStyle(x); if (cs.display !== "none" && cs.position !== "fixed" && cs.position !== "absolute") unten += x.offsetHeight + parseFloat(cs.marginTop) + parseFloat(cs.marginBottom); }
+  w.style.setProperty("--wz-h", Math.max(340, Math.floor(window.innerHeight - oben - unten - 2)) + "px");
+  wzVideoHoehe();
+}
+function wzVideoHoehe(){   // Videofeld nur so weit kleiner, dass die ZUGEKLAPPTE Karte darunter ins Fenster passt (iPad mit Safari-Leiste).
+  // Untergrenze 75 % der normalen Höhe: Die Gebärde bleibt vorn. Wird die Karte durch Aufklappen oder die Löschen-Nachfrage größer, scrollt die Seite.
+  const w = document.querySelector(".wz"), K = $("wz-karte"); if (!w || !K || !w.offsetParent) return;
+  if (!matchMedia("(min-width:900px)").matches){ w.style.removeProperty("--wz-v"); return; }
+  const h = parseFloat(w.style.getPropertyValue("--wz-h")) || 640, gap = parseFloat(getComputedStyle(document.querySelector(".wz-haupt")).rowGap) || 0;
+  const karte = K.querySelector(".wkarte"), links = K.querySelector(".wk-links"), frage = K.querySelector(".confirm");
+  let basis = 0;   // Höhe der Karte zugeklappt, ohne Nachfrage: linke Spalte + Rand und Innenabstand der Karte
+  if (karte && links){ const cs = getComputedStyle(karte);
+    basis = links.offsetHeight - (frage ? frage.offsetHeight + (parseFloat(getComputedStyle(links).rowGap) || 0) : 0)
+      + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth); }
+  w.style.setProperty("--wz-v", Math.floor(Math.max(h * .56 * .75, h - (basis ? basis + gap : 0) - 2)) + "px");
+}
+function wzAnpassen(){ if (!$("wz-liste")) return; wzHoehe(); WZ.zeile = 0; wzZeilen(true); }
+window.addEventListener("resize", wzAnpassen);
+// Bericht, Backup-Erinnerung oder Export-Fenster über der Liste erscheinen/verschwinden → Höhe neu, damit die Liste im Fenster bleibt
+if (window.ResizeObserver){ const ro = new ResizeObserver(() => wzHoehe()); ["report","backup-hinweis","exportpanel","note"].forEach(id => ro.observe($(id))); }
+const wzRoKarte = window.ResizeObserver ? new ResizeObserver(() => wzVideoHoehe()) : null;   // Karte wächst/schrumpft (Aufklappen) → Video anpassen
+function wzKarte(e){
+  freeUrls(listUrls);
+  const K = $("wz-karte"); if (!K) return;
+  if (!e){ K.innerHTML = ""; return; }
+  const before = urls.length;
+  const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.thema ? `<span class="chip thema">${esc(e.thema)}</span>` : ""}${e.lernwort ? `<span class="chip lern">Lernwort · Block ${esc(e.lernblock == null ? "" : e.lernblock)}</span>` : ""}</div>`;
+  const erklM = erklMedium(e), hatErkl = !!(e.erklaerung_text || erklM);
+  const auf = k => !!(st.open && st.open.id === e.id && st.open.key === k);
+  const knopf = (k, text) => `<button type="button" class="btn" data-play="${k}" data-id="${esc(e.id)}" aria-expanded="${auf(k)}">${PFEIL(auf(k))}${text}</button>`;
+  let inhalt = "";
+  if (auf("erklaerung") && hatErkl) inhalt = `<div class="wk-auf">${e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : ""}${erklM ? (istBild(erklM)
+      ? `<div class="player"><img src="${url(erklM)}" alt="Erklärungsbild zu ${esc(e.wort)}"></div>`
+      : `<div class="player"><video autoplay loop muted playsinline src="${url(erklM)}" aria-label="Erklärung zu ${esc(e.wort)}"></video></div>`) : ""}</div>`;
+  if (auf("fingeralphabet") && e.fingeralphabet) inhalt = `<div class="wk-auf"><div class="player"><video autoplay loop muted playsinline src="${url(e.fingeralphabet)}" aria-label="Fingeralphabet zu ${esc(e.wort)}"></video></div></div>`;
+  const confirm = st.confirmDel === e.id ? `<div class="confirm" role="alert"><p>„${esc(e.wort)}“ wirklich löschen? Das lässt sich nicht rückgängig machen.</p>
+      <div class="row"><button type="button" class="btn danger solid" data-del-yes="${esc(e.id)}">Endgültig löschen</button><button type="button" class="btn ghost" data-del-no="1">Abbrechen</button></div></div>` : "";
+  K.innerHTML = `<article class="card wkarte${st.editId === e.id ? " editing" : ""}${inhalt ? " mit-auf" : ""}" id="wkarte" aria-label="${esc(artikelWort(e))}"><div class="wk-links">
+      <div class="wk-kopf"><h3 class="word">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</h3>${chips}</div>
+      ${e.plural ? `<p class="variants">Plural: <b>${esc(e.plural)}</b></p>` : ""}
+      ${e.varianten && e.varianten.length ? `<p class="variants">Varianten: <b>${esc(e.varianten.join(", "))}</b></p>` : ""}
+      ${hatErkl || e.fingeralphabet ? `<div class="media">${hatErkl ? knopf("erklaerung", "Erklärung") : ""}${e.fingeralphabet ? knopf("fingeralphabet", "Fingeralphabet") : ""}</div>` : ""}
+      ${confirm}
+      <div class="cfoot"><button type="button" class="btn" data-edit="${esc(e.id)}">Bearbeiten</button><button type="button" class="btn ghost danger" data-del="${esc(e.id)}">Löschen</button></div>
+    </div>${inhalt}</article>`;
+  listUrls.push(...urls.splice(before));
+}
+function wzHaupt(){
+  const e = st.auf ? st.eintraege.find(x => x.id === st.auf && x.sammlung === st.sammlung) : null;
+  if (!e) st.auf = null;
+  const V = $("wz-video"); if (!V) return;
+  if (WZ.vId !== (e ? e.id : null) || WZ.vBlob !== (e ? e.gebaerde : null)){   // Video nur neu laden, wenn ein anderes Wort/Video gewählt ist
+    freeUrls(wzUrls);
+    WZ.vId = e ? e.id : null; WZ.vBlob = e ? e.gebaerde : null;
+    V.classList.toggle("leer", !e);
+    if (e && e.gebaerde){ const u = URL.createObjectURL(e.gebaerde); wzUrls.push(u);
+      V.innerHTML = `<div class="player"><video autoplay loop muted playsinline src="${u}" aria-label="Gebärde zu ${esc(e.wort)}"></video></div>`; }
+    else V.innerHTML = `<div class="wz-platz">${SYM_VIDEO}<span>Wort antippen</span></div>`;
+  }
+  wzKarte(e);
+}
+function wzLeeren(){   // Liste verlassen (Startseiten, Test/Üben): Videos anhalten, Quellen freigeben; die Auswahl bleibt
+  document.querySelectorAll("#wz-video video, #wz-karte video").forEach(v => { v.pause(); v.removeAttribute("src"); v.load(); });
+  freeUrls(wzUrls); freeUrls(listUrls); WZ.vId = undefined; WZ.vBlob = undefined;
+  if ($("wz-video")) $("wz-video").innerHTML = ""; if ($("wz-karte")) $("wz-karte").innerHTML = "";
+}
+function wzWahl(id){
+  if (st.auf !== id){ st.auf = id; st.open = null; st.confirmDel = null; }
+  wzHaupt();
+  document.querySelectorAll("#wz-hoehe .wz-z").forEach(z => z.setAttribute("aria-selected", String(z.dataset.auf === st.auf)));
+  if (!matchMedia("(min-width:900px)").matches && st.auf) $("wz-video").scrollIntoView({block:"start"});   // schmales Fenster: Video steht über der Liste
+}
 function renderCounts(){
   ["schueler","fachkraft"].forEach(s => {
     const n = st.eintraege.filter(e => e.sammlung === s).length;
@@ -950,83 +1310,42 @@ function renderCounts(){
   });
 }
 function renderList(){
-  freeUrls(listUrls);
   renderCounts();
-  const items = st.eintraege.filter(e => e.sammlung === st.sammlung)
-    .sort((a, b) => a.wort.localeCompare(b.wort, "de", {sensitivity:"base"}));
-  $("count").textContent = items.length === 1 ? "1 Gebärde" : items.length + " Gebärden";
-  $("btn-test").hidden = st.sammlung !== "schueler" || !items.length; // 05.11.2026: nur Gebärde → Wort, braucht Gebärden
-  $("btn-ueben").hidden = !items.length; // 05.11.2026: Rechnen üben liegt jetzt unter Mathe
+  const n = wzIndex().length;
+  $("btn-test").hidden = st.sammlung !== "schueler" || !n; // 05.11.2026: nur Gebärde → Wort, braucht Gebärden
+  $("btn-ueben").hidden = !n; // 05.11.2026: Rechnen üben liegt jetzt unter Mathe
   const L = $("list");
   L.hidden = st.xp.open;
   renderGes();
   renderBackupHinweis();
   renderExport();
-  if (!items.length){
-
+  if (!n){
+    freeUrls(listUrls); freeUrls(wzUrls); WZ.vId = null; WZ.vBlob = null; st.auf = null;
+    $("count").textContent = "0 Gebärden";
     L.innerHTML = `<div class="empty"><h3>Noch keine Gebärden in der ${esc(SAMMLUNG[st.sammlung].name)}</h3>
       <p>Tippe auf „+ Neue Gebärde“, um die erste Gebärde anzulegen. Sie erscheint dann hier.</p>
       <div class="steps"><span>1. Deutsches Wort eintragen</span><span>2. Gebärdenvideo anhängen${faPflicht() ? " und Fingeralphabet-Video" : ""}</span><span>3. Fach wählen und speichern</span></div></div>`;
     return;
   }
-  const before = urls.length;
-  L.innerHTML = items.map(e => {
-    const media = ["gebaerde","fingeralphabet","erklaerung"].map(k => {
-      const blob = k === "erklaerung" ? erklMedium(e) : e[k];
-      const on = st.open && st.open.id === e.id && st.open.key === k;
-      return `<button type="button" class="btn" data-play="${k}" data-id="${e.id}" aria-pressed="${on}" ${blob ? "" : "disabled"}>${on ? "▾" : "▸"} ${VID_LABEL[k]}${blob ? "" : " –"}</button>`;
-    }).join("");
-    let player = "";
-    if (st.open && st.open.id === e.id){
-      const k = st.open.key;
-      const blob = k === "erklaerung" ? erklMedium(e) : e[k];
-      if (blob) player = istBild(blob)
-        ? `<div class="player"><img src="${url(blob)}" alt="Erklärungsbild zu ${esc(e.wort)}"></div>`
-        : `<div class="player"><video autoplay loop muted playsinline src="${url(blob)}" aria-label="${VID_LABEL[k]}-Video zu ${esc(e.wort)}"></video></div>`;
-    }
-    const confirm = st.confirmDel === e.id ? `<div class="confirm" role="alert"><p>„${esc(e.wort)}“ wirklich löschen? Das lässt sich nicht rückgängig machen.</p>
-      <div class="row"><button type="button" class="btn danger solid" data-del-yes="${e.id}">Endgültig löschen</button><button type="button" class="btn ghost" data-del-no="1">Abbrechen</button></div></div>` : "";
-    const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.thema ? `<span class="chip thema">${esc(e.thema)}</span>` : ""}${e.lernwort ? `<span class="chip lern">Lernwort · Block ${e.lernblock}</span>` : ""}</div>`;
-    const offen = st.auf === e.id;
-    if (!offen) return `<article class="card zu${st.editId === e.id ? " editing" : ""}">
-      <button type="button" class="auf" data-auf="${e.id}" aria-expanded="false"><span class="word">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span>${chips}</button>
-    </article>`;
-    return `<article class="card${st.editId === e.id ? " editing" : ""}">
-      <button type="button" class="auf" data-auf="${e.id}" aria-expanded="true">
-        <span style="min-width:0"><span class="word" style="display:block">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</span>
-        ${e.varianten && e.varianten.length ? `<span class="variants" style="display:block">Varianten: ${esc(e.varianten.join(", "))}</span>` : ""}</span>
-        ${chips}
-      </button>
-      <div class="media">${media}</div>
-      ${player}
-      ${e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : ""}
-      ${confirm}
-      <div class="cfoot">
-        <button type="button" class="btn" data-edit="${e.id}">Bearbeiten</button>
-        <button type="button" class="btn ghost danger" data-del="${e.id}">Löschen</button>
-      </div>
-    </article>`;
-  }).join("");
-  listUrls.push(...urls.splice(before));
+  wzGeruest(L);
+  wzOptionen(); wzFiltern(); wzZahl();
+  wzHoehe(); wzZeilen(true); wzHaupt();
 }
 $("list").addEventListener("click", async ev => {
   const b = ev.target.closest("button");
   if (!b) return;
   if (b.dataset.auf){
-    const id = b.dataset.auf;
-    st.auf = st.auf === id ? null : id;   // ein neues Wort klappt das vorige zu; erneuter Klick klappt zu
-    st.open = null; st.confirmDel = null;
-    renderList();
+    wzWahl(b.dataset.auf);   // Wort antippen → Video läuft sofort (ein anderes Wort ersetzt das vorige)
   } else if (b.dataset.play){
     const same = st.open && st.open.id === b.dataset.id && st.open.key === b.dataset.play;
-    st.open = same ? null : {id:b.dataset.id, key:b.dataset.play};
-    renderList();
+    st.open = same ? null : {id:b.dataset.id, key:b.dataset.play};   // Erklärung bzw. Fingeralphabet auf-/zuklappen (nur eins offen)
+    wzHaupt();
   } else if (b.dataset.edit){
     startEdit(b.dataset.edit);
   } else if (b.dataset.del){
-    st.confirmDel = b.dataset.del; renderList();
+    st.confirmDel = b.dataset.del; wzHaupt();
   } else if (b.dataset.delNo){
-    st.confirmDel = null; renderList();
+    st.confirmDel = null; wzHaupt();
   } else if (b.dataset.delYes){
     const id = b.dataset.delYes;
     const e = st.eintraege.find(x => x.id === id);
@@ -1070,7 +1389,7 @@ async function backupErstellen(){
     const zip = new JSZip(), index = [];
     auswahl.forEach(e => {
       const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
-      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], kategorie:e.kategorie,
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], plural:e.plural || "", kategorie:e.kategorie,
         lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
         erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
       MEDIEN.forEach(k => { const m = medium(e, k); if (m){ const name = k + "." + endung(m); zip.file(ordner + "/" + name, m, {binary:true}); meta.dateien[k] = name; } });
@@ -1181,8 +1500,8 @@ $("ges-csv").addEventListener("change", async e => {
 
 /* ---------- Test / Übungsarten (22.10.2026) ----------
    Arten: Gebärde → Wort, Fachbegriffe, Blitzlesen, Fingeralphabet lesen, Artikel.
-   Wort aufschreiben → Foto vom Zettel → Selbstauswertung ✓/✗ → Punkte (Artikel: direkt auswählen, ohne Foto).
-   Nichts wird gespeichert, das Foto wird verworfen. Gesamtwortschatz: doppelte Punkte (erst im Ergebnis). */
+   Wort aufschreiben → Knopf „Aufgeschrieben“ → Selbstauswertung ✓/✗ → Punkte (Artikel: direkt auswählen).
+   Nichts wird gespeichert. Das Foto vom Zettel fällt weg (Freddy 07.11., Sammel-Bau 1). Gesamtwortschatz: doppelte Punkte (erst im Ergebnis). */
 const ARTEN = {
   gebaerde: {name:"Gebärde → Wort", info:"Gebärde ansehen, Wort aufschreiben."},
   fach:     {name:"Fachbegriffe", info:"Erklärungsbild/-video ansehen, Fachbegriff aufschreiben. Ohne Gebärde."}, // nur Wörter außerhalb von Deutsch (05.11.2026)
@@ -1286,7 +1605,7 @@ function rSterne(w){ return w.ok ? 3 - (w.versuche || 0) : 0; }
 function rRueck(w){
   const v = w.versuche || 0, max = rMax();
   if (!w.wahl) return v ? `<p class="rueck nein">Leider falsch – ${max ? "noch " + (max - v) + (max - v === 1 ? " Versuch" : " Versuche") : "versuch es nochmal"}.</p>`
-    + (T.phase === "rueben" ? `<div class="hilfen"><button type="button" class="btn" data-t="rloesung">Lösung zeigen</button></div>` : "") : "";
+    + (T.phase === "rueben" ? `<div class="hilfen"><button type="button" class="btn" data-t="rloesung">${SYM.lampe}Lösung zeigen</button></div>` : "") : "";
   if (w.gezeigt) return `<p class="rueck nein">Die Lösung: ${esc(w.e.wort)} = <strong>${w.e.loesung}</strong></p>`;
   if (w.ok) return ""; // richtig: kein Text, nur „Weiter“ (Freddy 05.11.2026)
   return `<p class="rueck nein">Leider falsch. ${esc(w.e.wort)} ${/^D/.test(w.e.wort) ? "ist" : "="} <strong>${w.e.loesung}</strong></p>`;
@@ -1298,8 +1617,8 @@ function matheRueck(w){ const e = w.e, ok = w.wahl === e.mathe;
 function rUnter(w){ return T.unter && (w.e.rop === "+" || w.e.rop === "-"); } // schriftliche Darstellung aktiv?
 function zFeld(w){
   const fertig = !!w.wahl, cls = fertig ? (w.ok ? " ja" : " nein") : "";
-  const t = k => `<button type="button" class="btn${k === "ok" ? " ok" : ""}" data-z="${k}" ${fertig ? "disabled" : ""} aria-label="${k === "del" ? "Löschen" : k === "ok" ? "Bestätigen" : k}">${k === "del" ? "⌫" : k === "ok" ? "OK" : k}</button>`;
-  return `<div class="zfeld">${rUnter(w) ? "" : `<div class="zanzeige${cls}" aria-live="polite">${esc(w.eingabe || "") || "&nbsp;"}</div>`}<div class="ztasten">${["1","2","3","4","5","6","7","8","9","del","0","ok"].map(t).join("")}</div></div>`;
+  const t = k => `<button type="button" class="btn${k === "ok" ? " ok" : ""}" data-z="${k}" ${fertig ? "disabled" : ""} aria-label="${k === "del" ? "Löschen" : k === "ok" ? "Bestätigen" : k}">${k === "del" ? SYM.loeschen : k === "ok" ? SYM.haken + "OK" : k}</button>`;
+  return `<div class="zfeld">${rUnter(w) ? "" : `<div class="zanzeige${cls}" aria-live="polite">${esc(w.eingabe || "") || "&nbsp;"}${fertig && w.ok ? SYM.richtig : ""}</div>`}<div class="ztasten">${["1","2","3","4","5","6","7","8","9","del","0","ok"].map(t).join("")}</div></div>`;
 }
 function zTaste(k){ // Zahlenfeld: Ziffern, Löschen, OK
   const w = T.woerter[T.i]; if (!w || w.wahl) return;
@@ -1502,22 +1821,41 @@ function tAuswahl(){
   return T.modus === "ueben" && WUEBEN.has(T.uart) ? pool : mischen(pool).slice(0, T.anzahl); // Üben: alle Wörter der Auswahl
 }
 /* Punkte eines Wortes vor dem Verdoppeln, als ob es richtig gelöst würde */
-function tMoeglich(w){
+function tMoeglich(w, roh){
   let p;
-  if (T.art === "gebaerde"){ p = w.fa >= 1 ? Math.max(1, 4 - w.fa) : w.abc ? 4 : 5; if (w.erkl) p -= 1; }
+  if (T.art === "gebaerde"){ p = w.fa >= 1 ? 4 - w.fa /* bis 0, Freddy 16.11. */ : w.abc ? 4 : 5; if (w.erkl) p -= 1; }
   else if (T.art === "fach") p = 5 - (w.abc ? 1 : 0) - 2 * w.fa;
   else if (T.art === "blitz") p = 5 - (w.geb ? 1 : 0) - (w.abc ? 1 : 0);
   else if (T.art === "falesen") p = 5 - w.wdh;
   else if (T.art === "rechnen") p = w.wahl && !w.ok ? 0 : 3 - (w.versuche || 0); // 3 Sterne, −1 je Fehlversuch
   else p = 5;
-  return Math.max(0, p);
+  if (w.jbonus) p += w.jbonus;   // Joker: diese Hilfe war kostenlos (Sammel-Bau 1)
+  return roh ? p : Math.max(0, p);   // roh: ohne Untergrenze 0, damit der Joker den vollen Abzug erstattet
 }
 function tPunkte(w){
   if (T.art === "artikel") return w.wahl === w.e.artikel ? 1 : 0;
   if (!w.richtig) return 0;
   return tMoeglich(w) * (T.quelle === "gesamt" ? 2 : 1);
 }
-function kosten(w, aenderung){ if (T.phase === "wueben") return ""; const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 ? ` <span class="kost">−${d}</span>` : ` <span class="kost null">±0</span>`; }
+/* Kosten auf dem Knopf: eine Stelle für alles – nach der ersten Nutzung (kostenlos) und bei aktivem Joker „±0“ (Sammel-Bau 1: Fehler „−1 bleibt stehen“) */
+function kosten(w, aenderung){ if (T.phase === "wueben") return ""; const d = tMoeglich(w) - tMoeglich(Object.assign({}, w, aenderung)); return d > 0 && !(T.jokerAn && T.phase === "wort") ? ` <span class="kost">−${d}</span>` : ` <span class="kost null">±0</span>`; }
+/* Joker (Freddy 05.11.): 1 je 10 Wörter (abgerundet), nur im Test mit Hilfen; bewusst aktivieren → die nächste Hilfe, die etwas kostet, ist kostenlos.
+   Ein genutzter Joker verhindert „Perfekt“. Ungenutzte Joker werden am Ende gezeigt; die Zahl der Extrapunkte ist noch offen (Freddy). */
+const JOKER_ARTEN = new Set(["gebaerde","fach","blitz","falesen"]);
+function jokerStart(){ T.joker = T.modus !== "ueben" && JOKER_ARTEN.has(T.art) ? Math.floor(T.woerter.length / 10) : 0; T.jokerGesamt = T.joker; T.jokerAn = false; }
+function jokerNutzen(w){ // gibt es eine Hilfe, die nicht gesperrt ist und gerade einen sichtbaren Stern kostet?
+  const e = w.e, z = [];
+  if (T.art === "gebaerde"){ if (!w.abc) z.push({abc:true}); if (w.abc && e.fingeralphabet) z.push({fa:w.fa + 1}); if (e.erklaerung_text || erklMedium(e)) z.push({erkl:true}); }
+  else if (T.art === "fach"){ if (!w.abc) z.push({abc:true}); if (e.fingeralphabet) z.push({fa:w.fa + 1}); }
+  else if (T.art === "blitz" && w.gezeigt){ z.push({geb:true}); if (!w.abc) z.push({abc:true}); }
+  else if (T.art === "falesen") z.push({wdh:w.wdh + 1});
+  return z.some(a => tMoeglich(w) - tMoeglich(Object.assign({}, w, a)) > 0);
+}
+function hilfe(w, tun){
+  const sichtbar = tMoeglich(w), vorher = tMoeglich(w, true); tun(); const d = vorher - tMoeglich(w, true);
+  if (T.phase === "wort" && T.jokerAn && d > 0 && sichtbar > tMoeglich(w) && T.joker > 0){ w.jbonus = (w.jbonus || 0) + d; w.joker = (w.joker || 0) + 1; T.joker--; T.jokerAn = false; }
+  renderTest();
+}
 const KOST1v = ` <span class="kost">−1</span>`;
 function kost1(){ return T.phase === "wueben" ? "" : KOST1v; } // Üben: Hilfen kosten nichts
 /* Bewertung am Ende (Freddy 22.10.): Schnitt 0–5 ohne Verdopplung; 5 = „Perfekt!!“, ≥ 3 = „Super“, < 3 = „Übe noch ein bisschen“ */
@@ -1528,15 +1866,15 @@ function tSchnitt(){
   return T.woerter.reduce((a, w) => a + (w.richtig ? tMoeglich(w) : 0), 0) / T.woerter.length;
 }
 function lobHtml(schnitt){
-  const art = schnitt >= 5 ? "perfekt" : schnitt >= 3 ? "super" : "ueben";
+  // „Perfekt“ nur ganz ohne Hilfe – auch ein genutzter Joker verhindert es (Freddy 05.11.)
+  const art = schnitt >= 5 && !(T.woerter || []).some(x => x.joker) ? "perfekt" : schnitt >= 3 ? "super" : "ueben";
   const text = {perfekt:"Perfekt!!", super:"Super!", ueben:"Übe noch ein bisschen"}[art];
-  const konfetti = art === "ueben" ? "" : `<span class="konfetti" aria-hidden="true">${Array.from({length: art === "perfekt" ? 28 : 16}, (_, i) =>
-    `<i style="--x:${Math.round(Math.cos(i * 2.4) * (60 + (i * 37) % 90))}px;--y:${Math.round(-40 - (i * 53) % 120)}px;--r:${(i * 47) % 360}deg;--f:${["#ffc83d","#ff6b6b","#4dabf7","#51cf66","#cc5de8","#ff922b"][i % 6]};--d:${(i % 5) * 60}ms"></i>`).join("")}</span>`;
-  return `<div class="lob ${art}" role="status">${konfetti}<span class="lobtext">${text}</span></div>`;
+  // kein Konfetti, kein Hüpfen (Design System); Bild der Bewertung noch nicht entworfen → Platzhalter
+  return `<div class="lob ${art}" role="status">${PH("Bewertung " + text)}<span class="lobtext">${text}</span></div>`;
 }
 function tNeuStart(woerter){
   T.woerter = mischen(woerter.map(w => ({e:w.e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()})));
-  T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0;
+  T.i = 0; T.gerendert = null; T.sternWort = null; T.phase = "wort"; jokerStart(); renderTest(); $("testov").scrollTop = 0;
 }
 function tKopf(titel, rechts){ return `<div class="testkopf"><h2 id="testtitel">${titel}</h2><span style="display:flex;gap:12px;align-items:center">${rechts || ""}<button type="button" class="btn ghost" data-t="abbrechen">${["ergebnis","start","ueben","uergebnis"].includes(T.phase) ? "Schließen" : T.phase === "uwort" || T.phase === "rueben" || T.phase === "wueben" ? "Üben beenden" : "Test abbrechen"}</button></span></div>`; }
 function flFrei(){ while (T.flUrls.length) URL.revokeObjectURL(T.flUrls.pop()); }
@@ -1578,7 +1916,7 @@ function renderTest(){
       ${T.quelle === "einzeln" ? `<div class="testliste">${sortiert.map(e => `<label><input type="checkbox" data-te="${e.id}" ${T.einzeln.has(e.id) ? "checked" : ""}> ${esc(artikelWort(e))}</label>`).join("")}</div>` : ""}
       ${!wu && (T.quelle === "gesamt" || T.quelle === "fach") ? `<label class="elab" for="t-anzahl">Anzahl Wörter</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric">` : ""}
       <p class="hint" id="t-info">${n ? n + (n === 1 ? " Wort" : " Wörter") + (ueben ? "" : " im Test") : "Keine Wörter ausgewählt."}</p></div>`}
-      <div class="los"><button type="button" class="btn primary" data-t="los" ${nn ? "" : "disabled"}>${ueben ? "Üben starten" : "Test starten"}</button></div></section>`;
+      <div class="los"><button type="button" class="btn primary" data-t="los" ${nn ? "" : "disabled"}>${ueben ? PH("Üben") + "Üben starten" : PH("Test") + "Test starten"}</button></div></section>`;
     return;
   }
   if (T.phase === "wort"){
@@ -1588,14 +1926,9 @@ function renderTest(){
         <div class="los"><button type="button" class="btn primary" data-t="weiter" id="t-weiter"></button></div>`;
       T.gerendert = T.i; T.flKey = "";
     }
-    // Stern (Variante C, Freddy 22.10.): leuchtet/pulsiert; bei einer Hilfe wackelt er und „−n“ schwebt hoch
-    // Zahl senkrecht: KEIN dominant-baseline (Safari legt es anders aus) – Grundlinie = Sternmitte (y 57,7) + halbe Ziffernhöhe (≈ 0,36 × 40 px)
-    const jetzt = tMoeglich(w), vorher = T.sternWort === T.i ? T.sternPunkte : jetzt, minus = vorher - jetzt;
-    T.sternWort = T.i; T.sternPunkte = jetzt;
-    const stern = T.art === "artikel" || T.art === "mathe" ? "" : `<span class="stern${minus > 0 ? " wackel" : ""}" aria-label="${jetzt} Punkte möglich"><svg viewBox="0 0 120 120" aria-hidden="true">
-      <defs><radialGradient id="sternglanz" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff3b0"/><stop offset=".55" stop-color="#ffc83d"/><stop offset="1" stop-color="#ff9f1c"/></radialGradient></defs>
-      <path d="M60 8l14 30 33 4-24 23 6 33-29-16-29 16 6-33-24-23 33-4z" fill="url(#sternglanz)" stroke="#ff9f1c" stroke-width="3" stroke-linejoin="round"/>
-      <text x="60" y="72" text-anchor="middle" class="sternzahl${minus > 0 ? " wechsel" : ""}">${jetzt}</text></svg>${minus > 0 ? `<span class="minusflug">−${minus}</span>` : ""}<span class="sr">${jetzt}</span></span>`;
+    // Stern neu (Freddy 05.11.): Umriss-Sterne, jede Hilfe macht einen blass (ohne Bewegung); Kopfrechnen: richtig füllt die übrigen
+    const jetzt = tMoeglich(w), n = T.art === "rechnen" ? 3 : 5;
+    const stern = T.art === "artikel" || T.art === "mathe" ? "" : sternReihe(n, n - jetzt, T.art === "rechnen" && w.ok ? jetzt : 0);
     $("t-kopf").innerHTML = tKopf(ARTEN[T.art].name, `<span class="testnr">${T.art === "rechnen" ? "Aufgabe" : "Wort"} ${T.i + 1} von ${T.woerter.length}</span>`);
     $("t-stern").innerHTML = stern;   // Stern unter dem Video, rechts neben den Hilfe-Knöpfen (Freddy 22.10., 18:12)
     renderFlaeche(w);
@@ -1615,7 +1948,7 @@ function renderTest(){
     if (T.art === "rechnen") unter += rRueck(w);
     $("t-unter").innerHTML = unter;
     const weiter = $("t-weiter");
-    weiter.textContent = letzte ? (T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "Fertig – Ergebnis" : "Fertig – Foto vom Zettel machen") : "Weiter";
+    weiter.innerHTML = letzte ? SYM.haken + (T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "Fertig – Ergebnis" : "Fertig") : "Weiter" + SYM.weiter;
     weiter.disabled = ((T.art === "artikel" || T.art === "mathe" || T.art === "rechnen") && !w.wahl) || (T.art === "blitz" && !w.gezeigt);
     return;
   }
@@ -1635,14 +1968,14 @@ function renderTest(){
     $("t-unter").innerHTML = unter;
     const fertig = schreib ? w.loesung : (w.wahl || w.loesung);
     const loesungKnopf = !fertig && (schreib ? (art !== "blitz" || w.gezeigt) : w.falsch.length);
-    $("t-wk").innerHTML = (loesungKnopf ? `<button type="button" class="btn" data-t="wloesung">Lösung zeigen</button>` : "")
-      + `<button type="button" class="btn primary" data-t="wnext" ${fertig ? "" : "disabled"}>Nächstes Wort</button>`;
+    $("t-wk").innerHTML = (loesungKnopf ? `<button type="button" class="btn" data-t="wloesung">${SYM.lampe}Lösung zeigen</button>` : "")
+      + `<button type="button" class="btn primary" data-t="wnext" ${fertig ? "" : "disabled"}>Nächstes Wort${SYM.weiter}</button>`;
     return;
   }
   if (T.phase === "rueben"){ // Üben ohne Ende (03.11.2026)
     const w = T.woerter[0];
     el.innerHTML = tKopf(T.uart === "rechnen" ? ARTEN.rechnen.name + " üben" : ARTEN.mathe.name, `<span class="testnr">Aufgabe ${T.rn}</span>`) + `<div class="flaeche" id="t-flaeche"></div><div class="hilfzeile"><div class="hilfen" id="t-hilfen"></div></div><div id="t-unter"></div>
-      <div class="los"><button type="button" class="btn primary" data-t="rnext" ${w.wahl ? "" : "disabled"}>Nächste Aufgabe</button></div>`;
+      <div class="los"><button type="button" class="btn primary" data-t="rnext" ${w.wahl ? "" : "disabled"}>Nächste Aufgabe${SYM.weiter}</button></div>`;
     T.flKey = ""; renderFlaeche(w); renderHilfen(w);
     $("t-unter").innerHTML = T.uart === "rechnen" ? rRueck(w) : w.wahl ? matheRueck(w) : "";
     return;
@@ -1658,8 +1991,8 @@ function renderTest(){
     el.innerHTML = tKopf("Gebärden üben", `<span class="testnr">Wort ${T.i + 1} von ${T.woerter.length}</span>`) + wort
       + (e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : "")
       + `<div class="flaeche">${fl}</div>
-      <div class="hilfen">${erklM ? knopf("uerkl", "Erklärung", w.zeige === "erkl") : ""}${knopf("ugeb", "Gebärde anzeigen", w.zeige === "geb")}</div>
-      ${w.gesehen ? `<div class="hilfen"><button type="button" class="btn artwahl ja" data-t="gewusst">✓ Gewusst</button><button type="button" class="btn artwahl nein" data-t="nichtgewusst">✗ Nicht gewusst</button></div>`
+      <div class="hilfen">${erklM ? knopf("uerkl", PH("Erklärung") + "Erklärung", w.zeige === "erkl") : ""}${knopf("ugeb", PH("Gebärde") + "Gebärde anzeigen", w.zeige === "geb")}</div>
+      ${w.gesehen ? `<div class="hilfen"><button type="button" class="btn artwahl ja" data-t="gewusst">${SYM.richtig}Gewusst</button><button type="button" class="btn artwahl nein" data-t="nichtgewusst">${SYM.falsch}Nicht gewusst</button></div>`
         : `<p class="hint">Erst die Gebärde selbst machen, dann „Gebärde anzeigen“ antippen.</p>`}`;
     return;
   }
@@ -1671,23 +2004,20 @@ function renderTest(){
       ${nein.length ? `<p class="hint">Noch üben: ${nein.map(w => esc(artikelWort(w.e))).join(", ")}</p>` : ""}
       <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
       <div class="hilfen">${nein.length ? `<button type="button" class="btn primary" data-t="unochmal">Nicht gewusste nochmal</button>` : ""}
-        <button type="button" class="btn" data-t="ualle">Alle nochmal</button><button type="button" class="btn${nein.length ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
+        <button type="button" class="btn" data-t="ualle">Alle nochmal</button><button type="button" class="btn${nein.length ? "" : " primary"}" data-t="abbrechen">${SYM.haken}Fertig</button></div></section>`;
     return;
   }
-  if (T.phase === "foto"){
-    el.innerHTML = tKopf("Foto vom Zettel") + `<section class="panel testwahl">
-      <p>Mach jetzt ein Foto von deinem Zettel. Danach vergleichst du selbst.</p>
-      <p class="hint">Das Foto wird nicht gespeichert und nach der Auswertung gelöscht.</p>
-      <div><label class="btn primary" for="t-foto">Foto machen<input type="file" id="t-foto" accept="image/*" capture="environment"></label></div></section>`;
+  if (T.phase === "zettel"){ // statt Foto: Knopf „Aufgeschrieben“ (Freddy 07.11.)
+    el.innerHTML = tKopf("Zettel") + `<section class="panel testwahl">
+      <div><button type="button" class="btn primary" data-t="aufgeschrieben">${SYM.haken}Aufgeschrieben</button></div></section>`;
     return;
   }
   if (T.phase === "auswertung"){
     const fertig = T.woerter.every(w => w.richtig !== null);
     el.innerHTML = tKopf("Selbst auswerten") + `
-      <div class="testfoto"><img src="${T.fotoUrl}" alt="Foto vom Zettel"></div>
       <p class="hint">Vergleiche mit deinem Zettel: Ist das Wort richtig geschrieben? (Der Artikel zählt hier nicht.)</p>
       <div class="urteile">${T.woerter.map((w, i) => `<div class="urteil"><span class="testnr">${i + 1}.</span><span class="w">${w.e.artikel ? `<span class="art">${esc(w.e.artikel)}</span> ` : ""}${esc(w.e.wort)}</span>
-        <span class="knoepfe"><button type="button" class="btn ja" data-ja="${i}" aria-pressed="${w.richtig === true}" aria-label="richtig">✓</button><button type="button" class="btn nein" data-nein="${i}" aria-pressed="${w.richtig === false}" aria-label="falsch">✗</button></span></div>`).join("")}</div>
+        <span class="knoepfe"><button type="button" class="btn ja" data-ja="${i}" aria-pressed="${w.richtig === true}" aria-label="richtig">${SYM.richtig}</button><button type="button" class="btn nein" data-nein="${i}" aria-pressed="${w.richtig === false}" aria-label="falsch">${SYM.falsch}</button></span></div>`).join("")}</div>
       <div><button type="button" class="btn primary" data-t="auswerten" ${fertig ? "" : "disabled"}>Auswerten</button></div>`;
     return;
   }
@@ -1698,9 +2028,9 @@ function renderTest(){
         ${lobHtml(tSchnitt())}
         <p style="font-size:20px"><strong>${sterne} von ${3 * T.woerter.length} Sternen</strong> · ${r} von ${T.woerter.length} gelöst</p>
         <table class="erg"><tr><th>Aufgabe</th><th>Versuche</th><th class="r">Sterne</th></tr>
-        ${T.woerter.map(w => `<tr><td>${w.ok ? "✓" : "✗"} ${esc(w.e.wort)} = ${w.e.loesung}</td><td>${(w.versuche || 0) + (w.ok ? 1 : 0)}</td><td class="r">${rSterne(w)}</td></tr>`).join("")}</table>
+        ${T.woerter.map(w => `<tr><td>${w.ok ? "✓" : "✗"} ${esc(w.e.wort)} = ${w.e.loesung}</td><td>${(w.versuche || 0) + (w.ok ? 1 : 0)}</td><td class="r">${sternReihe(3, 3 - rSterne(w), rSterne(w))}<span class="sr">${rSterne(w)}</span></td></tr>`).join("")}</table>
         <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
-        <div class="hilfen">${nochmal ? `<button type="button" class="btn primary" data-t="rnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${nochmal ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
+        <div class="hilfen">${nochmal ? `<button type="button" class="btn primary" data-t="rnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${nochmal ? "" : " primary"}" data-t="abbrechen">${SYM.haken}Fertig</button></div></section>`;
       return;
     }
     if (T.art === "mathe"){
@@ -1711,7 +2041,7 @@ function renderTest(){
         <table class="erg"><tr><th>Aufgabe</th><th>Deine Wahl</th><th>Richtig</th></tr>
         ${T.woerter.map(w => `<tr><td>${w.wahl === w.e.mathe ? "✓" : "✗"} ${esc(w.e.wort)}</td><td>${w.wahl ? RECHEN[w.wahl].n : "–"}</td><td>${RECHEN[w.e.mathe].n}</td></tr>`).join("")}</table>
         <p class="hint">Das Ergebnis wird nicht gespeichert.</p>
-        <div class="hilfen">${r < T.woerter.length ? `<button type="button" class="btn primary" data-t="mnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${r < T.woerter.length ? "" : " primary"}" data-t="abbrechen">Fertig</button></div></section>`;
+        <div class="hilfen">${r < T.woerter.length ? `<button type="button" class="btn primary" data-t="mnochmal">Falsche nochmal</button>` : ""}<button type="button" class="btn${r < T.woerter.length ? "" : " primary"}" data-t="abbrechen">${SYM.haken}Fertig</button></div></section>`;
       return;
     }
     if (T.art === "artikel"){
@@ -1726,13 +2056,15 @@ function renderTest(){
       return;
     }
     const summe = T.woerter.reduce((a, w) => a + tPunkte(w), 0), max = T.woerter.length * (T.quelle === "gesamt" ? 10 : 5);
-    const hilfe = w => [w.geb ? "Gebärde" : "", w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.wdh ? "nochmal " + w.wdh + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
+    const hilfeText = w => [w.joker ? "Joker" : "", w.geb ? "Gebärde" : "", w.abc ? "Anfangsbuchstabe" : "", w.fa ? "Fingeralphabet " + w.fa + "×" : "", w.wdh ? "nochmal " + w.wdh + "×" : "", w.erkl ? "Erklärung" : ""].filter(Boolean).join(", ") || "–";
     el.innerHTML = tKopf("Ergebnis") + `<section class="panel testwahl">
       ${lobHtml(tSchnitt())}
       <p style="font-size:20px"><strong>${summe} von ${max} Punkten</strong> · Schnitt ${(summe / T.woerter.length).toLocaleString("de-DE", {maximumFractionDigits:1})} pro Wort${T.quelle === "gesamt" ? " (doppelte Punkte)" : ""}</p>
       <table class="erg"><tr><th>Wort</th><th>Hilfen</th><th class="r">Punkte</th></tr>
-      ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${hilfe(w)}</td><td class="r">${tPunkte(w)}</td></tr>`).join("")}</table>
-      <p class="hint">Das Ergebnis wird noch nicht gespeichert. Das Foto ist gelöscht.</p>
+      ${T.woerter.map(w => `<tr><td>${w.richtig ? "✓" : "✗"} ${esc(artikelWort(w.e))}</td><td>${hilfeText(w)}</td><td class="r">${sternReihe(5, 5 - tMoeglich(w), w.richtig ? tMoeglich(w) : 0)}<span class="sr">${tPunkte(w)}</span></td></tr>`).join("")}</table>
+      ${T.jokerGesamt ? `<p class="jokerrest">${SYM.joker}Joker übrig: ${T.joker} von ${T.jokerGesamt}</p>` : ""}
+      <p class="abgabe">Blatt bei der Lehrkraft abgeben.</p>
+      <p class="hint">Das Ergebnis wird noch nicht gespeichert.</p>
       ${ergKnoepfe()}</section>`;
     return;
   }
@@ -1743,8 +2075,8 @@ function renderTest(){
     el.innerHTML = tKopf("Wörter üben", `<span class="testnr">${T.ui + 1} von ${T.woerter.length}</span>`) + `
       <div class="blitzwort uebwort">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</div>
       <div class="player"><video autoplay loop muted playsinline src="${flUrl(e.gebaerde)}" aria-label="Gebärde zu ${esc(e.wort)}"></video></div>
-      <div class="hilfen"><button type="button" class="btn" data-t="uzurueck" ${T.ui ? "" : "disabled"}>‹ Zurück</button>
-        ${T.ui < T.woerter.length - 1 ? `<button type="button" class="btn primary" data-t="uweiter">Weiter ›</button>` : `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button>`}</div>`;
+      <div class="hilfen"><button type="button" class="btn" data-t="uzurueck" ${T.ui ? "" : "disabled"}>${SYM.zurueck}Zurück</button>
+        ${T.ui < T.woerter.length - 1 ? `<button type="button" class="btn primary" data-t="uweiter">Weiter${SYM.weiter}</button>` : `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button>`}</div>`;
   }
 }
 /* Anzeigefläche: wird nur neu aufgebaut, wenn sich die Ansicht ändert (oder Fingeralphabet erneut abgespielt wird) */
@@ -1765,42 +2097,45 @@ function renderFlaeche(w){
   else if (w.ansicht === "wort") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">${esc(artikelWort(e))}</div></div>`;
   else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${w.wahl ? markiere(e.wort) : esc(e.wort)}</div></div>`;
   else if (w.ansicht === "rechnen" && rUnter(w)){ const [a, z, b] = e.wort.split(" ");
-    fl.innerHTML = `<div class="leerflaeche"><div class="schriftlich" aria-label="${esc(e.wort)}"><span></span><span class="z">${a}</span><span>${z}</span><span class="z">${b}</span><span class="strich"></span><span class="erg${w.wahl ? (w.ok ? " ja" : " nein") : ""}" aria-live="polite">${esc(w.eingabe || "")}</span></div></div>`; }
+    fl.innerHTML = `<div class="leerflaeche"><div class="schriftlich" aria-label="${esc(e.wort)}"><span></span><span class="z">${a}</span><span>${z}</span><span class="z">${b}</span><span class="strich"></span><span class="erg${w.wahl ? (w.ok ? " ja" : " nein") : ""}" aria-live="polite">${esc(w.eingabe || "")}${w.wahl && w.ok ? SYM.richtig : ""}</span></div></div>`; }
   else if (w.ansicht === "rechnen") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 14 ? " mathesatz" : ""}">${esc(e.wort)} ${/^D/.test(e.wort) ? "ist ?" : "= ?"}</div></div>`;
   else if (w.ansicht === "artikel") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">… ${esc(e.wort)}</div></div>`;
   else fl.innerHTML = `<div class="leerflaeche"><p class="hint">Schreib das Wort auf.</p></div>`;
 }
-function knopf(t, text, an, aus){ return `<button type="button" class="btn" data-t="${t}" aria-pressed="${!!an}" ${aus ? "disabled" : ""}>${text}</button>`; }
+function knopf(t, text, an, aus){ if (aus) text = text.replace(' <span class="kost null">±0</span>', ""); return `<button type="button" class="btn" data-t="${t}" aria-pressed="${!!an}" ${aus ? "disabled" : ""}>${text}</button>`; }
 function renderHilfen(w){
   const e = w.e, h = [], art = aktArt();
+  if (T.phase === "wort" && T.jokerAn && !jokerNutzen(w)) T.jokerAn = false;   // Joker, der nichts bewirkt, nicht aktiv lassen (Runde 2, M3)
   if (art === "gebaerde"){
-    h.push(knopf("geb", "Gebärde", w.ansicht === "gebaerde"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc));
+    h.push(knopf("geb", PH("Gebärde") + "Gebärde", w.ansicht === "gebaerde"));
+    h.push(knopf("abc", PH("Anfangsbuchstabe") + "Anfangsbuchstabe" + kosten(w, {abc:true}), false, w.abc));
     // Fingeralphabet erst nach dem Anfangsbuchstaben: Kosten so anzeigen, wie sie dann gelten
-    h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
-    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", "Erklärung" + kost1(), w.ansicht === "erkl"));
+    h.push(knopf("fa", PH("Fingeralphabet") + "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w.abc ? w : Object.assign({}, w, {abc:true}), {fa:w.fa + 1}), w.ansicht === "fa", !w.abc || !e.fingeralphabet));
+    if (e.erklaerung_text || erklMedium(e)) h.push(knopf("erkl", PH("Erklärung") + "Erklärung" + kosten(w, {erkl:true}), w.ansicht === "erkl"));
   } else if (art === "fach"){
-    h.push(knopf("erklsehen", "Erklärung", w.ansicht === "erkl"));
-    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc));
-    h.push(knopf("fa", "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
+    h.push(knopf("erklsehen", PH("Erklärung") + "Erklärung", w.ansicht === "erkl"));
+    h.push(knopf("abc", PH("Anfangsbuchstabe") + "Anfangsbuchstabe" + kosten(w, {abc:true}), false, w.abc));
+    h.push(knopf("fa", PH("Fingeralphabet") + "Fingeralphabet" + (w.fa ? " " + w.fa + "×" : "") + kosten(w, {fa:w.fa + 1}), w.ansicht === "fa", !e.fingeralphabet));
   } else if (art === "blitz"){
-    h.push(knopf("blitzgeb", "Gebärde" + kost1(), w.ansicht === "gebaerde", !w.gezeigt));
-    h.push(knopf("abc", "Anfangsbuchstabe" + kost1(), false, w.abc || !w.gezeigt));
+    h.push(knopf("blitzgeb", PH("Gebärde") + "Gebärde" + kosten(w, {geb:true}), w.ansicht === "gebaerde", !w.gezeigt));
+    h.push(knopf("abc", PH("Anfangsbuchstabe") + "Anfangsbuchstabe" + kosten(w, {abc:true}), false, w.abc || !w.gezeigt));
   } else if (art === "falesen"){
-    h.push(knopf("nochmal", "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
+    h.push(knopf("nochmal", PH("Fingeralphabet") + "Fingeralphabet nochmal" + kosten(w, {wdh:w.wdh + 1}), false));
   } else if (art === "mathe"){
-    Object.entries(RECHEN).forEach(([op, x]) => h.push(`<button type="button" class="btn artwahl rechen${w.wahl === op ? (op === e.mathe ? " ja" : " nein") : (w.wahl && op === e.mathe ? " richtig" : "")}" data-mwahl="${op}" ${w.wahl ? "disabled" : ""}><span class="rz">${x.z}</span> ${x.n}</button>`));
+    Object.entries(RECHEN).forEach(([op, x]) => h.push(`<button type="button" class="btn artwahl rechen${w.wahl === op ? (op === e.mathe ? " ja" : " nein") : (w.wahl && op === e.mathe ? " richtig" : "")}" data-mwahl="${op}" ${w.wahl ? "disabled" : ""}>${w.wahl === op && op === e.mathe ? SYM.richtig : ""}<span class="rz">${x.z}</span> ${x.n}</button>`));
   } else if (art === "rechnen"){
     h.push(zFeld(w));
   } else if (art === "artikel"){
-    ["der","die","das"].forEach(a => { const f = (w.falsch || []).includes(a); h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : f ? " nein" : ""}" data-wahl="${a}" ${w.wahl || f || w.loesung ? "disabled" : ""}>${a}</button>`); });
+    ["der","die","das"].forEach(a => { const f = (w.falsch || []).includes(a); h.push(`<button type="button" class="btn artwahl${w.wahl === a ? (a === e.artikel ? " ja" : " nein") : f ? " nein" : ""}" data-wahl="${a}" ${w.wahl || f || w.loesung ? "disabled" : ""}>${w.wahl === a && a === e.artikel ? SYM.richtig : ""}${a}</button>`); });
   }
+  if (T.phase === "wort" && JOKER_ARTEN.has(art) && T.jokerGesamt) // Joker mit Bild (Freddy 06.11.), nur im Test
+    h.push(`<button type="button" class="btn joker" data-t="joker" aria-pressed="${!!T.jokerAn}" ${T.joker && jokerNutzen(w) ? "" : "disabled"}>${SYM.joker}Joker · ${T.joker ? T.joker + " übrig" : "keiner übrig"}</button>`);
   $("t-hilfen").innerHTML = h.join("");
 }
 function ergKnoepfe(){
   const knapp = tSchnitt() < 3;
   return `<div class="hilfen">${knapp ? `<button type="button" class="btn primary" data-t="wiederholen">Test wiederholen</button><button type="button" class="btn" data-t="ueben">Wörter üben</button>` : ""}
-    <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">Fertig</button></div>`;
+    <button type="button" class="btn${knapp ? "" : " primary"}" data-t="abbrechen">${SYM.haken}Fertig</button></div>`;
 }
 function startAnsicht(art){
   return {gebaerde:"gebaerde", fach:"erkl", blitz:"bereit", falesen:"fa", artikel:"artikel", mathe:"mathe", rechnen:"rechnen"}[art || T.art];
@@ -1809,12 +2144,13 @@ function startAnsicht(art){
 function oeffneTest(art, modus){
   T.modus = modus; T.fest = true;
   if (modus === "ueben") T.uart = art; else T.art = art;
-  T.phase = "start"; T.einzeln = new Set(); renderTest(); $("testov").hidden = false; $("testov").scrollTop = 0; document.body.style.overflow = "hidden";
+  T.phase = "start"; T.einzeln = new Set(); wzLeeren(); renderTest(); $("testov").hidden = false; $("testov").scrollTop = 0; document.body.style.overflow = "hidden";
 }
 function testZu(){
   stoppeBlitz(); flFrei(); T.flKey = ""; if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl);
   T.phase = null; T.woerter = []; T.fotoUrl = ""; T.gerendert = null;
   $("testov").hidden = true; $("testin").innerHTML = ""; document.body.style.overflow = "";
+  if (NAV.seite === "liste") wzHaupt();
 }
 function uebenStart(woerter){
   T.woerter = mischen(woerter.map(e => ({e, zeige:null, gesehen:false, gewusst:null})));
@@ -1842,7 +2178,6 @@ $("testin").addEventListener("change", ev => {
   else if (t.id === "t-anzahl"){ T.anzahl = Math.min(50, Math.max(10, parseInt(t.value, 10) || 25)); renderTest(); }
   else if (t.dataset.te){ t.checked ? T.einzeln.add(t.dataset.te) : T.einzeln.delete(t.dataset.te); const n = tAuswahl().length;
     $("t-info").textContent = n ? n + (n === 1 ? " Wort" : " Wörter") + " im Test" : "Keine Wörter ausgewählt."; document.querySelector('[data-t="los"]').disabled = !n; }
-  else if (t.id === "t-foto"){ const f = t.files[0]; if (!f) return; T.fotoUrl = URL.createObjectURL(f); T.phase = "auswertung"; renderTest(); $("testov").scrollTop = 0; }
 });
 $("testin").addEventListener("click", ev => {
   const b = ev.target.closest("button"); if (!b) return;
@@ -1863,7 +2198,7 @@ $("testin").addEventListener("click", ev => {
   else if (a === "wnext"){ wNeu(); }
   else if (a === "wloesung"){ stoppeBlitz(); w.loesung = true; if (T.uart === "blitz") w.gezeigt = true; renderTest(); }
   else if (a === "rloesung"){ w.wahl = "–"; w.ok = false; w.gezeigt = true; renderTest(); }
-  else if (a === "rnochmal"){ T.woerter = mischen(T.woerter.filter(x => !(x.ok && !x.versuche)).map(x => ({e:x.e, wahl:null, eingabe:"", versuche:0, ansicht:"rechnen"}))); T.sternWort = null; T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0; }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
+  else if (a === "rnochmal"){ T.woerter = mischen(T.woerter.filter(x => !(x.ok && !x.versuche)).map(x => ({e:x.e, wahl:null, eingabe:"", versuche:0, ansicht:"rechnen"}))); T.sternWort = null; T.i = 0; T.gerendert = null; T.phase = "wort"; jokerStart(); renderTest(); $("testov").scrollTop = 0; }   // „Alle nochmal“ = ganze ursprüngliche Auswahl
   else if (a === "ugeb"){ w.zeige = "geb"; w.gesehen = true; renderTest(); }
   else if (a === "uerkl"){ w.zeige = "erkl"; renderTest(); }
   else if (a === "gewusst" || a === "nichtgewusst"){
@@ -1871,35 +2206,37 @@ $("testin").addEventListener("click", ev => {
     if (T.i < T.woerter.length - 1){ T.i++; renderTest(); } else { T.phase = "uergebnis"; renderTest(); }
     $("testov").scrollTop = 0;
   }
-  else if (a === "mnochmal"){ T.woerter = mischen(T.woerter.filter(x => x.wahl !== x.e.mathe).map(x => ({e:x.e, wahl:null, ansicht:"mathe"}))); T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest(); $("testov").scrollTop = 0; }
+  else if (a === "mnochmal"){ T.woerter = mischen(T.woerter.filter(x => x.wahl !== x.e.mathe).map(x => ({e:x.e, wahl:null, ansicht:"mathe"}))); T.i = 0; T.gerendert = null; T.phase = "wort"; jokerStart(); renderTest(); $("testov").scrollTop = 0; }
   else if (a === "unochmal"){ uebenStart(T.woerter.filter(x => !x.gewusst).map(x => x.e)); }
   else if (a === "ualle"){ uebenStart(T.uAlle || T.woerter.map(x => x.e)); }
   else if (a === "los"){
     T.woerter = tAuswahl().map(e => ({e, abc:false, fa:0, erkl:false, geb:false, gezeigt:false, wdh:0, wahl:null, richtig:null, ansicht:startAnsicht()}));
     if (T.quelle !== "gesamt" && T.quelle !== "fach") T.woerter = mischen(T.woerter);
-    T.i = 0; T.gerendert = null; T.phase = "wort"; renderTest();
+    T.i = 0; T.gerendert = null; T.phase = "wort"; jokerStart(); renderTest();
   }
   else if (a === "geb"){ w.ansicht = "gebaerde"; renderTest(); }
-  else if (a === "abc"){ w.abc = true; renderTest(); }
-  else if (a === "fa"){ w.fa++; w.ansicht = "fa"; renderTest(); }
-  else if (a === "erkl"){ w.erkl = true; w.ansicht = "erkl"; renderTest(); }
+  else if (a === "abc"){ hilfe(w, () => { w.abc = true; }); }
+  else if (a === "fa"){ hilfe(w, () => { w.fa++; w.ansicht = "fa"; }); }
+  else if (a === "erkl"){ hilfe(w, () => { w.erkl = true; w.ansicht = "erkl"; }); }
+  else if (a === "joker"){ if (T.jokerAn) T.jokerAn = false; else if (T.joker > 0 && jokerNutzen(w)) T.jokerAn = true; renderTest(); }   // nochmal tippen = zurücknehmen
   else if (a === "erklsehen"){ w.ansicht = "erkl"; renderTest(); }
-  else if (a === "nochmal"){ w.wdh++; w.ansicht = "fa"; renderTest(); }
-  else if (a === "blitzgeb"){ w.geb = true; w.ansicht = w.ansicht === "gebaerde" ? "leer" : "gebaerde"; renderTest(); }
+  else if (a === "nochmal"){ hilfe(w, () => { w.wdh++; w.ansicht = "fa"; }); }
+  else if (a === "blitzgeb"){ hilfe(w, () => { w.geb = true; w.ansicht = w.ansicht === "gebaerde" ? "leer" : "gebaerde"; }); }
   else if (a === "zeigen"){
     w.ansicht = "wort"; renderTest();
     stoppeBlitz(); T.blitzTimer = setTimeout(() => { T.blitzTimer = null; w.gezeigt = true; w.ansicht = "leer"; if (T.phase === "wort" || T.phase === "wueben") renderTest(); }, 500);
   }
   else if (a === "weiter"){
-    stoppeBlitz();
+    stoppeBlitz(); T.jokerAn = false;   // nicht genutzter, aktivierter Joker bleibt übrig
     if (T.i < T.woerter.length - 1){ T.i++; renderTest(); }
-    else { T.phase = T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "ergebnis" : "foto"; renderTest(); }
+    else { T.phase = T.art === "artikel" || T.art === "mathe" || T.art === "rechnen" ? "ergebnis" : "zettel"; renderTest(); }
     $("testov").scrollTop = 0;
   }
   else if (a === "wiederholen"){ tNeuStart(T.woerter); }
   else if (a === "ueben"){ T.ui = 0; T.uGerendert = null; T.phase = "ueben"; renderTest(); $("testov").scrollTop = 0; }
   else if (a === "uweiter"){ T.ui++; renderTest(); }
   else if (a === "uzurueck"){ T.ui--; renderTest(); }
+  else if (a === "aufgeschrieben"){ T.phase = "auswertung"; renderTest(); $("testov").scrollTop = 0; }
   else if (a === "auswerten"){ if (T.fotoUrl) URL.revokeObjectURL(T.fotoUrl); T.fotoUrl = ""; T.phase = "ergebnis"; renderTest(); $("testov").scrollTop = 0; }
 });
 
@@ -1947,7 +2284,7 @@ function kannSpeichern(){ return !!downloads || !imViewer; }
 function istTouchGeraet(){ return navigator.maxTouchPoints > 1 && /Mac|iPad|iPhone|iPod/.test(navigator.platform || navigator.userAgent); }
 async function speichern(name, blob){
   if (downloads) return downloads.save({filename:name, data:blob});
-  const file = new File([blob], name, {type:"application/zip"});
+  const file = new File([blob], name, {type: blob.type || "application/zip"});
   if (istTouchGeraet() && navigator.canShare && navigator.canShare({files:[file]})){
     try { await navigator.share({files:[file], title:name}); return {status:"saved"}; }
     catch(err){ throw {code: err && err.name === "AbortError" ? "declined" : "unavailable"}; }
@@ -1960,7 +2297,7 @@ async function speichern(name, blob){
 }
 function renderTools(){
   const b = $("btn-export");
-  b.disabled = !kannSpeichern();
+  b.disabled = !kannSpeichern(); $("btn-csv").disabled = !kannSpeichern();
   b.setAttribute("aria-pressed", String(st.xp.open));
   $("tools-hint").textContent = kannSpeichern() ? "" : "Export ist in dieser Ansicht nicht verfügbar.";
 }
@@ -2037,7 +2374,7 @@ async function exportieren(){
     const index = [];
     auswahl.forEach(e => {
       const ordner = "eintraege/" + slug(e.wort) + "_" + e.id.slice(0, 8);
-      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], kategorie:e.kategorie,
+      const meta = {id:e.id, sammlung:e.sammlung, artikel:e.artikel || "", wort:e.wort, thema:e.thema || "", varianten:e.varianten || [], plural:e.plural || "", kategorie:e.kategorie,
         lernwort:!!e.lernwort, lernblock:e.lernblock || null, erklaerung_text:e.erklaerung_text || "",
         erstellt:e.erstellt, geaendert:e.geaendert, dateien:{}};
       MEDIEN.forEach(k => {
@@ -2122,7 +2459,9 @@ $("import-file").addEventListener("change", async e => {
       const jetzt = new Date().toISOString();
       const eintrag = {
         id: alt ? alt.id : ids.has(meta.id) || !meta.id ? (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36) + Math.random().toString(36).slice(2)) : meta.id,
-        sammlung: ziel, artikel: ["der","die","das"].includes(meta.artikel) ? meta.artikel : "", wort: String(meta.wort).trim(), varianten: Array.isArray(meta.varianten) ? meta.varianten : [],
+        sammlung: ziel, artikel: ["der","die","das"].includes(meta.artikel) ? meta.artikel : ((alt && alt.artikel) || ""), wort: String(meta.wort).trim(),   // ohne Angabe bleibt der Artikel (Freddy 16.11.)
+        varianten: Array.isArray(meta.varianten) && meta.varianten.length ? meta.varianten : ((alt && alt.varianten) || []),   // ebenso die Varianten
+        plural: typeof meta.plural === "string" && meta.plural ? meta.plural : ((alt && alt.plural) || ""),   // fehlend oder leer löscht den Plural nicht (Freddy 16.11.: derselbe Schutz für alle drei)
         gebaerde: blobs.gebaerde, fingeralphabet: blobs.fingeralphabet || null,
         erklaerung_text: meta.erklaerung_text || "", erklaerung_medium: blobs.erklaerung || null,
         kategorie: meta.kategorie || "Deutsch", thema: typeof meta.thema === "string" ? meta.thema : "", lernwort: !!meta.lernwort && (meta.kategorie || "Deutsch") === "Deutsch",
@@ -2167,6 +2506,96 @@ $("import-file").addEventListener("change", async e => {
     ${gesN ? `<p class="hint">${gesN} ${gesN === 1 ? "Wort" : "Wörter"} in „noch zu bearbeiten“ übernommen.</p>` : ""}`, fehler.length > 0 && !neu.length && !ersetzt.length);
 });
 
+/* ---------- Wörter-Export (CSV) und Feld-Rückimport (Sammel-Bau 1, Freddy 07.11.) ----------
+   Export: nur die Wörter der gewählten Sammlung, ohne Videos/Bilder, ohne Ersteller-Kürzel; setzt keine Markierung „exportiert“.
+   Rückimport: sucht jeden Eintrag über die id, ergänzt nur leere Felder (Artikel, Plural) und fehlende Varianten.
+   Er legt nichts an, überschreibt und leert nichts, fasst Videos nicht an (Speichern wie überall über store.put mit frischer Kopie). */
+const CSV_SPALTEN = ["id","artikel","wort","plural","varianten","fach","thema"];
+const CSV_FORMEL = /^[=+\-@\t\r]/;   // Excel würde solche Zellen als Formel ausführen oder umdeuten (z. B. „-los“ → #NAME?)
+const CSV_FEHLERWERT = /^#(NAME\?|WERT!|VALUE!|BEZUG!|REF!|DIV\/0!|NV|N\/A|ZAHL!|NUM!|NULL!|ÜBERLAUF!|SPILL!)/i;
+function csvFeld(v){ v = String(v == null ? "" : v); if (CSV_FORMEL.test(v)) v = "'" + v; return /[";\r\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function csvText(items){
+  return "\ufeff" + [CSV_SPALTEN.join(";")].concat(items.map(e => [e.id, e.artikel || "", e.wort, e.plural || "", (e.varianten || []).join(", "), e.kategorie || "", e.thema || ""].map(csvFeld).join(";"))).join("\r\n") + "\r\n";
+}
+function csvZeilen(text){ // Trennzeichen ; , oder Tab (aus der Kopfzeile), Anführungszeichen wie in Excel
+  text = String(text).replace(/^\ufeff/, "");
+  const kopf = text.split(/\r?\n/)[0] || "";
+  const trenn = [";", "\t", ","].map(t => [t, kopf.split(t).length]).sort((a, b) => b[1] - a[1])[0][0];
+  const zeilen = []; let z = [], f = "", q = false;
+  for (let i = 0; i < text.length; i++){
+    const c = text[i];
+    if (q){ if (c === '"'){ if (text[i + 1] === '"'){ f += '"'; i++; } else q = false; } else f += c; }
+    else if (c === '"' && f === "") q = true;
+    else if (c === trenn){ z.push(f); f = ""; }
+    else if (c === "\n" || c === "\r"){ if (c === "\r" && text[i + 1] === "\n") i++; z.push(f); f = ""; if (z.some(x => x.trim())) zeilen.push(z); z = []; }
+    else f += c;
+  }
+  z.push(f); if (z.some(x => x.trim())) zeilen.push(z);
+  return zeilen;
+}
+async function csvExport(){
+  menuZu();
+  if (!kannSpeichern()){ toast("Export ist in dieser Ansicht nicht verfügbar."); return; }
+  const items = xItems();
+  if (!items.length){ toast("Noch keine Wörter."); return; }
+  const name = `Woerter-${st.sammlung === "schueler" ? "Schueler" : "Fachkraefte"}-${heute()}.csv`;
+  try { await speichern(name, new Blob([csvText(items)], {type:"text/csv"})); }
+  catch(err){ toast(err && err.code === "declined" ? "Speichern abgebrochen." : "Export ist hier gerade nicht möglich."); return; }
+  toast(`${items.length} ${items.length === 1 ? "Wort" : "Wörter"} gespeichert: ${name}`);
+}
+async function csvRueckimport(text){
+  const zeilen = csvZeilen(text);
+  const kopf = (zeilen.shift() || []).map(x => x.trim().toLowerCase());
+  const sp = n => kopf.indexOf(n);
+  if (sp("id") < 0){ showReport("<p><strong>Keine Wörter-Liste:</strong> Es fehlt die Spalte „id“ (Datei aus „Wörter exportieren“).</p>", true); return; }
+  const ergaenzt = [], gleich = [], fremd = [], nicht = [], abweichend = [];
+  for (const z of zeilen){
+    const wert = n => { if (sp(n) < 0) return ""; let v = String(z[sp(n)] == null ? "" : z[sp(n)]);
+      if (/^'[=+\-@\t\r]/.test(v)) v = v.slice(1);   // Formel-Schutz aus dem Export wieder entfernen
+      return v.trim().replace(/\s+/g, " "); };
+    const id = wert("id"); if (!id) continue;
+    const alt = st.eintraege.find(e => e.id === id && e.sammlung === st.sammlung);
+    if (!alt){ fremd.push(wert("wort") || id); continue; }
+    if (wortKey(wert("wort")) !== wortKey(alt.wort)){ abweichend.push((wert("wort") || "–") + " ≠ " + alt.wort); continue; }   // verschobene Zeile: nichts ergänzen
+    const neu = {};
+    const fehlerwert = n => { if (CSV_FEHLERWERT.test(wert(n))){ nicht.push(alt.wort + " (" + n + ": " + wert(n) + ")"); return true; } return false; };
+    const art = fehlerwert("artikel") ? "" : wert("artikel").toLowerCase();
+    if (art && art !== (alt.artikel || "")){
+      if (!alt.artikel && ["der","die","das"].includes(art)) neu.artikel = art; else nicht.push(alt.wort + " (Artikel)"); }
+    const pl = fehlerwert("plural") ? "" : wert("plural");
+    if (pl && pl !== (alt.plural || "")){ if (!alt.plural) neu.plural = pl; else nicht.push(alt.wort + " (Plural)"); }
+    const vAlt = alt.varianten || [], dazu = (fehlerwert("varianten") ? [] : parseVarianten(wert("varianten"), alt.wort))
+      .filter(v => { if (CSV_FEHLERWERT.test(v)){ nicht.push(alt.wort + " (varianten: " + v + ")"); return false; } return true; })   // auch „a, #NAME?“ (N8)
+      .filter(v => !vAlt.some(x => x.toLowerCase() === v.toLowerCase()));
+    if (dazu.length) neu.varianten = vAlt.concat(dazu);
+    if (!Object.keys(neu).length){ gleich.push(alt.wort); continue; }
+    const eintrag = Object.assign({}, alt, neu, {geaendert: new Date().toISOString()});
+    try { await store.put(eintrag); } catch(err){ nicht.push(alt.wort + " (Speichern ging nicht)"); continue; }
+    st.eintraege = st.eintraege.map(x => x.id === id ? eintrag : x);
+    ergaenzt.push(alt.wort);
+  }
+  if (st.editId && ergaenzt.length) resetForm();
+  renderList();
+  const liste = a => esc(a.join(", "));
+  showReport(`<p><strong>Rückimport:</strong> ${ergaenzt.length} ergänzt, ${gleich.length} unverändert${fremd.length ? ", " + fremd.length + " nicht gefunden" : ""}${abweichend.length ? ", " + abweichend.length + " übersprungen" : ""}.</p>
+    ${abweichend.length ? `<p class="hint">Wort passt nicht zur id, übersprungen: ${liste(abweichend)}</p>` : ""}
+    ${nicht.length ? `<p class="hint">Nicht überschrieben (schon anders eingetragen oder ungültig): ${liste(nicht)}</p>` : ""}
+    ${fremd.length ? `<p class="hint">Nicht in dieser Sammlung, nichts angelegt: ${liste(fremd)}</p>` : ""}`, !ergaenzt.length && (fremd.length + nicht.length + abweichend.length) > 0);
+}
+$("btn-csv").addEventListener("click", csvExport);
+$("csv-rueck").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; menuZu(); if (!f) return;
+  let text;
+  try { const roh = await f.arrayBuffer();
+    try { text = new TextDecoder("utf-8", {fatal:true}).decode(roh); }      // UTF-8 (unser Export, mit BOM)
+    catch(err){ text = new TextDecoder("windows-1252").decode(roh); } }       // Excel unter Windows speichert „CSV“ als windows-1252
+  catch(err){ toast("Die Datei konnte nicht gelesen werden."); return; }
+  await csvRueckimport(text);
+});
+/* Blanko-Übungszettel (Freddy 07.11.): Linien, Name und Datum von Hand, nichts vorausgefüllt – Drucken am Schulrechner */
+$("btn-zettel").addEventListener("click", () => { menuZu(); document.body.classList.add("zettel-druck"); window.print(); });
+window.addEventListener("afterprint", () => document.body.classList.remove("zettel-druck"));
+
 /* ---------- Startbildschirme + Navigation (05.11.2026, Freddy) ----------
    Rolle (Schüler/Lehrer) → Schüler: Themen → Wortschatz (Liste) · Mathe · Deutsch · Fachwörter. Lehrer: direkt die Sammlung.
    „Zurück“ = eine Ebene hoch, „Start“ = Rollenwahl. Die letzte Seite wird gemerkt (gw-nav). */
@@ -2179,16 +2608,16 @@ function setSammlung(s){
   try { localStorage.setItem("gw-sammlung", s); } catch(e){}
   if (st.editId) resetForm();
   clearAllErr();
-  st.open = null; st.confirmDel = null; st.auf = null;
+  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; if ($("wz-suche")) $("wz-suche").value = "";
   renderSammlung(); renderSlots(); renderList();
 }
 const HIC = {
   schueler:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 24 9l20 9-20 9z"/><path d="M12 22v10c0 3 6 6 12 6s12-3 12-6V22"/><path d="M44 18v12"/></svg>',
   lehrer:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="6" width="28" height="20" rx="2"/><circle cx="11" cy="20" r="5"/><path d="M3 42c0-7 4-12 8-12s6 2 8 5l7-9"/></svg>',
-  wort:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"><path d="M24 12c-5-4-12-5-19-4v29c7-1 14 0 19 4 5-4 12-5 19-4V8c-7-1-14 0-19 4z"/><path d="M24 12v29"/></svg>',
-  mathe:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"><path d="M14 6v14M7 13h14M28 13h14M8 30l12 12M20 30 8 42M28 33h14M28 41h14"/></svg>',
-  deutsch:'<svg viewBox="0 0 48 48"><text x="24" y="35" text-anchor="middle" font-family="Georgia,serif" font-weight="700" font-size="28" fill="currentColor">Aa</text></svg>',
-  fach:'<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 5h12M20 5v14L8 40a3 3 0 0 0 3 4h26a3 3 0 0 0 3-4L28 19V5"/><path d="M13 31h22"/></svg>',
+  wort:'<svg class="ksym" viewBox="0 0 80 80" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M31 76 L30 61 C25 57 18 50 14 44 C12 41 13 37 17 38 C21 39 25 44 29 47 L24 23 C23 18 28 16 30 20 L34 39 L34 14 C34 9 40 9 40 14 L40 38 L44 16 C45 11 50 12 50 17 L46 40 L53 25 C55 21 60 22 58 27 L52 47 C51 55 50 59 48 62 L48 76"/><path d="M31 70 C36 71 42 71 48 70"/></svg>', // neue Hand (Design System, von Freddy freigegeben 09.11.)
+  mathe:'<svg class="ksym" viewBox="0 0 72 72" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M18 9v20M8 19h20"/><path d="M44 19h20"/><path d="M10 47l16 16M26 47 10 63"/><path d="M44 51h20M44 59h20"/></svg>',
+  deutsch:'<span class="ktext" aria-hidden="true">Aa</span>',
+  fach:'<svg class="ksym" viewBox="0 0 66 66" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M25 8h16M28 8v18L12 54c-2 4 0 6 4 6h34c4 0 6-2 4-6L38 26V8"/><path d="M19 42h28"/></svg>',
   rechnen:'<svg viewBox="0 0 48 48"><text x="24" y="32" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="19" fill="currentColor">7+5</text></svg>',
   rechenart:'<svg viewBox="0 0 48 48"><text x="24" y="22" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="17" fill="currentColor">+ −</text><text x="24" y="41" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="17" fill="currentColor">· :</text></svg>',
   blitz:'<svg viewBox="0 0 48 48" fill="currentColor"><path d="M27 3 9 27h12l-3 18 21-26H26z"/></svg>',
@@ -2199,11 +2628,13 @@ const HIC = {
 const HSEITEN = {rolle:{titel:"Lernapp DGS"}, themen:{titel:"Was möchtest du lernen?", zurueck:"rolle"}, mathe:{titel:"Mathe", zurueck:"themen"},
   deutsch:{titel:"Deutsch", zurueck:"themen"}, fachwoerter:{titel:"Fachwörter", zurueck:"themen"}};
 const UEBEN_DA = new Set(["rechnen","mathe","blitz","falesen","artikel","fach"]); // Bau 2 (05.11.2026): Üben für alle
-function kachel(k){
+const KREIS = {A:'<path d="M76 10c34-1 62 24 63 60 1 37-27 68-64 69-35 1-63-25-64-62C10 40 36 13 68 11c9 0 17 2 24 5"/>', B:'<path d="M70 12c37-3 66 23 67 59 2 36-26 66-62 67-36 1-64-24-65-61-1-31 20-56 50-63 12-3 26-1 36 5"/>', C:'<path d="M80 11c33 2 59 28 58 62-1 36-29 65-65 65-35 0-62-28-62-63 0-33 25-59 57-62 11-1 21 1 30 6"/>', aus:'<path stroke-dasharray="2 8" d="M72 12c35-1 64 25 65 60 1 36-27 66-63 66-35 1-63-26-63-62 0-32 24-58 55-63"/>'};
+function kachel(k, i){
   const akt = !!(k.test || k.ueben);
-  const inhalt = `<span class="kicon">${HIC[k.icon]}</span><span class="ktitel">${k.t}</span><span class="ksub">${k.sub}</span>`
+  const kreis = `<svg class="kreis" viewBox="0 0 150 150" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">${KREIS[k.aus ? "aus" : "ABC"[(i || 0) % 3]]}</svg>`;
+  const inhalt = `<span class="kicon">${kreis}${HIC[k.icon]}</span><span class="ktitel">${k.t}</span><span class="ksub">${k.sub}</span>`
     + (k.aus ? `<span class="bald">${k.bald || "kommt bald"}</span>` : "")
-    + (akt && !k.aus ? `<span class="akt"><button type="button" data-hueben="${k.ueben}" ${UEBEN_DA.has(k.ueben) ? "" : "disabled"}>Üben</button><button type="button" class="test" data-htest="${k.test}">Test</button></span>` : "");
+    + (akt && !k.aus ? `<span class="akt"><button type="button" data-hueben="${k.ueben}" ${UEBEN_DA.has(k.ueben) ? "" : "disabled"}>${PH("Üben")}Üben</button><button type="button" class="test" data-htest="${k.test}">${PH("Test")}Test</button></span>` : "");
   if (akt || k.aus) return `<div class="kachel${k.aus ? " aus" : ""}" data-farbe="${k.farbe}"${k.aus ? ' aria-disabled="true"' : ""}>${inhalt}</div>`;
   return `<button type="button" class="kachel" data-farbe="${k.farbe}" data-zu="${k.zu}">${inhalt}</button>`;
 }
@@ -2220,11 +2651,12 @@ function renderHome(){
   if (s === "mathe") k = [{t:"Kopfrechnen", sub:"Plus, Minus, Einmaleins", icon:"rechnen", farbe:"mathe", test:"rechnen", ueben:"rechnen"},
     {t:"Rechenart erkennen", sub:"Signalwörter und Sätze", icon:"rechenart", farbe:"mathe", test:"mathe", ueben:"mathe"}];
   if (s === "deutsch") k = [{t:"Blitzlesen", sub:"Wort kurz sehen, dann schreiben", icon:"blitz", farbe:"deutsch", test:"blitz", ueben:"blitz", aus:!se.length, bald:kein},
-    {t:"Fingeralphabet", sub:"Fingeralphabet lesen, Wort schreiben", icon:"hand", farbe:"deutsch", test:"falesen", ueben:"falesen", aus:!se.some(e => e.fingeralphabet), bald:kein},
+    {t:"Fingeralphabet", sub:"Fingeralphabet lesen, Wort schreiben", icon:"wort", farbe:"deutsch", test:"falesen", ueben:"falesen", aus:!se.some(e => e.fingeralphabet), bald:kein},
     {t:"Artikel", sub:"der, die oder das?", icon:"artikel", farbe:"deutsch", test:"artikel", ueben:"artikel", aus:!se.some(e => e.artikel), bald:kein}];
   if (s === "fachwoerter") k = [{t:"Fachbegriffe", sub:"Bild ansehen, Fachbegriff schreiben", icon:"fachbegriff", farbe:"fachw", test:"fach", ueben:"fach",
     aus:!se.some(e => erklMedium(e) && e.kategorie !== "Deutsch"), bald:"noch keine Fachwörter mit Erklärungsbild"}];
-  $("home").innerHTML = `<div class="hkopf"><button type="button" class="btn hnav" data-hnav="zurueck" ${S.zurueck ? "" : "hidden"}>‹ Zurück</button><h1>${S.titel}</h1><button type="button" class="btn hnav" data-hnav="start" ${s === "rolle" ? "hidden" : ""}>⌂ Start</button></div>`
+  const strich = `<svg class="strich${s === "mathe" ? " f-mathe" : s === "deutsch" ? " f-deutsch" : s === "fachwoerter" ? " f-fachw" : ""}" viewBox="0 0 300 14" aria-hidden="true" fill="none" preserveAspectRatio="none"><path d="M6 9c44-5 92-7 142-6 47 2 95 1 147-3" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/></svg>`; // Startseiten rot, Unterseiten in Fachfarbe
+  $("home").innerHTML = `<div class="hkopf"><button type="button" class="btn hnav" data-hnav="zurueck" ${S.zurueck ? "" : "hidden"}>${SYM.zurueck}Zurück</button><h1><span>${S.titel}</span>${strich}</h1><button type="button" class="btn hnav" data-hnav="start" ${s === "rolle" ? "hidden" : ""}>${SYM.haus}Start</button></div>`
     + (s === "rolle" ? `<p class="hfrage">Wer bist du?</p>` : "")
     + `<div class="kacheln">${k.map(kachel).join("")}</div>`;
 }
@@ -2234,8 +2666,8 @@ function renderNav(){
   const liste = NAV.seite === "liste";
   $("home").hidden = liste; document.querySelector(".wrap").hidden = !liste;
   if (NAV.rolle) setSammlung(NAV.rolle === "lehrer" ? "fachkraft" : "schueler");
-  if (liste){ $("nav-zurueck").hidden = NAV.rolle !== "schueler"; }
-  else renderHome();
+  if (liste){ $("nav-zurueck").hidden = NAV.rolle !== "schueler"; wzHaupt(); requestAnimationFrame(wzAnpassen); }
+  else { wzLeeren(); renderHome(); }   // keine unsichtbaren Videos weiterlaufen lassen
   window.scrollTo(0, 0);
 }
 function geheZu(seite){ NAV.seite = seite; navSpeichern(); renderNav(); }

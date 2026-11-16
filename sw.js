@@ -1,8 +1,9 @@
 // Offline-Betrieb des Gebärden-Wörterbuchs. Erzeugt von baue_woerterbuch_github.py – nicht von Hand ändern.
-const CACHE = "woerterbuch-f3862b85bf";
-const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png"];
+const CACHE = "woerterbuch-c78529dc81";
+const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", "./schriften/bricolage-grotesque-latin-opsz-normal.woff2", "./schriften/atkinson-hyperlegible-next-latin-wght-normal.woff2", "./schriften/OFL.txt"];
 self.addEventListener("install", e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: "reload" – nicht aus dem HTTP-Cache des Browsers füllen (sonst kann eine alte index.html in den neuen Cache geraten)
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES.map(u => new Request(u, {cache: "reload"})))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", e => {
   e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
