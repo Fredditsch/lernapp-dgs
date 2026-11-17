@@ -568,7 +568,23 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
 .wz-z:focus-visible{outline:3px solid var(--mathe);outline-offset:-3px}
 .wz-w{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .wz-leer{margin:0;padding:16px 8px;text-align:center;color:var(--c-leise);font-size:max(17px,calc(20 * var(--u,1px)))}
-.wz-video .player video,.wz-platz{display:block;width:100%;aspect-ratio:16/9;max-height:min(calc(var(--wz-h,640px) * .56), var(--wz-v,9999px));background:var(--c-tief);border:2px solid var(--c-rand);border-radius:18px 22px 16px 20px;box-shadow:4px 4px 0 var(--t-rose);object-fit:contain;box-sizing:border-box}
+.wz-video{display:grid;gap:calc(12 * var(--u,1px));min-width:0}
+.wz-fenster,.wz-platz{display:block;width:100%;aspect-ratio:16/9;max-height:min(calc(var(--wz-h,640px) * .56), var(--wz-v,9999px));background:var(--c-tief);border:2px solid var(--c-rand);border-radius:18px 22px 16px 20px;box-shadow:4px 4px 0 var(--t-rose);box-sizing:border-box}
+/* Fenster (Sammel-Bau 1c): Gebärde, Erklärung oder Fingeralphabet groß im selben Rahmen – die Größe hängt nicht am Inhalt */
+.wz-fenster{position:relative;overflow:hidden}
+.wz-fenster > .player,.wz-medium > .player,.wz-erkl{position:absolute;inset:0;margin:0}
+.wz-fenster .player video,.wz-fenster .wz-medium img{display:block;width:100%;height:100%;max-width:none;max-height:none;aspect-ratio:auto;object-fit:contain;border:0;border-radius:0;background:transparent;box-shadow:none}
+.wz-erkl{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr)}
+.wz-erkl.beides{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}   /* Bild/Video und Text zusammen: nebeneinander */
+.wz-medium{position:relative;min-width:0;min-height:0}
+.wz-medium img{position:absolute;inset:0}
+.wz-text{display:flex;min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;background:var(--c-karte);color:var(--c-tinte);padding:calc(20 * var(--u,1px)) calc(32 * var(--u,1px));font-size:max(20px,calc(30 * var(--u,1px)));line-height:1.45}
+.wz-erkl.beides .wz-text{border-left:2px solid var(--c-rand);font-size:max(18px,calc(26 * var(--u,1px)));padding:calc(16 * var(--u,1px)) calc(22 * var(--u,1px))}
+.wz-text p{margin:auto;max-width:34em;white-space:pre-line;overflow-wrap:anywhere}   /* kurzer Text mittig, langer Text scrollt von oben */
+.wz-text:focus-visible{outline-offset:-4px}
+.wz-um{display:flex;flex-wrap:wrap;justify-content:center;gap:max(6px,calc(12 * var(--u,1px)))}
+.wz-um .btn{min-height:max(40px,calc(48 * var(--u,1px)));padding:0 max(10px,calc(20 * var(--u,1px)));font-size:max(17px,calc(20 * var(--u,1px)));line-height:1.25;box-shadow:4px 4px 0 var(--t-rose)}
+.wz-um .btn[aria-pressed="true"]{background:var(--c-wortschatz);border-color:var(--c-rand);color:var(--c-auf);box-shadow:none}
 .wz-platz{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-style:dashed;box-shadow:none;color:var(--c-leise);font-size:max(17px,calc(22 * var(--u,1px)));line-height:1.2}
 .wz-platz .sym{width:calc(56 * var(--u,1px));height:calc(56 * var(--u,1px));min-width:40px;min-height:40px}
 .wkarte{gap:calc(14 * var(--u,1px)) calc(24 * var(--u,1px));padding:calc(18 * var(--u,1px)) calc(24 * var(--u,1px))}
@@ -579,14 +595,6 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
 .wkarte .variants{font-size:max(17px,calc(20 * var(--u,1px)));margin:0;color:var(--c-leise)}
 .wkarte .variants b{color:var(--c-tinte);font-weight:700}
 .wkarte .chip{font-size:max(15px,calc(16 * var(--u,1px)));max-width:100%;white-space:normal;overflow-wrap:anywhere}
-.wkarte .expl{font-size:max(17px,calc(20 * var(--u,1px)))}
-.wkarte .media .btn{font-size:max(17px,calc(19 * var(--u,1px)))}
-.wkarte .media .btn .sym{width:1em;height:1em}
-.wkarte .media .btn[aria-expanded="true"]{background:var(--c-tief);box-shadow:none}
-.wkarte .wk-auf{display:grid;gap:10px}
-/* Erklärung/Fingeralphabet kleiner als die Gebärde: die Gebärde bleibt vorn */
-.wkarte .wk-auf .player video,.wkarte .wk-auf .player img{display:block;width:auto;max-width:100%;height:calc(var(--wz-h,640px) * .26);min-height:120px;aspect-ratio:16/9;object-fit:contain;background:var(--c-tief);border:2px solid var(--c-rand);border-radius:16px 20px 18px 22px;box-sizing:border-box}
-.wkarte .wk-auf .player img{aspect-ratio:auto}
 /* Echte Schrift (Atkinson Next): mit Zeilenhöhe 1,2 stand der Text der Kachel-Knöpfe am iPad 1,2 px zu hoch (gerundete Schriftmaße), mit 1,25 mittig */
 .akt button{line-height:1.25}
 .abgabe{margin:0;font-weight:700;font-size:max(17px,calc(22 * var(--u,1px)))}
@@ -601,8 +609,6 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
   .wz{grid-template-columns:minmax(0,1fr) minmax(320px,calc(460 * var(--u,1px)))}
   .wz-seite{height:var(--wz-h,640px);position:sticky;top:8px}
   .wz-liste{height:auto;flex:1}
-  .wkarte.mit-auf{grid-template-columns:minmax(0,1fr) auto;align-items:start}   /* Aufgeklapptes rechts neben den Angaben, Gebärde bleibt oben im Bild */
-  .wkarte .wk-auf .expl{max-width:calc(420 * var(--u,1px))}
   /* Kopf der Wortschatz-Seite etwas enger, damit Video und Karte ins Fenster passen */
   .wrap.wz-breit{padding-block:calc(16 * var(--u,1px)) calc(24 * var(--u,1px))}
   .wz-breit .navbar{margin-bottom:calc(6 * var(--u,1px))}
@@ -613,16 +619,19 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
 @media (min-width:1200px) and (pointer:fine), (min-width:1024px) and (orientation:landscape) and (pointer:coarse){
   .wrap.wz-breit{max-width:calc(1760 * var(--u))}
 }
-@media (pointer:coarse){.wz-z{min-height:48px}.wkarte .media .btn,.wkarte .cfoot .btn{min-height:48px}}
+@media (pointer:coarse){.wz-z{min-height:48px}.wz-um .btn,.wkarte .cfoot .btn{min-height:48px}}
 @media print{
   @page{size:A4;margin:16mm}
-  body.zettel-druck{background:#fff!important;margin:0}
+  /* Übungszettel fest 203 mm hoch (Kopf 14 mm + 18 Linien à 10,5 mm): passt auf eine A4-Seite, auch wenn Safari die Ränder
+     des Druckdialogs nimmt und 6,7 % größer druckt, mit Kopf-/Fußzeilen oder bei 125 % (Sammel-Bau 1c) */
+  :root:has(> body.zettel-druck){padding:0!important;color-scheme:light!important;background:#fff!important}   /* Nachbesserung 1 (B-N1): auch im Dunkelmodus mit Hintergrundgrafiken kein dunkler Rand */
+  body.zettel-druck{background:#fff!important;color-scheme:light;margin:0!important;padding:0!important}
   body.zettel-druck > *:not(#zettel){display:none!important}
-  body.zettel-druck #zettel{display:block!important;color:#000;font-family:var(--font-body)}
-  #zettel .zkopf{display:flex;align-items:flex-end;gap:4mm;font-size:13pt;margin-bottom:6mm}
-  #zettel .zlinie{flex:1;border-bottom:.4mm solid #000;height:8mm}
+  body.zettel-druck #zettel{display:block!important;box-sizing:border-box;height:203mm;overflow:hidden;break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid;color:#000;font-family:var(--font-body)}
+  #zettel .zkopf{display:flex;align-items:flex-end;gap:4mm;height:8mm;font-size:13pt;line-height:1.2;margin-bottom:6mm}
+  #zettel .zlinie{flex:1;border-bottom:.4mm solid #000;height:8mm;box-sizing:border-box}
   #zettel .zlinie.kurz{flex:0 0 45mm}
-  #zettel .zlinien div{height:11mm;border-bottom:.3mm solid #555}
+  #zettel .zlinien div{box-sizing:border-box;height:10.5mm;border-bottom:.3mm solid #555}
 }
 </style>
 
@@ -763,7 +772,7 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
 </div>
 <div class="testov" id="testov" hidden role="dialog" aria-modal="true" aria-labelledby="testtitel"><div class="testin" id="testin"></div></div>
 <div class="toast" id="toast" role="status" hidden></div>
-<section id="zettel" aria-hidden="true"><div class="zkopf"><span>Name</span><span class="zlinie"></span><span>Datum</span><span class="zlinie kurz"></span></div><div class="zlinien"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></section>
+<section id="zettel" aria-hidden="true"><div class="zkopf"><span>Name</span><span class="zlinie"></span><span>Datum</span><span class="zlinie kurz"></span></div><div class="zlinien"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div></section>
 
 <script src="jszip.min.js"></script>
 <script>
@@ -995,7 +1004,7 @@ document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click"
   try { localStorage.setItem("gw-sammlung", st.sammlung); } catch(e){}
   if (st.editId) resetForm();
   clearAllErr();
-  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; if ($("wz-suche")) $("wz-suche").value = "";
+  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; WZ.ansicht = "gebaerde"; if ($("wz-suche")) $("wz-suche").value = "";
   renderSammlung(); renderSlots(); renderList();
 }));
 
@@ -1142,14 +1151,15 @@ $("form").addEventListener("submit", async ev => {
 /* ---------- Wortschatz-Liste nach Kestner (Sammel-Bau 1b, Freddy 05./16.11.2026) ----------
    Rechts: Suche, Filter Fach und Thema, Liste (alphabetisch, Artikel ignoriert, Umlaute nach deutscher Sortierung).
    Nur die sichtbaren Zeilen stehen im DOM (5000+ Wörter). Wort antippen (st.auf) → Gebärdenvideo läuft sofort, stumm, in Schleife,
-   ohne Bedienleiste; darunter die Karte mit allen gefüllten Feldern. Erklärung und Fingeralphabet aufklappen (st.open).
-   Videos werden erst beim Auswählen bzw. Aufklappen geladen, ihre Object-URLs beim Wechsel freigegeben. */
+   ohne Bedienleiste; darunter die Karte mit allen gefüllten Feldern. Sammel-Bau 1c: Erklärung und Fingeralphabet stehen über
+   Umschalter (WZ.ansicht) groß im selben Fenster, nur einer läuft; ein anderes Wort beginnt wieder mit der Gebärde.
+   Medien werden erst beim Anzeigen geladen, ihre Object-URLs beim Wechsel freigegeben. */
 const listUrls = [], wzUrls = [];
-const WZ = {q:"", fach:"", thema:"", idx:null, idxArr:null, idxLen:-1, idxS:"", treffer:[], zeile:0, vId:null, vBlob:null, roh:null};
+const WZ = {q:"", fach:"", thema:"", idx:null, idxArr:null, idxLen:-1, idxS:"", treffer:[], zeile:0, vKey:null, ansicht:"gebaerde", roh:null};
+const WZ_ANS = {gebaerde:"Gebärde", erklaerung:"Erklärung", fingeralphabet:"Fingeralphabet"};
 const KOLL = new Intl.Collator("de", {sensitivity:"base", numeric:true}), KOLL2 = new Intl.Collator("de", {numeric:true});   // KOLL2: bei Gleichstand Apfel vor Äpfel
 const SYM_VIDEO = '<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 6.5h12v11h-12z"/><path d="M15.5 10.5l5-3v9l-5-3"/></svg>';
 const SYM_LUPE = '<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6"/><path d="M15 15l5 5"/></svg>';
-const PFEIL = auf => `<svg class="sym" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="${auf ? "M6 15l6-6 6 6" : "M6 9l6 6 6-6"}"/></svg>`;
 function wzNorm(t){ return String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ß/g, "ss"); }
 function wzIndex(){   // sortiert und für die Suche vorbereitet; neu nur, wenn sich die Einträge ändern
   if (WZ.idx && WZ.idxArr === st.eintraege && WZ.idxLen === st.eintraege.length && WZ.idxS === st.sammlung) return WZ.idx;
@@ -1188,7 +1198,7 @@ function wzGeruest(L){
       <div class="wz-liste" id="wz-liste" role="listbox" aria-label="Wörter" tabindex="-1"><div class="wz-hoehe" id="wz-hoehe"></div></div>
       <p class="wz-leer" id="wz-leer" role="status" hidden>Keine Treffer.</p>
     </div></div>`;
-  WZ.vId = undefined; WZ.vBlob = undefined; WZ.zeile = 0;   // Videofeld beim ersten Zeichnen immer füllen
+  WZ.vKey = null; WZ.zeile = 0;   // Videofeld beim ersten Zeichnen immer füllen
   if (wzRoKarte) wzRoKarte.observe($("wz-karte"));
   $("wz-suche").value = WZ.q;
   $("wz-liste").addEventListener("scroll", () => { if (!wzZeilen.f) wzZeilen.f = requestAnimationFrame(() => { wzZeilen.f = 0; wzZeilen(); }); }, {passive:true});
@@ -1245,60 +1255,75 @@ function wzVideoHoehe(){   // Videofeld nur so weit kleiner, dass die ZUGEKLAPPT
   if (karte && links){ const cs = getComputedStyle(karte);
     basis = links.offsetHeight - (frage ? frage.offsetHeight + (parseFloat(getComputedStyle(links).rowGap) || 0) : 0)
       + parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom) + parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth); }
-  w.style.setProperty("--wz-v", Math.floor(Math.max(h * .56 * .75, h - (basis ? basis + gap : 0) - 2)) + "px");
+  const um = document.querySelector("#wz-video .wz-um"), umH = um ? um.offsetHeight + (parseFloat(getComputedStyle($("wz-video")).rowGap) || 0) : 0;
+  w.style.setProperty("--wz-v", Math.floor(Math.max(h * .56 * .75, h - (basis ? basis + gap : 0) - umH - 2)) + "px");
 }
 function wzAnpassen(){ if (!$("wz-liste")) return; wzHoehe(); WZ.zeile = 0; wzZeilen(true); }
 window.addEventListener("resize", wzAnpassen);
 // Bericht, Backup-Erinnerung oder Export-Fenster über der Liste erscheinen/verschwinden → Höhe neu, damit die Liste im Fenster bleibt
 if (window.ResizeObserver){ const ro = new ResizeObserver(() => wzHoehe()); ["report","backup-hinweis","exportpanel","note"].forEach(id => ro.observe($(id))); }
-const wzRoKarte = window.ResizeObserver ? new ResizeObserver(() => wzVideoHoehe()) : null;   // Karte wächst/schrumpft (Aufklappen) → Video anpassen
+const wzRoKarte = window.ResizeObserver ? new ResizeObserver(() => wzVideoHoehe()) : null;   // Karte wächst/schrumpft (anderes Wort) → Fenster anpassen
 function wzKarte(e){
   freeUrls(listUrls);
   const K = $("wz-karte"); if (!K) return;
   if (!e){ K.innerHTML = ""; return; }
-  const before = urls.length;
   const chips = `<div class="chips"><span class="chip">${esc(e.kategorie)}</span>${e.thema ? `<span class="chip thema">${esc(e.thema)}</span>` : ""}${e.lernwort ? `<span class="chip lern">Lernwort · Block ${esc(e.lernblock == null ? "" : e.lernblock)}</span>` : ""}</div>`;
-  const erklM = erklMedium(e), hatErkl = !!(e.erklaerung_text || erklM);
-  const auf = k => !!(st.open && st.open.id === e.id && st.open.key === k);
-  const knopf = (k, text) => `<button type="button" class="btn" data-play="${k}" data-id="${esc(e.id)}" aria-expanded="${auf(k)}">${PFEIL(auf(k))}${text}</button>`;
-  let inhalt = "";
-  if (auf("erklaerung") && hatErkl) inhalt = `<div class="wk-auf">${e.erklaerung_text ? `<div class="expl">${esc(e.erklaerung_text)}</div>` : ""}${erklM ? (istBild(erklM)
-      ? `<div class="player"><img src="${url(erklM)}" alt="Erklärungsbild zu ${esc(e.wort)}"></div>`
-      : `<div class="player"><video autoplay loop muted playsinline src="${url(erklM)}" aria-label="Erklärung zu ${esc(e.wort)}"></video></div>`) : ""}</div>`;
-  if (auf("fingeralphabet") && e.fingeralphabet) inhalt = `<div class="wk-auf"><div class="player"><video autoplay loop muted playsinline src="${url(e.fingeralphabet)}" aria-label="Fingeralphabet zu ${esc(e.wort)}"></video></div></div>`;
   const confirm = st.confirmDel === e.id ? `<div class="confirm" role="alert"><p>„${esc(e.wort)}“ wirklich löschen? Das lässt sich nicht rückgängig machen.</p>
       <div class="row"><button type="button" class="btn danger solid" data-del-yes="${esc(e.id)}">Endgültig löschen</button><button type="button" class="btn ghost" data-del-no="1">Abbrechen</button></div></div>` : "";
-  K.innerHTML = `<article class="card wkarte${st.editId === e.id ? " editing" : ""}${inhalt ? " mit-auf" : ""}" id="wkarte" aria-label="${esc(artikelWort(e))}"><div class="wk-links">
+  K.innerHTML = `<article class="card wkarte${st.editId === e.id ? " editing" : ""}" id="wkarte" aria-label="${esc(artikelWort(e))}"><div class="wk-links">
       <div class="wk-kopf"><h3 class="word">${e.artikel ? `<span class="art">${esc(e.artikel)}</span> ` : ""}${esc(e.wort)}</h3>${chips}</div>
       ${e.plural ? `<p class="variants">Plural: <b>${esc(e.plural)}</b></p>` : ""}
       ${e.varianten && e.varianten.length ? `<p class="variants">Varianten: <b>${esc(e.varianten.join(", "))}</b></p>` : ""}
-      ${hatErkl || e.fingeralphabet ? `<div class="media">${hatErkl ? knopf("erklaerung", "Erklärung") : ""}${e.fingeralphabet ? knopf("fingeralphabet", "Fingeralphabet") : ""}</div>` : ""}
       ${confirm}
       <div class="cfoot"><button type="button" class="btn" data-edit="${esc(e.id)}">Bearbeiten</button><button type="button" class="btn ghost danger" data-del="${esc(e.id)}">Löschen</button></div>
-    </div>${inhalt}</article>`;
-  listUrls.push(...urls.splice(before));
+    </div></article>`;
+}
+function wzHat(e){ return {gebaerde:!!e, erklaerung:!!(e && (e.erklaerung_text || erklMedium(e))), fingeralphabet:!!(e && e.fingeralphabet)}; }
+function wzStopp(){   // Medien im Fenster anhalten und ihre Quellen freigeben (vor jedem Wechsel)
+  document.querySelectorAll("#wz-video video").forEach(v => { v.pause(); v.removeAttribute("src"); v.load(); });
+  freeUrls(wzUrls);
+}
+function wzFenster(e){   // Inhalt des Fensters: Gebärde, Erklärung (Video, Bild und/oder Text) oder Fingeralphabet
+  const quelle = b => { const u = URL.createObjectURL(b); wzUrls.push(u); return u; };
+  const video = (b, was) => `<div class="player"><video autoplay loop muted playsinline src="${quelle(b)}" aria-label="${was} zu ${esc(e.wort)}"></video></div>`;
+  if (WZ.ansicht === "fingeralphabet") return video(e.fingeralphabet, "Fingeralphabet");
+  if (WZ.ansicht === "erklaerung"){
+    const m = erklMedium(e), t = e.erklaerung_text || "";
+    const medium = m ? `<div class="wz-medium">${istBild(m) ? `<img src="${quelle(m)}" alt="Erklärungsbild zu ${esc(e.wort)}">` : video(m, "Erklärung")}</div>` : "";
+    return `<div class="wz-erkl${m && t ? " beides" : ""}">${medium}${t ? `<div class="wz-text" role="region" tabindex="0" aria-label="Erklärung zu ${esc(e.wort)}"><p>${esc(t)}</p></div>` : ""}</div>`;
+  }
+  return e.gebaerde ? video(e.gebaerde, "Gebärde") : "";
 }
 function wzHaupt(){
   const e = st.auf ? st.eintraege.find(x => x.id === st.auf && x.sammlung === st.sammlung) : null;
   if (!e) st.auf = null;
   const V = $("wz-video"); if (!V) return;
-  if (WZ.vId !== (e ? e.id : null) || WZ.vBlob !== (e ? e.gebaerde : null)){   // Video nur neu laden, wenn ein anderes Wort/Video gewählt ist
-    freeUrls(wzUrls);
-    WZ.vId = e ? e.id : null; WZ.vBlob = e ? e.gebaerde : null;
+  const hat = wzHat(e);
+  if (!hat[WZ.ansicht]) WZ.ansicht = "gebaerde";   // Umschalter nur für vorhandene Inhalte
+  const k = !e ? [null] : [e.id, e.wort, WZ.ansicht, e.gebaerde, hat.erklaerung, hat.fingeralphabet,
+    WZ.ansicht === "fingeralphabet" ? e.fingeralphabet : null, WZ.ansicht === "erklaerung" ? erklMedium(e) : null, WZ.ansicht === "erklaerung" ? e.erklaerung_text : null];
+  let neu = false;
+  if (!WZ.vKey || k.length !== WZ.vKey.length || k.some((x, i) => x !== WZ.vKey[i])){   // Fenster nur neu füllen, wenn sich Wort, Umschalter oder Inhalt ändern
+    wzStopp(); WZ.vKey = k;
     V.classList.toggle("leer", !e);
-    if (e && e.gebaerde){ const u = URL.createObjectURL(e.gebaerde); wzUrls.push(u);
-      V.innerHTML = `<div class="player"><video autoplay loop muted playsinline src="${u}" aria-label="Gebärde zu ${esc(e.wort)}"></video></div>`; }
-    else V.innerHTML = `<div class="wz-platz">${SYM_VIDEO}<span>Wort antippen</span></div>`;
+    if (!e) V.innerHTML = `<div class="wz-platz">${SYM_VIDEO}<span>Wort antippen</span></div>`;
+    else {
+      const um = hat.erklaerung || hat.fingeralphabet ? `<div class="wz-um" role="group" aria-label="Im Fenster zeigen">${Object.keys(WZ_ANS).filter(a => hat[a])
+        .map(a => `<button type="button" class="btn" data-ansicht="${a}" aria-pressed="${a === WZ.ansicht}">${WZ_ANS[a]}</button>`).join("")}</div>` : "";
+      V.innerHTML = `<div class="wz-fenster" data-zeigt="${WZ.ansicht}">${wzFenster(e)}</div>${um}`;
+    }
+    neu = true;
   }
   wzKarte(e);
+  if (neu) wzVideoHoehe();   // Nachbesserung 1 (B-M1): Umschalter-Zeile kommt/geht, die Karte bleibt gleich hoch → Fenster sofort neu bemessen
 }
-function wzLeeren(){   // Liste verlassen (Startseiten, Test/Üben): Videos anhalten, Quellen freigeben; die Auswahl bleibt
-  document.querySelectorAll("#wz-video video, #wz-karte video").forEach(v => { v.pause(); v.removeAttribute("src"); v.load(); });
-  freeUrls(wzUrls); freeUrls(listUrls); WZ.vId = undefined; WZ.vBlob = undefined;
+function wzLeeren(){   // Liste verlassen (Startseiten, Test/Üben): Videos anhalten, Quellen freigeben; die Auswahl bleibt, beim Zurückkommen wieder die Gebärde
+  wzStopp(); freeUrls(listUrls); WZ.vKey = null; WZ.ansicht = "gebaerde";
   if ($("wz-video")) $("wz-video").innerHTML = ""; if ($("wz-karte")) $("wz-karte").innerHTML = "";
 }
 function wzWahl(id){
   if (st.auf !== id){ st.auf = id; st.open = null; st.confirmDel = null; }
+  WZ.ansicht = "gebaerde";   // Wort öffnen → immer zuerst die Gebärde
   wzHaupt();
   document.querySelectorAll("#wz-hoehe .wz-z").forEach(z => z.setAttribute("aria-selected", String(z.dataset.auf === st.auf)));
   if (!matchMedia("(min-width:900px)").matches && st.auf) $("wz-video").scrollIntoView({block:"start"});   // schmales Fenster: Video steht über der Liste
@@ -1320,7 +1345,7 @@ function renderList(){
   renderBackupHinweis();
   renderExport();
   if (!n){
-    freeUrls(listUrls); freeUrls(wzUrls); WZ.vId = null; WZ.vBlob = null; st.auf = null;
+    wzStopp(); freeUrls(listUrls); WZ.vKey = null; WZ.ansicht = "gebaerde"; st.auf = null;
     $("count").textContent = "0 Gebärden";
     L.innerHTML = `<div class="empty"><h3>Noch keine Gebärden in der ${esc(SAMMLUNG[st.sammlung].name)}</h3>
       <p>Tippe auf „+ Neue Gebärde“, um die erste Gebärde anzulegen. Sie erscheint dann hier.</p>
@@ -1331,15 +1356,15 @@ function renderList(){
   wzOptionen(); wzFiltern(); wzZahl();
   wzHoehe(); wzZeilen(true); wzHaupt();
 }
+function wzAnstossen(){ const v = document.querySelector("#wz-video .wz-fenster video"); if (v && v.paused) { const x = v.play(); if (x && x.catch) x.catch(() => {}); } }
 $("list").addEventListener("click", async ev => {
   const b = ev.target.closest("button");
-  if (!b) return;
+  if (!b){ if (ev.target.closest("#wz-video .wz-fenster")) wzAnstossen(); return; }
   if (b.dataset.auf){
-    wzWahl(b.dataset.auf);   // Wort antippen → Video läuft sofort (ein anderes Wort ersetzt das vorige)
-  } else if (b.dataset.play){
-    const same = st.open && st.open.id === b.dataset.id && st.open.key === b.dataset.play;
-    st.open = same ? null : {id:b.dataset.id, key:b.dataset.play};   // Erklärung bzw. Fingeralphabet auf-/zuklappen (nur eins offen)
-    wzHaupt();
+    wzWahl(b.dataset.auf); wzAnstossen();   // Wort antippen → Video läuft sofort (ein anderes Wort ersetzt das vorige)
+  } else if (b.dataset.ansicht){
+    WZ.ansicht = b.dataset.ansicht; wzHaupt(); wzAnstossen();   // Umschalter: Gebärde, Erklärung oder Fingeralphabet groß im Fenster
+    const neu = document.querySelector(`#wz-video [data-ansicht="${WZ.ansicht}"]`); if (neu && document.activeElement !== neu) neu.focus({preventScroll:true});
   } else if (b.dataset.edit){
     startEdit(b.dataset.edit);
   } else if (b.dataset.del){
@@ -2608,7 +2633,7 @@ function setSammlung(s){
   try { localStorage.setItem("gw-sammlung", s); } catch(e){}
   if (st.editId) resetForm();
   clearAllErr();
-  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; if ($("wz-suche")) $("wz-suche").value = "";
+  st.open = null; st.confirmDel = null; st.auf = null; WZ.fach = ""; WZ.thema = ""; WZ.q = ""; WZ.ansicht = "gebaerde"; if ($("wz-suche")) $("wz-suche").value = "";
   renderSammlung(); renderSlots(); renderList();
 }
 const HIC = {

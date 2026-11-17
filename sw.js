@@ -1,5 +1,5 @@
 // Offline-Betrieb des Gebärden-Wörterbuchs. Erzeugt von baue_woerterbuch_github.py – nicht von Hand ändern.
-const CACHE = "woerterbuch-c78529dc81";
+const CACHE = "woerterbuch-fc6b34781e";
 const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", "./schriften/bricolage-grotesque-latin-opsz-normal.woff2", "./schriften/atkinson-hyperlegible-next-latin-wght-normal.woff2", "./schriften/OFL.txt"];
 self.addEventListener("install", e => {
   // cache: "reload" – nicht aus dem HTTP-Cache des Browsers füllen (sonst kann eine alte index.html in den neuen Cache geraten)
