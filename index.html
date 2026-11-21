@@ -451,6 +451,10 @@ mark.sigwort{background:none;color:var(--signal);font-weight:900;padding:0} /* S
   .testin[data-art=rechnen] .blitzwort.mathesatz{font-size:calc(80 * var(--u))}
   .schriftlich{font-size:calc(120 * var(--u))}
   .zanzeige{font-size:calc(60 * var(--u));min-width:calc(300 * var(--u));min-height:calc(90 * var(--u));border-width:calc(4 * var(--u));border-radius:calc(24 * var(--u))}
+  .zfeld .rfelder{font-size:calc(52 * var(--u));gap:calc(20 * var(--u))}   /* .zfeld davor: muss die Grundregeln weiter unten schlagen */
+  .zfeld .zanzeige.rfeld{font-size:calc(60 * var(--u));min-width:calc(190 * var(--u))}
+  .zfeld .zanzeige.rfeld.an{box-shadow:0 0 0 calc(6 * var(--u)) var(--mathe)}
+  .zfeld .zanzeige.rfeld.an.leer{box-shadow:0 0 0 calc(6 * var(--u)) var(--c-rot)}
   .ztasten{grid-template-columns:repeat(3,calc(120 * var(--u)));gap:calc(10 * var(--u))}
   .ztasten .btn{min-height:calc(66 * var(--u));padding:0;line-height:1;font-size:calc(40 * var(--u));border-radius:calc(22 * var(--u))}
   /* Ergebnis */
@@ -634,6 +638,15 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
 /* „Richtig“: grün + Haken (Freddy 16.11.) */
 .artwahl.ja .sym{width:1.1em;height:1.1em}
 .zanzeige{position:relative}
+/* Geteilt mit Rest (Sammel-Bau 2b): zwei Felder; das aktive hat einen Ring außen herum (nicht nur Farbe, ohne Größenänderung – Prüfer B N3).
+   OK mit leerem Feld: Ring rot (Prüfer B M1). Haken im Feld nicht über der Ziffer (Prüfer A4). */
+.rfelder{display:flex;align-items:center;justify-content:center;gap:14px;font-family:var(--font-display);font-size:34px;font-weight:700;touch-action:manipulation}
+.zanzeige.rfeld{font-family:var(--font-display);font-size:40px;font-weight:700;color:var(--ink);min-width:88px;padding:4px 12px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.zanzeige.rfeld:not(.an):not(.ja):not(.nein){border-color:var(--c-randaus);box-shadow:none}
+.zanzeige.rfeld.an{border-color:var(--mathe);box-shadow:0 0 0 4px var(--mathe)}
+.zanzeige.rfeld.an.leer{border-color:var(--c-rot);box-shadow:0 0 0 4px var(--c-rot)}
+.zanzeige.rfeld .sym{position:static;display:inline-block;vertical-align:middle;margin-left:.1em}
+.zanzeige.rfeld.ja{color:var(--c-richtig)}.zanzeige.rfeld.nein{color:var(--c-rot)}
 .zanzeige .sym,.schriftlich .erg .sym{position:absolute;top:0;bottom:0;margin:auto 0;width:.8em;height:.8em}   /* senkrecht mittig ohne transform (Rundung) */
 .zanzeige .sym{right:.25em}
 .schriftlich .erg{position:relative}
@@ -1603,6 +1616,8 @@ const RBEREICH = {
   vh100:{name:"Verdoppeln und Halbieren bis 100", max:100, art:"vh", ops:VH},
   e1x1k:{name:"Einmaleins: Kernaufgaben (1·, 2·, 5·, 10·)", kern:true, ops:{"*":"nur Mal","/":"nur Geteilt","md":"gemischt"}},
   e1x1:{name:"Kleines Einmaleins", ops:{"*":"nur Mal","/":"nur Geteilt","md":"gemischt"}},
+  e1x1rk:{name:"Geteilt mit Rest: Kernaufgaben (: 2, : 5, : 10)", rest:true, kern:true, ops:{"/":"nur Geteilt"}},   // Sammel-Bau 2b (Freddy 17./21.11.)
+  e1x1r:{name:"Geteilt mit Rest (17 : 5 = 3 Rest 2)", rest:true, ops:{"/":"nur Geteilt"}},
   e1x1z:{name:"Zehner-Einmaleins (3 · 40)", zehn:true, ops:{"*":"nur Mal","/":"nur Geteilt","md":"gemischt"}}};
 const RZ = {"+":"+","-":"−","*":"·","/":":"};
 function zufall(a, b){ return a + Math.floor(Math.random() * (b - a + 1)); }
@@ -1624,6 +1639,11 @@ function rAufgabe(bereich, op, reihen, eins){
   const id = "r" + Math.random().toString(36).slice(2);
   if (B.art === "erg"){ a = nullAuf ? (Math.random() < .5 ? 0 : 10) : zufall(1, 9); return {id, wort:a + " + ? = 10", loesung:10 - a, rop:"e"}; }   // Ergänzen: die fehlende Zahl
   if (B.art === "fv"){ const x = zufall(2, 9), y = x + (x === 2 || Math.random() < .5 ? 1 : -1); [a, b] = Math.random() < .5 ? [x, y] : [y, x]; return {id, wort:a + " + " + b, loesung:a + b, rop:"+"}; }
+  if (B.rest){   // Geteilt mit Rest: Teiler 2–10, Ergebnis 0–10 (0 ab und zu), Rest 0 bis Teiler − 1, Rest 0 ab und zu (~1 von 10)
+    const rh = B.kern ? [2, 5, 10] : reihen && reihen.length && reihen.length < 9 ? reihen : null;
+    const d = rh ? rh[zufall(0, rh.length - 1)] : zufall(2, 10), q = nullAuf ? 0 : zufall(1, 10), r = Math.random() < .1 ? 0 : zufall(1, d - 1);
+    return {id, wort:(q * d + r) + " : " + d, loesung:q, rest:r, teiler:d, rop:"/r"};
+  }
   if (op === "*" || op === "/"){
     // Reihen (03.11.2026): y = Reihe; sind alle Reihen 2–10 gewählt, gilt das ganze Einmaleins wie bisher (1–10)
     const rh = B.kern ? [1, 2, 5, 10] : !B.zehn && reihen && reihen.length && reihen.length < 9 ? reihen : null;
@@ -1650,10 +1670,10 @@ function rAufgabe(bereich, op, reihen, eins){
 }
 /* Leichtere Aufgaben beimischen (Freddy 07.11.: „schon sichere Stufen ~2 von 10“). Ohne gespeicherten Lernstand gilt als sicher:
    die Stufe direkt davor (gleiche Rechenart). Abschaltbar. */
-const RLEICHTER = {erg10:"z10", z20o:"z10", z20m:"z20o", z20:"z20o", fv20:"z20o", z100z:"z20", z100e:"z100z", z100zz:"z100e", z100zzo:"z100zz", z100zzm:"z100zzo", z100:"z100zzo", vh100:"vh20", e1x1:"e1x1k", e1x1z:"e1x1"};   // Prüfer B2: je Stufe eine sicher leichtere
+const RLEICHTER = {erg10:"z10", z20o:"z10", z20m:"z20o", z20:"z20o", fv20:"z20o", z100z:"z20", z100e:"z100z", z100zz:"z100e", z100zzo:"z100zz", z100zzm:"z100zzo", z100:"z100zzo", vh100:"vh20", e1x1:"e1x1k", e1x1rk:"e1x1k", e1x1r:"e1x1", e1x1z:"e1x1"};   // mit Rest: leichter = geteilt ohne Rest   // Prüfer B2: je Stufe eine sicher leichtere
 function rLeichter(rb, op){ const l = RLEICHTER[rb]; return l && op in RBEREICH[l].ops ? l : null; }
 function rZiehen(){ const l = T.mix ? rLeichter(T.rb, T.rop) : null; return rAufgabe(l && Math.random() < .2 ? l : T.rb, T.rop, T.reihen, T.eins); }
-function rLoesText(e){ return e.rop === "e" ? esc(e.wort.replace("?", e.loesung)) : esc(e.wort) + (/^D/.test(e.wort) ? " ist " : " = ") + e.loesung; }
+function rLoesText(e){ return e.rest !== undefined ? esc(e.wort) + " = " + e.loesung + " Rest " + e.rest : e.rop === "e" ? esc(e.wort.replace("?", e.loesung)) : esc(e.wort) + (/^D/.test(e.wort) ? " ist " : " = ") + e.loesung; }
 function rAufgaben(n){ // möglichst keine Aufgabe doppelt; reicht die Auswahl nicht (z. B. nur eine Reihe), dann nur nicht direkt hintereinander
   const r = [], schon = new Set();
   while (r.length < n){ let x, v = 0;
@@ -1670,7 +1690,7 @@ function rWahlHtml(ueben){
     + (B.eins ? `<label class="opt"><input type="checkbox" id="r-eins" ${T.eins ? "checked" : ""}> nur einstellig dazuzählen und abziehen (0–9)</label>` : "");
   return `<div class="sp"><div class="einst"><label class="elab" for="t-rop">1. Rechenart</label><select id="t-rop">${ROPS.map(([g, l]) => `<optgroup label="${g}">${l.map(([k, t]) => `<option value="${esc(k)}" ${T.rop === k ? "selected" : ""}>${t}</option>`).join("")}</optgroup>`).join("")}</select></div>
     <div class="einst"><label class="elab" for="t-rb">2. Bereich</label><select id="t-rb">${passend.map(([k, x]) => `<option value="${k}" ${T.rb === k ? "selected" : ""}>${x.name}</option>`).join("")}</select>
-    ${T.rb === "e1x1" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}
+    ${T.rb === "e1x1" || T.rb === "e1x1r" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}
     ${rLeichter(T.rb, T.rop) ? `<label class="opt"><input type="checkbox" id="r-mix" ${T.mix ? "checked" : ""}> leichtere Aufgaben beimischen (etwa 2 von 10)</label>` : ""}</div></div><div class="sp">`
     + (haken ? `<div class="einst"><span class="elab">3. Darstellung</span>${haken}</div>` : "")
     + (ueben ? "" : `<div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben (10–50), jedes Mal neu ausgedacht</p></div>`) + `</div>`;
@@ -1691,24 +1711,33 @@ function rMax(){ return T.phase === "rueben" ? 0 : 3; } // Versuche: Test 3, Üb
 function rSterne(w){ return w.ok ? 3 - (w.versuche || 0) : 0; }
 function rRueck(w){
   const v = w.versuche || 0, max = rMax();
-  if (!w.wahl) return v ? `<p class="rueck nein">Leider falsch – ${max ? "noch " + (max - v) + (max - v === 1 ? " Versuch" : " Versuche") : "versuch es nochmal"}.</p>`
-    + (T.phase === "rueben" ? `<div class="hilfen"><button type="button" class="btn" data-t="rloesung">${SYM.lampe}Lösung zeigen</button></div>` : "") : "";
+  if (!w.wahl) return (rRest(w) ? `<p class="rueck nein" id="r-leer" aria-live="polite" ${rLeerText(w) ? "" : "hidden"}>${rLeerText(w)}</p>` : "") + (v ? `<p class="rueck nein">Leider falsch – ${max ? "noch " + (max - v) + (max - v === 1 ? " Versuch" : " Versuche") : "versuch es nochmal"}.${rRest(w) && w.restGross ? ` Der Rest muss kleiner als ${w.e.teiler} sein.` : ""}</p>`
+    + (T.phase === "rueben" ? `<div class="hilfen"><button type="button" class="btn" data-t="rloesung">${SYM.lampe}Lösung zeigen</button></div>` : "") : "");
   if (w.gezeigt) return `<p class="rueck nein">Die Lösung: ${rLoesText(w.e)}</p>`;
   if (w.ok) return ""; // richtig: kein Text, nur „Weiter“ (Freddy 05.11.2026)
-  return `<p class="rueck nein">Leider falsch. ${rLoesText(w.e)}</p>`;
+  return `<p class="rueck nein">Leider falsch. ${rLoesText(w.e)}${rRest(w) && w.restGross ? `. Der Rest muss kleiner als ${w.e.teiler} sein.` : ""}</p>`;
 }
 function matheRueck(w){ const e = w.e, ok = w.wahl === e.mathe;
   if (ok) return "";
   return `<p class="rueck nein">Leider falsch. Richtig ist: <strong>${RECHEN[e.mathe].z} ${RECHEN[e.mathe].n}</strong></p>`
     + (e.matheErkl ? `<p class="hint" style="font-size:16px">${esc(e.wort)} = ${esc(e.matheErkl)}</p>` : ""); }
 function rUnter(w){ return T.unter && (w.e.rop === "+" || w.e.rop === "-"); } // schriftliche Darstellung aktiv?
+function rRest(w){ return !!w && w.e.rest !== undefined; }   // Aufgabe mit Rest: zwei Felder (Ergebnis, Rest)
+function rName(i, v){ return (i ? "Rest" : "Ergebnis") + ": " + (v || "leer"); }   // Prüfer B N2: Bildschirmleser liest den Wert mit
+function rLeerText(w){ return w.wahl || w.leer === undefined || w.leer === null ? "" : w.leer ? "Rest eintragen (auch 0)." : "Ergebnis eintragen."; }
+function rFelder(w){
+  const fertig = !!w.wahl, cls = fertig ? (w.ok ? " ja" : " nein") : "", f = w.feld || 0;
+  const k = (i, v, name) => `<button type="button" class="zanzeige rfeld${cls}${!fertig && f === i ? " an" : ""}${!fertig && w.leer === i ? " leer" : ""}" data-z="f${i}" aria-label="${rName(i, v)}" aria-pressed="${!fertig && f === i}">${esc(v || "") || "&nbsp;"}${fertig && w.ok && i === 1 ? SYM.richtig : ""}</button>`;
+  return `<div class="rfelder" aria-live="polite">${k(0, w.eingabe, "Ergebnis")}<span>Rest</span>${k(1, w.eingabe2, "Rest")}</div>`;
+}
 function zFeld(w){
   const fertig = !!w.wahl, cls = fertig ? (w.ok ? " ja" : " nein") : "";
   const t = k => `<button type="button" class="btn${k === "ok" ? " ok" : ""}" data-z="${k}" ${fertig ? "disabled" : ""} aria-label="${k === "del" ? "Löschen" : k === "ok" ? "Bestätigen" : k}">${k === "del" ? SYM.loeschen : k === "ok" ? SYM.haken + "OK" : k}</button>`;
-  return `<div class="zfeld">${rUnter(w) ? "" : `<div class="zanzeige${cls}" aria-live="polite">${esc(w.eingabe || "") || "&nbsp;"}${fertig && w.ok ? SYM.richtig : ""}</div>`}<div class="ztasten">${["1","2","3","4","5","6","7","8","9","del","0","ok"].map(t).join("")}</div></div>`;
+  return `<div class="zfeld">${rUnter(w) ? "" : rRest(w) ? rFelder(w) : `<div class="zanzeige${cls}" aria-live="polite">${esc(w.eingabe || "") || "&nbsp;"}${fertig && w.ok ? SYM.richtig : ""}</div>`}<div class="ztasten">${["1","2","3","4","5","6","7","8","9","del","0","ok"].map(t).join("")}</div></div>`;
 }
 function zTaste(k){ // Zahlenfeld: Ziffern, Löschen, OK
   const w = T.woerter[T.i]; if (!w || w.wahl) return;
+  if (rRest(w)) return zTasteRest(w, k);
   const s = w.eingabe || "";
   if (k === "del") w.eingabe = s.slice(0, -1);
   else if (k === "ok"){ if (!s) return;
@@ -1720,8 +1749,30 @@ function zTaste(k){ // Zahlenfeld: Ziffern, Löschen, OK
   else return;
   zAnzeige(w);
 }
+/* Geteilt mit Rest: Antippen eines Feldes wählt es; Ziffern und Löschen wirken im gewählten Feld (Löschen im leeren Rest-Feld springt zurück).
+   OK mit einem leeren Feld springt dorthin; sonst zählen beide Felder zusammen als ein Versuch. */
+function zTasteRest(w, k){
+  const f = w.feld || 0, key = f ? "eingabe2" : "eingabe", s = w[key] || "";
+  w.leer = null;   // Hinweis „… eintragen“ gilt nur bis zur nächsten Eingabe
+  if (k === "f0" || k === "f1") w.feld = +k[1];
+  else if (k === "del"){ if (!s && f) w.feld = 0; else w[key] = s.slice(0, -1); }
+  else if (k === "ok"){ const a = w.eingabe || "", b = w.eingabe2 || "";
+    if (!a || !b){ w.feld = w.leer = a ? 1 : 0; return zAnzeige(w); }   // leeres Feld: dorthin, rot umrandet, kurzer Hinweis, kein Versuch (Prüfer B M1)
+    if (Number(a) === w.e.loesung && Number(b) === w.e.rest){ w.wahl = a + " Rest " + b; w.ok = true; autoWeiter(w); }
+    else { w.versuche = (w.versuche || 0) + 1; w.restGross = Number(b) >= w.e.teiler; const max = rMax();
+      if (max && w.versuche >= max){ w.wahl = a + " Rest " + b; w.ok = false; } else { w.eingabe = ""; w.eingabe2 = ""; w.feld = 0; } }
+    renderTest(); return; }
+  else if (/^\d$/.test(k) && s.length < 3) w[key] = s === "0" ? k : s + k;
+  else return;
+  zAnzeige(w);
+}
 /* iPad (Freddy 17.11., Sammel-Bau 2): Ziffern und Löschen ändern nur die Anzeige – die Knöpfe bleiben stehen, kein Tipp geht verloren */
 function zAnzeige(w){
+  if (rRest(w)){ const fs = document.querySelectorAll("#t-hilfen .rfeld"); if (fs.length !== 2){ renderTest(); return; }
+    [w.eingabe, w.eingabe2].forEach((v, i) => { fs[i].innerHTML = esc(v || "") || "&nbsp;"; fs[i].classList.toggle("an", (w.feld || 0) === i); fs[i].classList.toggle("leer", w.leer === i);
+      fs[i].setAttribute("aria-pressed", String((w.feld || 0) === i)); fs[i].setAttribute("aria-label", rName(i, v)); });
+    const h = document.getElementById("r-leer"); if (h){ h.textContent = rLeerText(w); h.hidden = !h.textContent; }
+    return; }
   const el = rUnter(w) ? document.querySelector("#t-flaeche .schriftlich .erg") : document.querySelector("#t-hilfen .zanzeige");
   if (!el){ renderTest(); return; }
   el.innerHTML = esc(w.eingabe || "") || (rUnter(w) ? "" : "&nbsp;");
@@ -2021,7 +2072,7 @@ function renderTest(){
     const opt = (q, txt) => `<option value="${q}" ${T.quelle === q ? "selected" : ""}>${txt}</option>`; // Dropdown (05.11.2026)
     const ueben = T.modus === "ueben", uWahl = ueben && st.sammlung === "schueler" && !T.fest, ug = !ueben || T.uart === "gebaerden" || WUEBEN.has(T.uart), wu = ueben && WUEBEN.has(T.uart);
 
-    const rWahl = (!ueben && T.art === "rechnen") || (ueben && T.uart === "rechnen"), nn = rWahl ? (T.rb === "e1x1" && !T.reihen.length ? 0 : 1) : (ueben && T.uart === "mathe") ? 1 : n;
+    const rWahl = (!ueben && T.art === "rechnen") || (ueben && T.uart === "rechnen"), nn = rWahl ? ((T.rb === "e1x1" || T.rb === "e1x1r") && !T.reihen.length ? 0 : 1) : (ueben && T.uart === "mathe") ? 1 : n;
     el.innerHTML = tKopf(ueben ? (uWahl ? "Üben" : uTitel()) : T.fest ? ARTEN[T.art].name : "Test") + `<section class="panel testwahl spiel" data-farbe="${bereichFarbe()}">
       ${uWahl ? uArtWahlHtml() : ""}
       ${APP === "lehrer" && (T.art === "lehrer" || T.uart === "gebaerden") ? richtungHtml() : ueben ? (T.uart === "gebaerden" ? `<p class="hint">Du siehst das deutsche Wort, machst die Gebärde selbst und schaust dann zur Kontrolle das Video an.</p>` : "") : T.fest ? "" : `<h3>Übungsart</h3>
@@ -2242,7 +2293,7 @@ function renderFlaeche(w){
   else if (w.ansicht === "mathe") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 22 ? " mathesatz" : ""}">${w.wahl ? markiere(e.wort) : esc(e.wort)}</div></div>`;
   else if (w.ansicht === "rechnen" && rUnter(w)){ const [a, z, b] = e.wort.split(" ");
     fl.innerHTML = `<div class="leerflaeche"><div class="schriftlich" aria-label="${esc(e.wort)}"><span></span><span class="z">${a}</span><span>${z}</span><span class="z">${b}</span><span class="strich"></span><span class="erg${w.wahl ? (w.ok ? " ja" : " nein") : ""}" aria-live="polite">${esc(w.eingabe || "")}${w.wahl && w.ok ? SYM.richtig : ""}</span></div></div>`; }
-  else if (w.ansicht === "rechnen") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 14 ? " mathesatz" : ""}">${esc(e.wort)}${e.rop === "e" ? "" : /^D/.test(e.wort) ? " ist ?" : " = ?"}</div></div>`;
+  else if (w.ansicht === "rechnen") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort${e.wort.length > 14 ? " mathesatz" : ""}">${esc(e.wort)}${e.rop === "e" ? "" : e.rest !== undefined ? " =" : /^D/.test(e.wort) ? " ist ?" : " = ?"}</div></div>`;
   else if (w.ansicht === "artikel") fl.innerHTML = `<div class="leerflaeche"><div class="blitzwort">… ${esc(e.wort)}</div>${T.astufe === "farbe" ? ebeneArtikel() : ""}</div>`;
   else fl.innerHTML = `<div class="leerflaeche"><p class="hint">Schreib das Wort auf.</p></div>`;
 }
@@ -2549,6 +2600,9 @@ document.addEventListener("keydown", ev => {
   const w = T.woerter[T.i];
   if (/^\d$/.test(ev.key)) zTaste(ev.key);
   else if (ev.key === "Backspace") zTaste("del");
+  else if (rRest(w) && !w.wahl && (ev.key === "ArrowLeft" || ev.key === "ArrowRight")) zTaste(ev.key === "ArrowLeft" ? "f0" : "f1");
+  else if (rRest(w) && !w.wahl && ev.key === "Tab" && (w.feld || 0) === (ev.shiftKey ? 1 : 0) && (!document.activeElement || document.activeElement === document.body || document.activeElement.classList.contains("rfeld")))
+    zTaste(ev.shiftKey ? "f0" : "f1");   // Prüfer A3/B N1: Tab nur von Ergebnis zu Rest (Umschalt+Tab zurück); vom letzten Feld aus geht Tab normal weiter
   else if (ev.key === "Enter"){ if (w && !w.wahl) zTaste("ok"); else { const b = T.phase === "rueben" ? document.querySelector('[data-t="rnext"]') : $("t-weiter"); if (b && !b.disabled) b.click(); } }
   else return;
   ev.preventDefault();
