@@ -1,0 +1,607 @@
+{
+ "stand": "2026-11-21",
+ "saetze": [
+  {
+   "id": 1,
+   "stufe": 1,
+   "satz": "Die Sonne ist rot.",
+   "glieder": [
+    {
+     "text": "Die Sonne",
+     "rolle": "S"
+    },
+    {
+     "text": "ist",
+     "rolle": "P"
+    },
+    {
+     "text": "rot",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "stufe": 1,
+   "satz": "Der Bus fährt zur Schule.",
+   "glieder": [
+    {
+     "text": "Der Bus",
+     "rolle": "S"
+    },
+    {
+     "text": "fährt",
+     "rolle": "P"
+    },
+    {
+     "text": "zur Schule",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "stufe": 1,
+   "satz": "Die Biene fliegt zur Rose.",
+   "glieder": [
+    {
+     "text": "Die Biene",
+     "rolle": "S"
+    },
+    {
+     "text": "fliegt",
+     "rolle": "P"
+    },
+    {
+     "text": "zur Rose",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "stufe": 1,
+   "satz": "Die Katze schläft auf dem Sofa.",
+   "glieder": [
+    {
+     "text": "Die Katze",
+     "rolle": "S"
+    },
+    {
+     "text": "schläft",
+     "rolle": "P"
+    },
+    {
+     "text": "auf dem Sofa",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "stufe": 1,
+   "satz": "Der Mond scheint hell.",
+   "glieder": [
+    {
+     "text": "Der Mond",
+     "rolle": "S"
+    },
+    {
+     "text": "scheint",
+     "rolle": "P"
+    },
+    {
+     "text": "hell",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 6,
+   "stufe": 1,
+   "satz": "Das Schiff fährt langsam.",
+   "glieder": [
+    {
+     "text": "Das Schiff",
+     "rolle": "S"
+    },
+    {
+     "text": "fährt",
+     "rolle": "P"
+    },
+    {
+     "text": "langsam",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "stufe": 1,
+   "satz": "Die Ente schwimmt im Teich.",
+   "glieder": [
+    {
+     "text": "Die Ente",
+     "rolle": "S"
+    },
+    {
+     "text": "schwimmt",
+     "rolle": "P"
+    },
+    {
+     "text": "im Teich",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "stufe": 1,
+   "satz": "Der Hase sitzt unter dem Baum.",
+   "glieder": [
+    {
+     "text": "Der Hase",
+     "rolle": "S"
+    },
+    {
+     "text": "sitzt",
+     "rolle": "P"
+    },
+    {
+     "text": "unter dem Baum",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "stufe": 1,
+   "satz": "Die Eule sitzt auf dem Ast.",
+   "glieder": [
+    {
+     "text": "Die Eule",
+     "rolle": "S"
+    },
+    {
+     "text": "sitzt",
+     "rolle": "P"
+    },
+    {
+     "text": "auf dem Ast",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 10,
+   "stufe": 1,
+   "satz": "Der Koffer steht neben dem Bett.",
+   "glieder": [
+    {
+     "text": "Der Koffer",
+     "rolle": "S"
+    },
+    {
+     "text": "steht",
+     "rolle": "P"
+    },
+    {
+     "text": "neben dem Bett",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "stufe": 2,
+   "satz": "Die Maus frisst den Käse.",
+   "glieder": [
+    {
+     "text": "Die Maus",
+     "rolle": "S"
+    },
+    {
+     "text": "frisst",
+     "rolle": "P"
+    },
+    {
+     "text": "den Käse",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "stufe": 2,
+   "satz": "Der Affe sucht die Nuss.",
+   "glieder": [
+    {
+     "text": "Der Affe",
+     "rolle": "S"
+    },
+    {
+     "text": "sucht",
+     "rolle": "P"
+    },
+    {
+     "text": "die Nuss",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "stufe": 2,
+   "satz": "Die Oma kauft eine Tasse.",
+   "glieder": [
+    {
+     "text": "Die Oma",
+     "rolle": "S"
+    },
+    {
+     "text": "kauft",
+     "rolle": "P"
+    },
+    {
+     "text": "eine Tasse",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "stufe": 2,
+   "satz": "Der Opa trägt einen Hut.",
+   "glieder": [
+    {
+     "text": "Der Opa",
+     "rolle": "S"
+    },
+    {
+     "text": "trägt",
+     "rolle": "P"
+    },
+    {
+     "text": "einen Hut",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 15,
+   "stufe": 2,
+   "satz": "Tom findet den Ball im Bett.",
+   "glieder": [
+    {
+     "text": "Tom",
+     "rolle": "S"
+    },
+    {
+     "text": "findet",
+     "rolle": "P"
+    },
+    {
+     "text": "den Ball",
+     "rolle": "A"
+    },
+    {
+     "text": "im Bett",
+     "rolle": "-"
+    }
+   ]
+  },
+  {
+   "id": 16,
+   "stufe": 2,
+   "satz": "Lea zeigt das Bild.",
+   "glieder": [
+    {
+     "text": "Lea",
+     "rolle": "S"
+    },
+    {
+     "text": "zeigt",
+     "rolle": "P"
+    },
+    {
+     "text": "das Bild",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 17,
+   "stufe": 2,
+   "satz": "Der König sucht die Karte.",
+   "glieder": [
+    {
+     "text": "Der König",
+     "rolle": "S"
+    },
+    {
+     "text": "sucht",
+     "rolle": "P"
+    },
+    {
+     "text": "die Karte",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 18,
+   "stufe": 2,
+   "satz": "Der Pirat hat einen Vollbart.",
+   "glieder": [
+    {
+     "text": "Der Pirat",
+     "rolle": "S"
+    },
+    {
+     "text": "hat",
+     "rolle": "P"
+    },
+    {
+     "text": "einen Vollbart",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 19,
+   "stufe": 2,
+   "satz": "Die Ziege frisst die Rose.",
+   "glieder": [
+    {
+     "text": "Die Ziege",
+     "rolle": "S"
+    },
+    {
+     "text": "frisst",
+     "rolle": "P"
+    },
+    {
+     "text": "die Rose",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 20,
+   "stufe": 2,
+   "satz": "Ich kenne den Weg.",
+   "glieder": [
+    {
+     "text": "Ich",
+     "rolle": "S"
+    },
+    {
+     "text": "kenne",
+     "rolle": "P"
+    },
+    {
+     "text": "den Weg",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 21,
+   "stufe": 2,
+   "satz": "Das Pferd sieht den Esel.",
+   "glieder": [
+    {
+     "text": "Das Pferd",
+     "rolle": "S"
+    },
+    {
+     "text": "sieht",
+     "rolle": "P"
+    },
+    {
+     "text": "den Esel",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 22,
+   "stufe": 2,
+   "satz": "Der Hai hat spitze Zähne.",
+   "glieder": [
+    {
+     "text": "Der Hai",
+     "rolle": "S"
+    },
+    {
+     "text": "hat",
+     "rolle": "P"
+    },
+    {
+     "text": "spitze Zähne",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 23,
+   "stufe": 3,
+   "satz": "Lea gibt der Oma die Rose.",
+   "glieder": [
+    {
+     "text": "Lea",
+     "rolle": "S"
+    },
+    {
+     "text": "gibt",
+     "rolle": "P"
+    },
+    {
+     "text": "der Oma",
+     "rolle": "D"
+    },
+    {
+     "text": "die Rose",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 24,
+   "stufe": 3,
+   "satz": "Der Opa zeigt dem Kind die Karte.",
+   "glieder": [
+    {
+     "text": "Der Opa",
+     "rolle": "S"
+    },
+    {
+     "text": "zeigt",
+     "rolle": "P"
+    },
+    {
+     "text": "dem Kind",
+     "rolle": "D"
+    },
+    {
+     "text": "die Karte",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 25,
+   "stufe": 3,
+   "satz": "Tom erklärt dem Opa den Stadtplan.",
+   "glieder": [
+    {
+     "text": "Tom",
+     "rolle": "S"
+    },
+    {
+     "text": "erklärt",
+     "rolle": "P"
+    },
+    {
+     "text": "dem Opa",
+     "rolle": "D"
+    },
+    {
+     "text": "den Stadtplan",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 26,
+   "stufe": 3,
+   "satz": "Die Jacke gehört dem Opa.",
+   "glieder": [
+    {
+     "text": "Die Jacke",
+     "rolle": "S"
+    },
+    {
+     "text": "gehört",
+     "rolle": "P"
+    },
+    {
+     "text": "dem Opa",
+     "rolle": "D"
+    }
+   ]
+  },
+  {
+   "id": 27,
+   "stufe": 3,
+   "satz": "Heute trägt Lea eine Mütze und einen Schal.",
+   "glieder": [
+    {
+     "text": "Heute",
+     "rolle": "-"
+    },
+    {
+     "text": "trägt",
+     "rolle": "P"
+    },
+    {
+     "text": "Lea",
+     "rolle": "S"
+    },
+    {
+     "text": "eine Mütze und einen Schal",
+     "rolle": "A"
+    }
+   ]
+  },
+  {
+   "id": 28,
+   "stufe": 3,
+   "satz": "Tom will den Legostein suchen.",
+   "glieder": [
+    {
+     "text": "Tom",
+     "rolle": "S"
+    },
+    {
+     "text": "will",
+     "rolle": "P"
+    },
+    {
+     "text": "den Legostein",
+     "rolle": "A"
+    },
+    {
+     "text": "suchen",
+     "rolle": "P"
+    }
+   ]
+  },
+  {
+   "id": 29,
+   "stufe": 3,
+   "satz": "Die Henne hat ein Ei gelegt.",
+   "glieder": [
+    {
+     "text": "Die Henne",
+     "rolle": "S"
+    },
+    {
+     "text": "hat",
+     "rolle": "P"
+    },
+    {
+     "text": "ein Ei",
+     "rolle": "A"
+    },
+    {
+     "text": "gelegt",
+     "rolle": "P"
+    }
+   ]
+  },
+  {
+   "id": 30,
+   "stufe": 3,
+   "satz": "Auf der Karte findet Tom die Tankstelle.",
+   "glieder": [
+    {
+     "text": "Auf der Karte",
+     "rolle": "-"
+    },
+    {
+     "text": "findet",
+     "rolle": "P"
+    },
+    {
+     "text": "Tom",
+     "rolle": "S"
+    },
+    {
+     "text": "die Tankstelle",
+     "rolle": "A"
+    }
+   ]
+  }
+ ]
+}
