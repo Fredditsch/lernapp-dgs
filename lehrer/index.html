@@ -679,6 +679,18 @@ input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{bord
   #zettel .zlinie.kurz{flex:0 0 45mm}
   #zettel .zlinien div{box-sizing:border-box;height:10.5mm;border-bottom:.3mm solid #555}
 }
+
+/* Sammel-Bau 2c (21.11.2026): Auswahl-Kästen nebeneinander, damit „Üben/Test starten“ ohne Scrollen sichtbar ist */
+@media (min-width:1200px) and (pointer:fine), (min-width:1024px) and (orientation:landscape) and (pointer:coarse){
+  .testwahl.spiel{grid-auto-flow:row dense;align-items:start}
+  .testwahl.spiel > .sp{display:contents}
+  .testwahl.spiel .sp > .einst{grid-column:auto}
+  .testwahl.spiel .sp > .einst.bereich,.testwahl.spiel .sp > .einst.darst{grid-column:2}
+  .testwahl.spiel .sp > .einst.bereich.hoch{grid-row:span 2}
+  .testwahl.spiel .testliste{grid-template-columns:repeat(3,minmax(0,1fr));max-height:calc(300 * var(--u))}
+  .testwahl.spiel > .sp + .einst .testliste{grid-template-columns:repeat(2,minmax(0,1fr))}   /* halb breiter Kasten (neben Stufe/Richtung): lange Wörter passen */
+  .testwahl.spiel > .sp + .einst{grid-column:auto}
+}
 </style>
 
 <div class="home" id="home" hidden></div>
@@ -1689,10 +1701,10 @@ function rWahlHtml(ueben){
   const haken = (B.ops === PM ? `<label class="opt"><input type="checkbox" id="r-unter" ${T.unter ? "checked" : ""}> untereinander schreiben</label>` : "")
     + (B.eins ? `<label class="opt"><input type="checkbox" id="r-eins" ${T.eins ? "checked" : ""}> nur einstellig dazuzählen und abziehen (0–9)</label>` : "");
   return `<div class="sp"><div class="einst"><label class="elab" for="t-rop">1. Rechenart</label><select id="t-rop">${ROPS.map(([g, l]) => `<optgroup label="${g}">${l.map(([k, t]) => `<option value="${esc(k)}" ${T.rop === k ? "selected" : ""}>${t}</option>`).join("")}</optgroup>`).join("")}</select></div>
-    <div class="einst"><label class="elab" for="t-rb">2. Bereich</label><select id="t-rb">${passend.map(([k, x]) => `<option value="${k}" ${T.rb === k ? "selected" : ""}>${x.name}</option>`).join("")}</select>
+    <div class="einst bereich${haken ? "" : " hoch"}"><label class="elab" for="t-rb">2. Bereich</label><select id="t-rb">${passend.map(([k, x]) => `<option value="${k}" ${T.rb === k ? "selected" : ""}>${x.name}</option>`).join("")}</select>
     ${T.rb === "e1x1" || T.rb === "e1x1r" ? `<div class="reihen">${[2,3,4,5,6,7,8,9,10].map(z => `<label class="opt"><input type="checkbox" data-reihe="${z}" ${T.reihen.includes(z) ? "checked" : ""}> ${z}er</label>`).join("")}</div>${T.reihen.length ? "" : `<p class="hint">Bitte mindestens eine Reihe wählen.</p>`}` : ""}
     ${rLeichter(T.rb, T.rop) ? `<label class="opt"><input type="checkbox" id="r-mix" ${T.mix ? "checked" : ""}> leichtere Aufgaben beimischen (etwa 2 von 10)</label>` : ""}</div></div><div class="sp">`
-    + (haken ? `<div class="einst"><span class="elab">3. Darstellung</span>${haken}</div>` : "")
+    + (haken ? `<div class="einst darst"><span class="elab">3. Darstellung</span>${haken}</div>` : "")
     + (ueben ? "" : `<div class="einst"><label class="elab" for="t-anzahl">Anzahl Aufgaben</label><input type="number" id="t-anzahl" min="10" max="50" step="1" value="${T.anzahl}" inputmode="numeric"><p class="hint" id="t-info">${T.anzahl} Aufgaben (10–50), jedes Mal neu ausgedacht</p></div>`) + `</div>`;
 }
 /* Üben in der Schüler-Sammlung (03.11.2026): Gebärden, Kopfrechnen oder Rechenart erkennen – Rechnen ohne Ende, ohne Bilanz */
@@ -1950,7 +1962,7 @@ function artikelWort(e){ return (e.artikel ? e.artikel + " " : "") + e.wort; }
 function schuelerEintraege(){ return st.eintraege.filter(e => e.sammlung === "schueler"); }
 /* Üben für Blitzlesen, Fingeralphabet, Artikel, Fachbegriffe (05.11.2026): gleiche Wortauswahl wie im Test, Wörter laufen ohne Ende durch */
 const WUEBEN = new Set(["blitz","falesen","artikel","fach","bsatz","gross","plural"]);   // Sammel-Bau 2: + Blitz-Satz, Groß/klein, Plural
-function pArt(){ return T.modus === "ueben" && WUEBEN.has(T.uart) ? T.uart : T.art; }
+function pArt(){ return T.modus === "ueben" && T.uart ? T.uart : T.art; }   // 2c: Üben nie mit der Übungsart des letzten Tests
 function artPool(art){
   if (art === "rechnen") return [{id:"rechnen"}]; // Aufgaben werden erzeugt (03.11.2026)
   if (art === "mathe" && T.modus !== "ueben") return mPool();

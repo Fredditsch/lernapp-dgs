@@ -1,5 +1,5 @@
 // Offline-Betrieb des Gebärden-Wörterbuchs (lehrer-App). Erzeugt von baue_woerterbuch_github.py – nicht von Hand ändern.
-  const CACHE = "lehrer-5c19939551";
+  const CACHE = "lehrer-75400f215f";
   const FILES = ["./", "./index.html", "./datenschutz.html", "./jszip.min.js", "./manifest.webmanifest", "./icon-180.png", "./icon-512.png", "./schriften/bricolage-grotesque-latin-opsz-normal.woff2", "./schriften/atkinson-hyperlegible-next-latin-wght-normal.woff2", "./schriften/OFL.txt"];
   self.addEventListener("install", e => {
     // cache: "reload" – nicht aus dem HTTP-Cache des Browsers füllen (sonst kann eine alte index.html in den neuen Cache geraten)
